@@ -1,0 +1,35 @@
+import os
+import re
+import platform
+
+from lit import formats
+
+config.name = '@PRJ_NAME@pass-tests'
+config.test_source_root = '@CMAKE_CURRENT_SOURCE_DIR@'
+
+# Configuration file for the 'lit' test runner.
+config.test_format = formats.ShTest(True)
+
+# suffixes: A list of file extensions to treat as test files. This is overriden
+# by individual lit.local.cfg files in the test subdirectories.
+config.suffixes = ['.ll', '.c', '.cpp', '.test', '.txt', '.s']
+
+# excludes: A list of directories to exclude from the testsuite. The 'Inputs'
+# subdirectories contain auxiliary inputs for various tests in their parent
+# directories.
+config.excludes = ['data', 'CMakeCache.txt', 'CMakeFiles', 'CMakeLists.txt']
+
+config.substitutions.append(('%bindir', "@CMAKE_BINARY_DIR@"))
+config.substitutions.append(('%inputdatadir', "%p/data/input"))
+config.substitutions.append(('%outputdatadir', "%p/data/output"))
+config.substitutions.append(('%testeelib',
+                             "@TESTEE_PREFIX@@LIT_TESTEE_LIB@@TESTEE_SUFFIX@"))
+
+# environment: Set PATH as required
+config.environment['PATH'] = os.pathsep.join(["@LLVM_TOOLS_BINARY_DIR@",
+                                              config.environment['PATH']])
+config.environment['PRJ_NAME'] = "@PRJ_NAME@"
+config.environment['LLVM_ROOT'] = "@LLVM_INSTALL_PREFIX@"
+
+# vim:ft=python
+

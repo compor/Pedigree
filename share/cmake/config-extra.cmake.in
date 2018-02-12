@@ -1,0 +1,11 @@
+# cmake file
+
+set_target_properties(@LIB_NAME@ PROPERTIES DEPENDEE "@DEPENDEE@")
+
+set(@PRJ_NAME@_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
+set(@PRJ_NAME@_LIBRARY_DIRS "@CMAKE_INSTALL_PREFIX@/lib")
+set(@PRJ_NAME@_LIBRARIES "@TRGT_PREFIX@@LIB_NAME@@TRGT_SUFFIX@")
+
+
+message(STATUS "Found @PRJ_NAME@ version: @PRJ_VERSION@")
+
