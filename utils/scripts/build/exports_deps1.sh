@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 
-### edit section start
+# LLVM/Clang should be in the PATH for this to work
+export CC=clang
+export CXX=clang++
+export LLVMCONFIG=llvm-config
+
+# or picked up from a system package install
+if [[ ! -z ${COMPILER_VERSION} ]]; then
+  export CC=${CC}-${COMPILER_VERSION}
+  export CXX=${CXX}-${COMPILER_VERSION}
+  export LLVMCONFIG=${LLVMCONFIG}-${COMPILER_VERSION}
+fi
 
 COMPILER_VERSION=
 
@@ -17,20 +27,6 @@ export LINKER_FLAGS="${LINKER_FLAGS} -lc++ -lc++abi"
 
 export PEDIGREE_SKIP_TESTS=OFF
 export PEDIGREE_DEBUG=ON
-
-### edit section end
-
-# LLVM/Clang should be in the PATH
-export CC=clang
-export CXX=clang++
-export LLVMCONFIG=llvm-config
-
-# or picked up from a system package install
-if [[ ! -z ${COMPILER_VERSION} ]]; then
-  export CC=${CC}-${COMPILER_VERSION}
-  export CXX=${CXX}-${COMPILER_VERSION}
-  export LLVMCONFIG=${LLVMCONFIG}-${COMPILER_VERSION}
-fi
 
 
 # find LLVM's cmake dir
