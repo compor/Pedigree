@@ -18,7 +18,7 @@ class PedigreePass : public llvm::FunctionPass {
 public:
   static char ID;
 
-  Pedigree() : llvm::FunctionPass(ID) {}
+  PedigreePass() : llvm::FunctionPass(ID) {}
 
   bool runOnFunction(llvm::Function &CurFunc) override;
 };
