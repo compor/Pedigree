@@ -124,15 +124,6 @@ endif()
 
 # dependencies
 
-find_package(Foo CONFIG)
-
-if(Foo_FOUND)
-  set(${PRJ_NAME_UPPER}_USES_FOO 1)
-else()
-  set(${PRJ_NAME_UPPER}_USES_FOO 0)
-  message(WARNING "package Foo was not found; skipping.")
-endif()
-
 #
 
 set(LIB_SOURCES "lib/PedigreePass.cpp")
@@ -147,10 +138,6 @@ set_target_properties(${OBJ_LIB_NAME} PROPERTIES
   CXX_STANDARD 14
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF)
-
-if(Foo_FOUND)
-  target_link_libraries(${OBJ_LIB_NAME} PUBLIC Foo)
-endif()
 
 target_compile_definitions(${OBJ_LIB_NAME} PUBLIC ${LLVM_DEFINITIONS})
 target_compile_definitions(${OBJ_LIB_NAME} PRIVATE VERSION_STRING=${PRJ_VERSION})
@@ -242,10 +229,6 @@ set(PRJ_CMAKE_CONFIG_FILE "config.cmake")
 set(PRJ_CMAKE_CONFIG_EXTRA_FILE "config-extra.cmake")
 
 set(DEPENDEE "")
-
-if(Foo_FOUND)
-  list(APPEND DEPENDEE ${FOO_LIB_DIR}${TRGT_PREFIX}${FOO_LIB}${TRGT_SUFFIX})
-endif()
 
 install(TARGETS ${LIB_NAME} EXPORT ${PEDIGREE_EXPORT}
   ARCHIVE DESTINATION "${PRJ_INSTALL_LIB_DIR}"
