@@ -44,6 +44,8 @@
 // using DEBUG macro
 // using llvm::dbgs
 
+#include "boost/graph/adjacency_list.hpp"
+
 #define DEBUG_TYPE "pedigree"
 
 #define STRINGIFY_UTIL(x) #x

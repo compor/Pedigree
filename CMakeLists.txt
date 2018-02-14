@@ -125,6 +125,9 @@ endif()
 
 # dependencies
 
+find_package(Boost REQUIRED)
+
+
 #
 
 set(LIB_SOURCES "lib/PedigreePass.cpp")
@@ -149,6 +152,7 @@ if(PEDIGREE_DEBUG)
 endif()
 
 target_include_directories(${OBJ_LIB_NAME} PUBLIC ${LLVM_INCLUDE_DIRS})
+target_include_directories(${OBJ_LIB_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 target_include_directories(${OBJ_LIB_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 target_include_directories(${OBJ_LIB_NAME} PUBLIC
