@@ -67,7 +67,8 @@ handle_llvm_dependency(${PRJ_STANDALONE_BUILD})
 set(PRJ_SHARED_MODE "STATIC")
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
-  detect_llvm_shared_mode(SHARED_MODE shared_mode LLVM_VERSION ${LLVM_VERSION})
+  detect_llvm_shared_mode(SHARED_MODE shared_mode 
+    LLVM_VERSION ${LLVM_PACKAGE_VERSION})
   string(TOUPPER ${shared_mode} shared_mode)
 
   message(STATUS "LLVM shared mode: ${shared_mode}")
