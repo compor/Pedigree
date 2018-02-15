@@ -80,16 +80,16 @@ static llvm::cl::OptionCategory
     PedigreePassCategory("Pedigree Pass", "Options for Pedigree pass");
 
 #if PEDIGREE_DEBUG
-bool passDebugFlag = false;
-static llvm::cl::opt<bool, true> Debug("pedigree-debug",
-                                       llvm::cl::desc("debug pedigree pass"),
-                                       llvm::cl::location(passDebugFlag),
-                                       llvm::cl::cat(PedigreePassCategory));
+// bool passDebugFlag = false;
+static llvm::cl::opt<bool, true>
+    Debug("pedigree-debug", llvm::cl::desc("debug pedigree pass"),
+          llvm::cl::location(pedigree::utility::passDebugFlag),
+          llvm::cl::cat(PedigreePassCategory));
 
-LogLevel passLogLevel = LogLevel::info;
+// LogLevel passLogLevel = LogLevel::info;
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-debug-level", llvm::cl::desc("debug level for pedigree pass"),
-    llvm::cl::location(passLogLevel),
+    llvm::cl::location(pedigree::utility::passLogLevel),
     llvm::cl::values(
         clEnumValN(LogLevel::info, "info", "informational messages"),
         clEnumValN(LogLevel::notice, "notice", "significant conditions"),

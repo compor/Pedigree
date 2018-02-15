@@ -30,8 +30,8 @@ enum class LogLevel { info, notice, warning, error, debug };
 namespace pedigree {
 namespace utility {
 
-extern bool passDebugFlag;
-extern LogLevel passLogLevel;
+static bool passDebugFlag = false;
+static LogLevel passLogLevel = LogLevel::info;
 
 } // namespace utility end
 } // namespace pedigree end
