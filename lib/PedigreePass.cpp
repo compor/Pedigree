@@ -64,7 +64,7 @@ static llvm::RegisterPass<pedigree::PedigreePass>
 // RegisterStandardPasses class
 
 static void registerPedigreePass(const llvm::PassManagerBuilder &Builder,
-                                    llvm::legacy::PassManagerBase &PM) {
+                                 llvm::legacy::PassManagerBase &PM) {
   PM.add(new pedigree::PedigreePass());
 
   return;
@@ -72,7 +72,7 @@ static void registerPedigreePass(const llvm::PassManagerBuilder &Builder,
 
 static llvm::RegisterStandardPasses
     RegisterPedigreePass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                            registerPedigreePass);
+                         registerPedigreePass);
 
 //
 
@@ -80,13 +80,11 @@ static llvm::cl::OptionCategory
     PedigreePassCategory("Pedigree Pass", "Options for Pedigree pass");
 
 #if PEDIGREE_DEBUG
-// bool passDebugFlag = false;
 static llvm::cl::opt<bool, true>
     Debug("pedigree-debug", llvm::cl::desc("debug pedigree pass"),
           llvm::cl::location(pedigree::utility::passDebugFlag),
           llvm::cl::cat(PedigreePassCategory));
 
-// LogLevel passLogLevel = LogLevel::info;
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-debug-level", llvm::cl::desc("debug level for pedigree pass"),
     llvm::cl::location(pedigree::utility::passLogLevel),
@@ -103,8 +101,6 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 
 namespace pedigree {
 
-bool PedigreePass::runOnFunction(llvm::Function &CurFunc) {
-  return false;
-}
+bool PedigreePass::runOnFunction(llvm::Function &CurFunc) { return false; }
 
 } // namespace pedigree end

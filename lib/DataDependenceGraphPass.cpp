@@ -33,7 +33,7 @@
 // using DEBUG macro
 // using llvm::dbgs
 
-#define DEBUG_TYPE "pedigree"
+#define DEBUG_TYPE "pedigreeddg"
 
 #define STRINGIFY_UTIL(x) #x
 #define STRINGIFY(x) STRINGIFY_UTIL(x)
@@ -72,13 +72,11 @@ static llvm::cl::OptionCategory
                             "Options for Pedigree DDG pass");
 
 #if PEDIGREE_DEBUG
-// bool passDebugFlag = false;
 static llvm::cl::opt<bool, true>
     Debug("pedigree-ddg-debug", llvm::cl::desc("debug pedigree ddg pass"),
           llvm::cl::location(pedigree::utility::passDebugFlag),
           llvm::cl::cat(PedigreeDDGPassCategory));
 
-// LogLevel passLogLevel = LogLevel::info;
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-ddg-debug-level",
     llvm::cl::desc("debug level for pedigree ddg pass"),
