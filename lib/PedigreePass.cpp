@@ -44,11 +44,6 @@
 
 #define DEBUG_TYPE "pedigree"
 
-#define STRINGIFY_UTIL(x) #x
-#define STRINGIFY(x) STRINGIFY_UTIL(x)
-
-#define PRJ_CMDLINE_DESC(x) x " (version: " STRINGIFY(VERSION_STRING) ")"
-
 // plugin registration for opt
 
 char pedigree::PedigreePass::ID = 0;

@@ -27,6 +27,12 @@ enum class LogLevel { info, notice, warning, error, debug };
 #include <system_error>
 // using std::error_code
 
+// preprocessor stringification macros
+#define STRINGIFY_UTIL(x) #x
+#define STRINGIFY(x) STRINGIFY_UTIL(x)
+
+#define PRJ_CMDLINE_DESC(x) x " (version: " STRINGIFY(VERSION_STRING) ")"
+
 namespace pedigree {
 namespace utility {
 
