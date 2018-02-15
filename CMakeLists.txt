@@ -180,11 +180,6 @@ if(${LLVM_LIB_TARGET_TYPE} STREQUAL "STATIC_LIBRARY")
   target_link_libraries(${TEST_LIB_NAME} PUBLIC ${LLVM_LIBS})
 endif()
 
-if(nlohmann_json_FOUND)
-  target_link_libraries(${LIB_NAME} PRIVATE ${JSON_LIB})
-  target_link_libraries(${TEST_LIB_NAME} PRIVATE ${JSON_LIB})
-endif()
-
 #
 
 get_property(TRGT_PREFIX TARGET ${TEST_LIB_NAME} PROPERTY PREFIX)
