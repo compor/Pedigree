@@ -2,14 +2,9 @@
 //
 //
 
-#include "Config.hpp"
-
 #include "Utils.hpp"
 
 #include "PedigreePass.hpp"
-
-#include "llvm/Pass.h"
-// using llvm::RegisterPass
 
 #include "llvm/IR/Type.h"
 // using llvm::Type
@@ -22,6 +17,9 @@
 
 #include "llvm/Support/Casting.h"
 // using llvm::dyn_cast
+
+#include "llvm/Pass.h"
+// using llvm::RegisterPass
 
 #include "llvm/IR/LegacyPassManager.h"
 // using llvm::PassManagerBase
@@ -43,8 +41,6 @@
 #include "llvm/Support/Debug.h"
 // using DEBUG macro
 // using llvm::dbgs
-
-#include "DataDependenceGraph.hpp"
 
 #define DEBUG_TYPE "pedigree"
 

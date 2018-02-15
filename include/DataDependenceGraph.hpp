@@ -1,3 +1,7 @@
+//
+//
+//
+
 #ifndef DATADEPENDENCEGRAPH_HPP
 #define DATADEPENDENCEGRAPH_HPP
 
@@ -45,8 +49,9 @@ struct DataDependenceEdge {
 
 using DataDependenceGraph = Graph<DataDependenceVertex, DataDependenceEdge>;
 
-template <typename GraphTy> GraphTy make_ddg(const llvm::Function &CurFunc) {
-  return GraphTy{};
+template <typename GraphTy>
+GraphTy make_ddg(const llvm::Function &CurFunc) noexcept {
+  return {};
 }
 
 } // namespace pedigree end

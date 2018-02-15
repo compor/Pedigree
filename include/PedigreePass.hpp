@@ -14,8 +14,7 @@ class Function;
 
 namespace pedigree {
 
-class PedigreePass : public llvm::FunctionPass {
-public:
+struct PedigreePass : public llvm::FunctionPass {
   static char ID;
 
   PedigreePass() : llvm::FunctionPass(ID) {}
