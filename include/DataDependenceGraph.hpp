@@ -55,7 +55,7 @@ struct DataDependenceEdge {
 using DataDependenceGraph = Graph<DataDependenceVertex, DataDependenceEdge>;
 
 template <typename GraphTy>
-GraphTy make_ddg(const llvm::Function &Func) noexcept {
+GraphTy CreateGraph(const llvm::Function &Func) noexcept {
   GraphTy g{};
 
   for (auto &bb : Func)
