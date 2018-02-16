@@ -40,6 +40,10 @@ using Graph =
 
 struct DataDependenceVertex {
   llvm::Instruction *instruction;
+
+  explicit DataDependenceVertex(llvm::Instruction *const instruction) noexcept {
+    this->instruction = instruction;
+  }
 };
 
 struct DataDependenceEdge {
