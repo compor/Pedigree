@@ -16,12 +16,6 @@
 #include "llvm/Analysis/LoopInfo.h"
 // using llvm::LoopInfo
 
-#include <iostream>
-// using std::ostream
-
-#include <string>
-// using std::string
-
 namespace pedigree {
 namespace testing {
 
@@ -38,15 +32,6 @@ static llvm::LoopInfo calculateLoopInfo(llvm::Function &Func) {
 #endif
 
   return LI;
-}
-
-struct ExampleTestData {
-  std::string assemblyFile;
-};
-
-std::ostream &operator<<(std::ostream &os, const ExampleTestData &td) {
-  auto delim = ' ';
-  return os << delim << "assembly file: " << td.assemblyFile << delim;
 }
 
 } // namespace testing end

@@ -13,6 +13,12 @@
 // using boost::vecS
 // using boost::directedS
 
+//#include "boost/graph/graph_traits.hpp"
+// using boost::graph_traits
+
+// using vertexTy = typename graph_traits<GraphTy>::vertex_descriptor;
+// std::map<llvm::Instruction *, vertexTy> i2v;
+
 #include <cstdint>
 // using uint8_t
 

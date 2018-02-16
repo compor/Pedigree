@@ -12,9 +12,24 @@
 
 #include "TestCommon.hpp"
 
+#include <string>
+// using std::string
+
+#include <iostream>
+// using std::ostream
+
 namespace pedigree {
 namespace testing {
 namespace {
+
+struct ExampleTestData {
+  std::string assemblyFile;
+};
+
+std::ostream &operator<<(std::ostream &os, const ExampleTestData &td) {
+  auto delim = ' ';
+  return os << delim << "assembly file: " << td.assemblyFile << delim;
+}
 
 class ExampleTest : public TestIRAssemblyParser,
                     public ::testing::TestWithParam<ExampleTestData> {};

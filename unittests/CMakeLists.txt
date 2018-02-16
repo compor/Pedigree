@@ -27,7 +27,9 @@ add_custom_target(unittests)
 
 set(PRJ_TEST_NAME Test${PRJ_NAME})
 
-set(TEST_SOURCES TestPedigreeOpt.cpp)
+set(TEST_SOURCES 
+  TestPedigreeOpt.cpp
+  DDGTests.cpp)
 
 add_executable(${PRJ_TEST_NAME} ${TEST_SOURCES})
 
@@ -37,6 +39,7 @@ target_include_directories(${PRJ_TEST_NAME} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PRJ_TEST_NAME} PUBLIC ${GTEST_INCLUDE_DIRS})
 target_include_directories(${PRJ_TEST_NAME} PUBLIC ${LLVM_INCLUDE_DIRS})
+target_include_directories(${PRJ_TEST_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 target_include_directories(${PRJ_TEST_NAME} PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>)
 target_include_directories(${PRJ_TEST_NAME} PUBLIC
