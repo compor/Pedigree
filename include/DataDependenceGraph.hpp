@@ -44,17 +44,15 @@ using UnderlyingGraphTy =
 template <typename VertexPropertyTy, typename EdgePropertyTy>
 using DependenceGraphTy =
     labeled_graph<UnderlyingGraphTy<VertexPropertyTy, EdgePropertyTy>,
-                  llvm::Instruction *>;
+                  const llvm::Instruction *>;
 
 //
 
 struct DataDependenceVertex {
-  llvm::Instruction *instruction;
+  const llvm::Instruction *instruction;
 
-  explicit DataDependenceVertex(
-      const llvm::Instruction *ins = nullptr) noexcept {
-    instruction = const_cast<llvm::Instruction *>(ins);
-  }
+  explicit DataDependenceVertex(const llvm::Instruction *ins = nullptr) noexcept
+      : instruction(ins) {}
 };
 
 struct DataDependenceEdge {
