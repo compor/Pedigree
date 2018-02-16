@@ -62,6 +62,8 @@ GraphTy CreateGraph(const llvm::Function &Func) noexcept {
     for (auto &ins : bb) {
       auto src = add_vertex(DataDependenceVertex(&ins), g);
       for (auto &u : ins.uses()) {
+        // TODO: this adds all instructions encounter as vertices
+        // provide decision option to user
         auto *user = llvm::dyn_cast<llvm::Instruction>(u.getUser());
         if (user)
           auto dst = add_vertex(DataDependenceVertex(user), g);
