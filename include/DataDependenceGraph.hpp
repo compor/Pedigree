@@ -41,8 +41,9 @@ using Graph =
 struct DataDependenceVertex {
   llvm::Instruction *instruction;
 
-  explicit DataDependenceVertex(const llvm::Instruction *instruction) noexcept {
-    this->instruction = const_cast<llvm::Instruction *>(instruction);
+  explicit DataDependenceVertex(
+      const llvm::Instruction *ins = nullptr) noexcept {
+    instruction = const_cast<llvm::Instruction *>(ins);
   }
 };
 
@@ -54,10 +55,10 @@ struct DataDependenceEdge {
 using DataDependenceGraph = Graph<DataDependenceVertex, DataDependenceEdge>;
 
 template <typename GraphTy>
-GraphTy make_ddg(const llvm::Function &CurFunc) noexcept {
+GraphTy make_ddg(const llvm::Function &Func) noexcept {
   GraphTy g{};
 
-  for (auto &bb : CurFunc)
+  for (auto &bb : Func)
     for (auto &ins : bb) {
       auto src = add_vertex(DataDependenceVertex(&ins), g);
       for (auto &u : ins.uses()) {
