@@ -29,7 +29,7 @@ namespace {
 
 struct DDGTestData {
   std::string assemblyFile;
-  boost::graph_traits<DataDependenceGraph>::vertices_size_type num_vertices;
+  boost::graph_traits<DataDependenceGraphTy>::vertices_size_type num_vertices;
 };
 
 std::ostream &operator<<(std::ostream &os, const DDGTestData &td) {
@@ -52,7 +52,7 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  auto g = CreateGraph<DataDependenceGraph>(*curFunc);
+  auto g = CreateGraph<DataDependenceGraphTy>(*curFunc);
 
   EXPECT_EQ(td.num_vertices, num_vertices(g));
 }
