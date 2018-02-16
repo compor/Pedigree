@@ -41,8 +41,8 @@ using Graph =
 struct DataDependenceVertex {
   llvm::Instruction *instruction;
 
-  explicit DataDependenceVertex(llvm::Instruction *const instruction) noexcept {
-    this->instruction = instruction;
+  explicit DataDependenceVertex(const llvm::Instruction *instruction) noexcept {
+    this->instruction = const_cast<llvm::Instruction *>(instruction);
   }
 };
 
