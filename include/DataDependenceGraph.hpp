@@ -55,7 +55,19 @@ using DataDependenceGraph = Graph<DataDependenceVertex, DataDependenceEdge>;
 
 template <typename GraphTy>
 GraphTy make_ddg(const llvm::Function &CurFunc) noexcept {
-  return {};
+  GraphTy g{};
+
+  for (auto &bb : CurFunc)
+    for (auto &ins : bb) {
+      auto src = add_vertex(DataDependenceVertex(&ins), g);
+      for (auto &u : ins.uses()) {
+        auto *user = llvm::dyn_cast<llvm::Instruction>(u.getUser());
+        if (user)
+          auto dst = add_vertex(DataDependenceVertex(user), g);
+      }
+    }
+
+  return g;
 }
 
 } // namespace pedigree end
