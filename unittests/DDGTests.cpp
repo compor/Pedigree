@@ -57,7 +57,7 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
   EXPECT_EQ(td.num_vertices, num_vertices(g));
 }
 
-std::array<DDGTestData, 1> testData1 = {"whalebook_fig81.ll", 7};
+std::array<DDGTestData, 1> testData1 = {"whalebook_fig81.ll", 13};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGConstructionTest,
                         ::testing::ValuesIn(testData1));
