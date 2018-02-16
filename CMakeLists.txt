@@ -131,8 +131,8 @@ find_package(Boost REQUIRED)
 #
 
 set(LIB_SOURCES 
-  "lib/PedigreePass.cpp"
-  "lib/DataDependenceGraphPass.cpp")
+  lib/PedigreePass.cpp
+  lib/DataDependenceGraphPass.cpp)
 
 set(LIB_NAME "LLVM${PRJ_NAME}Pass")
 set(OBJ_LIB_NAME "${LIB_NAME}_obj")

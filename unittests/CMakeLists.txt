@@ -53,11 +53,11 @@ llvm_map_components_to_libnames(LLVM_LIBS
 
 target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${LLVM_LIBS})
 
-  # setup dependency between unit test targets and their production code
+# setup dependency between unit test targets and their production code
 add_dependencies(${PRJ_TEST_NAME} ${UNIT_TESTEE_LIB})
 target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${UNIT_TESTEE_LIB})
 
-  # exclude unit test targets from main build
+# exclude unit test targets from main build
 set_target_properties(${PRJ_TEST_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 add_dependencies(unittests ${PRJ_TEST_NAME})
@@ -69,5 +69,5 @@ file(MAKE_DIRECTORY ${TEST_DATA_DIR})
 
 add_custom_command(TARGET unittests PRE_BUILD COMMAND 
   ${CMAKE_COMMAND} -E copy_directory 
-  "${CMAKE_CURRENT_SOURCE_DIR}/data/" ${TEST_DATA_DIR})
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/ ${TEST_DATA_DIR})
 
