@@ -52,7 +52,8 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  auto g = CreateGraph<DataDependenceGraphTy>(*curFunc);
+  DataDependenceGraphTy g{};
+  CreateGraph(g, *curFunc);
 
   EXPECT_EQ(td.num_vertices, num_vertices(g));
 }

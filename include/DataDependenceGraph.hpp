@@ -64,9 +64,7 @@ using DataDependenceGraphTy =
     DependenceGraphTy<DataDependenceVertex, DataDependenceEdge>;
 
 template <typename Graph>
-Graph CreateGraph(const llvm::Function &Func) noexcept {
-  Graph g{};
-
+auto CreateGraph(Graph &g, const llvm::Function &Func) noexcept -> void {
   for (auto &bb : Func)
     for (auto &ins : bb) {
       auto src = add_vertex(&ins, DataDependenceVertex(&ins), g);
@@ -78,8 +76,6 @@ Graph CreateGraph(const llvm::Function &Func) noexcept {
           auto dst = add_vertex(user, DataDependenceVertex(user), g);
       }
     }
-
-  return g;
 }
 
 } // namespace pedigree end
