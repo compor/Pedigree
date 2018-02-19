@@ -72,8 +72,10 @@ auto CreateGraph(Graph &g, const llvm::Function &Func) noexcept -> void {
         // TODO: this adds all instructions encounter as vertices
         // provide decision option to user
         auto *user = llvm::dyn_cast<llvm::Instruction>(u.getUser());
-        if (user)
+        if (user) {
           auto dst = add_vertex(user, DataDependenceVertex(user), g);
+          add_edge(src, dst, g);
+        }
       }
     }
 }
