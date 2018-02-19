@@ -28,6 +28,8 @@ namespace testing {
 namespace {
 
 struct DDGTestData {
+  DDGTestData() = delete;
+
   std::string assemblyFile;
   boost::graph_traits<DataDependenceGraphTy>::vertices_size_type num_vertices;
   boost::graph_traits<DataDependenceGraphTy>::edges_size_type num_edges;
