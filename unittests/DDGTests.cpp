@@ -30,12 +30,14 @@ namespace {
 struct DDGTestData {
   std::string assemblyFile;
   boost::graph_traits<DataDependenceGraphTy>::vertices_size_type num_vertices;
+  boost::graph_traits<DataDependenceGraphTy>::edges_size_type num_edges;
 };
 
 std::ostream &operator<<(std::ostream &os, const DDGTestData &td) {
   auto delim = ' ';
   return os << delim << "assembly file: " << td.assemblyFile << delim
-            << "vertices num: " << td.num_vertices << delim;
+            << "vertices num: " << td.num_vertices << delim
+            << "edges num: " << td.num_edges << delim;
 }
 
 //
@@ -56,11 +58,12 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
   CreateGraph(g, *curFunc);
 
   EXPECT_EQ(td.num_vertices, num_vertices(g));
+  EXPECT_EQ(td.num_edges, num_edges(g));
 }
 
-std::array<DDGTestData, 3> testData1 = {"whalebook_fig81.ll",  13,
-                                        "whalebook_fig85.ll",  10,
-                                        "whalebook_fig821.ll", 16};
+std::array<DDGTestData, 3> testData1 = {"whalebook_fig81.ll",  13, 9,
+                                        "whalebook_fig85.ll",  10, 3,
+                                        "whalebook_fig821.ll", 16, 11};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGConstructionTest,
                         ::testing::ValuesIn(testData1));
