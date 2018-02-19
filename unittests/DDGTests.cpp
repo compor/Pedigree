@@ -65,7 +65,7 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
 
 std::array<DDGTestData, 3> testData1 = {"whalebook_fig81.ll",  13, 9,
                                         "whalebook_fig85.ll",  10, 3,
-                                        "whalebook_fig821.ll", 16, 11};
+                                        "whalebook_fig821.ll", 16, 10};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGConstructionTest,
                         ::testing::ValuesIn(testData1));
