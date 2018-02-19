@@ -1,5 +1,11 @@
 /* whale book - figure 8.1 */
 
+/*
+ * clang -c -emit-llvm file.c
+ * opt -mem2reg -simplifycfg
+ *
+ */
+
 int goo(int m, int i);
 
 int foo(int n) {
