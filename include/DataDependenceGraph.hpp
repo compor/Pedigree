@@ -64,17 +64,17 @@ using DataDependenceGraphTy =
     DependenceGraphTy<DataDependenceVertex, DataDependenceEdge>;
 
 template <typename Graph>
-auto CreateGraph(Graph &g, const llvm::Function &Func) noexcept -> void {
+auto CreateGraph(Graph &G, const llvm::Function &Func) noexcept -> void {
   for (auto &bb : Func)
     for (auto &ins : bb) {
-      auto src = add_vertex(&ins, DataDependenceVertex(&ins), g);
+      auto src = add_vertex(&ins, DataDependenceVertex(&ins), G);
       for (auto &u : ins.uses()) {
         // TODO: this adds all instructions encounter as vertices
         // provide decision option to user
         auto *user = llvm::dyn_cast<llvm::Instruction>(u.getUser());
         if (user) {
-          auto dst = add_vertex(user, DataDependenceVertex(user), g);
-          add_edge(src, dst, g);
+          auto dst = add_vertex(user, DataDependenceVertex(user), G);
+          add_edge(src, dst, G);
         }
       }
     }
