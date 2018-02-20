@@ -82,4 +82,42 @@ auto CreateGraph(Graph &G, const llvm::Function &Func) noexcept -> void {
 
 } // namespace pedigree end
 
+// traits
+
+namespace llvm {
+
+template <> struct GraphTraits<pedigree::DataDependenceGraphTy> {
+  using GraphTy = pedigree::DataDependenceGraphTy;
+  using bgt = boost::graph_traits<GraphTy>;
+
+  using NodeType = Instruction;
+  using ChildIteratorType = bgt::vertex_iterator;
+
+  // TODO think about inline
+
+  static NodeType *getEntryNode(const GraphTy &G) {
+    // TODO add assertion for null, hint: use std::tie
+    //return *vertices(G).first;
+    return nullptr;
+  }
+
+  //static ChildIteratorType child_begin(NodeType *Node) {
+    //return target(*out_edges(G[Node], G).first, G);
+  //}
+
+  //static ChildIteratorType child_end(NodeType *Node) {
+    //return target(*out_edges(G[Node], G).second, G);
+  //}
+
+  using nodes_iterator = bgt::vertex_iterator;
+
+  static nodes_iterator nodes_begin(GraphTy *G) { return vertices(*G).first; }
+
+  static nodes_iterator nodes_end(GraphTy *G) { return vertices(*G).second; }
+
+  static unsigned size(GraphTy *G) { return num_vertices(*G); }
+};
+
+} // namespace llvm end
+
 #endif // header
