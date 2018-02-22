@@ -60,7 +60,8 @@ public:
   llvm::Instruction *getActual() { return m_Actual; }
 
   void addDependentNode(DependenceGraphNode *Node) {
-    m_Edges.emplace_back(Node, DataDependenceInfo{});
+    m_Edges.emplace_back(
+        Node, DataDependenceInfo{DependenceType::flow, DependenceOrigin::data});
   }
 
   edges_size_type numEdges() { return m_Edges.size(); }
