@@ -60,6 +60,11 @@ target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${UNIT_TESTEE_LIB})
 # exclude unit test targets from main build
 set_target_properties(${PRJ_TEST_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
+set_target_properties(${PRJ_TEST_NAME} PROPERTIES 
+  CXX_STANDARD 14
+  CXX_STANDARD_REQUIRED ON
+  CXX_EXTENSIONS OFF)
+
 add_dependencies(unittests ${PRJ_TEST_NAME})
 
 get_property(PRJ_UNIT_TESTS_EXE TARGET ${PRJ_TEST_NAME} PROPERTY NAME)
