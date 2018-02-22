@@ -104,11 +104,12 @@ private:
 
 //
 
-class DataDependenceBuilder : public llvm::InstVisitor<DataDependenceBuilder> {
+class DataDependenceGraphBuilder
+    : public llvm::InstVisitor<DataDependenceGraphBuilder> {
   DataDependenceGraph &m_Graph;
 
 public:
-  DataDependenceBuilder(DataDependenceGraph &Graph) : m_Graph(Graph) {}
+  DataDependenceGraphBuilder(DataDependenceGraph &Graph) : m_Graph(Graph) {}
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
     auto src = m_Graph.getOrInsertNode(&CurInstruction);

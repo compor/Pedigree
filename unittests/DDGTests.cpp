@@ -54,7 +54,7 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
   ASSERT_FALSE(nullptr == curFunc);
 
   DataDependenceGraph ddg;
-  DataDependenceBuilder ddgBuilder{ddg};
+  DataDependenceGraphBuilder ddgBuilder{ddg};
 
   ddgBuilder.visit(*curFunc);
 

@@ -95,7 +95,7 @@ void DataDependenceGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 
 bool DataDependenceGraphPass::runOnFunction(llvm::Function &CurFunc) {
   DataDependenceGraph ddg;
-  DataDependenceBuilder ddgBuilder{ddg};
+  DataDependenceGraphBuilder ddgBuilder{ddg};
 
   ddgBuilder.visit(CurFunc);
 
