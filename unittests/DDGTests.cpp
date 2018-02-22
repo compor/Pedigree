@@ -8,9 +8,6 @@
 
 #include "DataDependenceGraph.hpp"
 
-#include "boost/graph/graph_traits.hpp"
-// using boost::graph_traits
-
 #include "gtest/gtest.h"
 // using testing::Test
 
@@ -31,15 +28,15 @@ struct DDGTestData {
   DDGTestData() = delete;
 
   std::string assemblyFile;
-  boost::graph_traits<DataDependenceGraphTy>::vertices_size_type num_vertices;
-  boost::graph_traits<DataDependenceGraphTy>::edges_size_type num_edges;
+  DataDependenceGraph::vertices_size_type numVertices;
+  DataDependenceGraph::edges_size_type numEdges;
 };
 
 std::ostream &operator<<(std::ostream &os, const DDGTestData &td) {
   auto delim = ' ';
   return os << delim << "assembly file: " << td.assemblyFile << delim
-            << "vertices num: " << td.num_vertices << delim
-            << "edges num: " << td.num_edges << delim;
+            << "vertices num: " << td.numVertices << delim
+            << "edges num: " << td.numEdges << delim;
 }
 
 //
@@ -56,11 +53,13 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  DataDependenceGraphTy g{};
-  CreateGraph(g, *curFunc);
+  DataDependenceGraph ddg;
+  DataDependenceBuilder ddgBuilder{ddg};
 
-  EXPECT_EQ(td.num_vertices, num_vertices(g));
-  EXPECT_EQ(td.num_edges, num_edges(g));
+  ddgBuilder.visit(*curFunc);
+
+  EXPECT_EQ(td.numVertices, ddg.numVertices());
+  EXPECT_EQ(td.numEdges, ddg.numEdges());
 }
 
 std::array<DDGTestData, 3> testData1 = {"whalebook_fig81.ll",  13, 9,
