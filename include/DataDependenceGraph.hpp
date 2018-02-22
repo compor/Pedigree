@@ -79,6 +79,10 @@ public:
   using edges_size_type = DependenceGraphNode::edges_size_type;
 
   DataDependenceGraph() = default;
+  ~DataDependenceGraph() {
+    for (auto &e : m_NodeMap)
+      delete e.second;
+  }
 
   DependenceGraphNode *
   getOrInsertNode(const llvm::Instruction *CurInstruction) {
