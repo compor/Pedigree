@@ -66,6 +66,14 @@ public:
 
   edges_size_type numEdges() { return m_Edges.size(); }
 
+  using iterator = EdgeStorageTy::iterator;
+  using const_iterator = EdgeStorageTy::const_iterator;
+
+  inline decltype(auto) begin() { return m_Edges.begin(); }
+  inline decltype(auto) end() { return m_Edges.end(); }
+  inline decltype(auto) begin() const { return m_Edges.begin(); }
+  inline decltype(auto) end() const { return m_Edges.end(); }
+
 private:
   llvm::Instruction *m_Actual;
 
@@ -77,6 +85,9 @@ public:
   using NodeMapTy = std::map<llvm::Instruction *, DependenceGraphNode *>;
   using vertices_size_type = NodeMapTy::size_type;
   using edges_size_type = DependenceGraphNode::edges_size_type;
+
+  using iterator = NodeMapTy::iterator;
+  using const_iterator = NodeMapTy::const_iterator;
 
   DataDependenceGraph() = default;
   ~DataDependenceGraph() {
@@ -102,6 +113,11 @@ public:
                   [&n](const auto &e) { n += e.second->numEdges(); });
     return n;
   }
+
+  inline decltype(auto) begin() { return m_NodeMap.begin(); }
+  inline decltype(auto) end() { return m_NodeMap.end(); }
+  inline decltype(auto) begin() const { return m_NodeMap.begin(); }
+  inline decltype(auto) end() const { return m_NodeMap.end(); }
 
 private:
   NodeMapTy m_NodeMap;
