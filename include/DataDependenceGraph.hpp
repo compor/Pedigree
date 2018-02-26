@@ -14,6 +14,9 @@
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
+#include "llvm/Support/DOTGraphTraits.h"
+// using llvm::DOTGraphTraits
+
 #include <vector>
 // using std::vector
 
@@ -204,6 +207,15 @@ struct GraphTraits<DataDependenceGraph *>
   }
 
   static DependenceGraphNode &NodeDeref(NodePairTy P) { return *P.second; }
+};
+
+template <>
+struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
+  using GraphTy = DataDependenceGraph;
+
+  DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
+
+  static std::string getGraphName(GraphTy *G) { return "DDG"; }
 };
 
 } // namespace llvm end
