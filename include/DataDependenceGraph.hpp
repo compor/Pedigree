@@ -184,25 +184,26 @@ struct GraphTraits<DataDependenceGraph *>
     : public GraphTraits<DependenceGraphNode *> {
   using GraphTy = DataDependenceGraph;
 
-  using GraphPairTy = std::pair<llvm::Instruction *, DependenceGraphNode *>;
-  using DerefFuncTy = std::function<DependenceGraphNode &(GraphPairTy)>;
+  using NodePairTy = std::pair<llvm::Instruction *, DependenceGraphNode *>;
+  using NodeDerefFuncTy = std::function<DependenceGraphNode &(NodePairTy)>;
 
-  using nodes_iterator = llvm::mapped_iterator<GraphTy::iterator, DerefFuncTy>;
+  using nodes_iterator =
+      llvm::mapped_iterator<GraphTy::iterator, NodeDerefFuncTy>;
 
   static NodeType *getEntryNode(GraphTy *G) { return G->getEntryNode(); }
 
   static nodes_iterator nodes_begin(GraphTy *G) {
-    return llvm::map_iterator(G->begin(), DerefFuncTy(GraphDeref));
+    return llvm::map_iterator(G->begin(), NodeDerefFuncTy(NodeDeref));
   }
   static nodes_iterator nodes_end(GraphTy *G) {
-    return llvm::map_iterator(G->end(), DerefFuncTy(GraphDeref));
+    return llvm::map_iterator(G->end(), NodeDerefFuncTy(NodeDeref));
   }
 
   static unsigned size(GraphTy *G) {
     return static_cast<unsigned>(G->numVertices());
   }
 
-  static DependenceGraphNode &GraphDeref(GraphPairTy P) { return *P.second; }
+  static DependenceGraphNode &NodeDeref(NodePairTy P) { return *P.second; }
 };
 
 } // namespace llvm end
