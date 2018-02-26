@@ -158,9 +158,31 @@ namespace llvm {
 
 using namespace pedigree;
 
-template <> struct GraphTraits<DataDependenceGraph> {
-  using GraphTy = DataDependenceGraph;
+template <> struct GraphTraits<DependenceGraphNode *> {
   using NodeType = DependenceGraphNode;
+
+  using ChildPairTy = DependenceGraphNode::DependenceRecordTy;
+  using ChildDerefFuncTy = std::function<DependenceGraphNode *(ChildPairTy)>;
+
+  using ChildIteratorType =
+      llvm::mapped_iterator<NodeType::iterator, ChildDerefFuncTy>;
+
+  static NodeType *getEntryNode(NodeType *G) { return G; }
+
+  static ChildIteratorType child_begin(NodeType *G) {
+    return llvm::map_iterator(G->begin(), ChildDerefFuncTy(ChildDeref));
+  }
+  static ChildIteratorType child_end(NodeType *G) {
+    return llvm::map_iterator(G->end(), ChildDerefFuncTy(ChildDeref));
+  }
+
+  static DependenceGraphNode *ChildDeref(ChildPairTy P) { return P.first; }
+};
+
+template <>
+struct GraphTraits<DataDependenceGraph *>
+    : public GraphTraits<DependenceGraphNode *> {
+  using GraphTy = DataDependenceGraph;
 
   using GraphPairTy = std::pair<llvm::Instruction *, DependenceGraphNode *>;
   using DerefFuncTy = std::function<DependenceGraphNode &(GraphPairTy)>;
