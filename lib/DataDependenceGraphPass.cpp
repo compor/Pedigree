@@ -98,6 +98,7 @@ bool DataDependenceGraphPass::runOnFunction(llvm::Function &CurFunc) {
   DataDependenceGraphBuilder ddgBuilder{ddg};
 
   ddgBuilder.visit(CurFunc);
+  m_Graph.reset(new DataDependenceGraph(ddg));
 
   return false;
 }
