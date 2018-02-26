@@ -198,6 +198,10 @@ struct GraphTraits<DataDependenceGraph *>
     return llvm::map_iterator(G->end(), DerefFuncTy(GraphDeref));
   }
 
+  static unsigned size(GraphTy *G) {
+    return static_cast<unsigned>(G->numVertices());
+  }
+
   static DependenceGraphNode &GraphDeref(GraphPairTy P) { return *P.second; }
 };
 
