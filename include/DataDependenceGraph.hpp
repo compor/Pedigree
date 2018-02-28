@@ -14,12 +14,6 @@
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
-#include "llvm/Support/DOTGraphTraits.h"
-// using llvm::DOTGraphTraits
-
-#include "llvm/Support/raw_ostream.h"
-// using llvm::raw_string_ostream
-
 #include <vector>
 // using std::vector
 
@@ -31,9 +25,6 @@
 
 #include <algorithm>
 // using std::for_each
-
-#include <string>
-// using std::string
 
 #include <cstdint>
 // using uint8_t
@@ -228,68 +219,6 @@ struct GraphTraits<DataDependenceGraph *>
   }
 
   static DependenceGraphNode &NodeDeref(NodePairTy P) { return *P.second; }
-};
-
-template <>
-struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
-  using GraphTy = DataDependenceGraph;
-
-  DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
-
-  static std::string getGraphName(const GraphTy *) { return "DDG"; }
-
-  std::string getNodeLabel(const DependenceGraphNode *Node,
-                           const GraphTy *Graph) {
-
-    if (isSimple())
-      return getSimpleNodeLabel(Node, Graph);
-    else
-      return getCompleteNodeLabel(Node, Graph);
-  }
-
-  static std::string getCompleteNodeLabel(const DependenceGraphNode *Node,
-                                          const GraphTy *Graph) {
-    std::string s;
-    llvm::raw_string_ostream os(s);
-    Node->getActual()->print(os);
-
-    return os.str();
-  }
-
-  static std::string getSimpleNodeLabel(const DependenceGraphNode *Node,
-                                        const GraphTy *Graph) {
-    auto name = Node->getActual()->getName();
-
-    if (name.empty())
-      return Node->getActual()->getOpcodeName();
-    else
-      return name.str();
-  }
-
-  static std::string getNodeAttributes(const DependenceGraphNode *Node,
-                                       const GraphTy *Graph) {
-    std::string attr;
-
-    if (Graph->getEntryNode() == Node)
-      attr = "color=grey,style=filled";
-
-    return attr;
-  }
-
-  static std::string
-  getEdgeAttributes(const DependenceGraphNode *Node,
-                    GraphTraits<GraphTy *>::ChildIteratorType EI,
-                    const GraphTy *Graph) {
-    std::string attr;
-
-    attr = "color=blue";
-
-    return attr;
-  }
-
-  bool isNodeHidden(const DependenceGraphNode *Node) {
-    return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
-  }
 };
 
 } // namespace llvm end
