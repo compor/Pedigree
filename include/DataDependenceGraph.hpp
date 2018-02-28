@@ -81,7 +81,7 @@ public:
     Node->incrementDependeeCount();
   }
 
-  edges_size_type numEdges() { return m_Edges.size(); }
+  edges_size_type numEdges() const { return m_Edges.size(); }
 
   using iterator = EdgeStorageTy::iterator;
   using const_iterator = EdgeStorageTy::const_iterator;
