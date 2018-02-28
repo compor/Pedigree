@@ -69,6 +69,9 @@ public:
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
   using edges_size_type = EdgeStorageTy::size_type;
 
+  using iterator = EdgeStorageTy::iterator;
+  using const_iterator = EdgeStorageTy::const_iterator;
+
   DependenceGraphNode(llvm::Instruction *CurInstruction)
       : m_Actual(CurInstruction), m_DependeeCount(0) {}
 
@@ -82,9 +85,6 @@ public:
   }
 
   edges_size_type numEdges() const { return m_Edges.size(); }
-
-  using iterator = EdgeStorageTy::iterator;
-  using const_iterator = EdgeStorageTy::const_iterator;
 
   inline decltype(auto) begin() { return m_Edges.begin(); }
   inline decltype(auto) end() { return m_Edges.end(); }
@@ -268,10 +268,21 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
 
   static std::string getNodeAttributes(const DependenceGraphNode *Node,
                                        const GraphTy *Graph) {
-    std::string attr{};
+    std::string attr;
 
     if (Graph->getEntryNode() == Node)
       attr = "color=grey,style=filled";
+
+    return attr;
+  }
+
+  static std::string
+  getEdgeAttributes(const DependenceGraphNode *Node,
+                    GraphTraits<GraphTy *>::ChildIteratorType EI,
+                    const GraphTy *Graph) {
+    std::string attr;
+
+    attr = "color=blue";
 
     return attr;
   }
