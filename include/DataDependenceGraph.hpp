@@ -69,7 +69,7 @@ public:
   DependenceGraphNode(llvm::Instruction *CurInstruction)
       : m_Actual(CurInstruction) {}
 
-  llvm::Instruction *getActual() { return m_Actual; }
+  llvm::Instruction *getActual() const { return m_Actual; }
 
   void addDependentNode(DependenceGraphNode *Node) {
     m_Edges.emplace_back(
@@ -225,9 +225,10 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
-  static std::string getGraphName(GraphTy *) { return "DDG"; }
+  static std::string getGraphName(const GraphTy *) { return "DDG"; }
 
-  static std::string getNodeLabel(DependenceGraphNode *Node, GraphTy *Graph) {
+  static std::string getNodeLabel(const DependenceGraphNode *Node,
+                                  const GraphTy *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
     Node->getActual()->print(os);
