@@ -21,22 +21,34 @@
 
 #include "llvm/Support/CommandLine.h"
 // using llvm::cl::opt
+// using llvm::cl::list
 // using llvm::cl::desc
 // using llvm::cl::Hidden
 
 #include "llvm/Support/raw_ostream.h"
 // using llvm::raw_string_ostream
 
+#include <algorithm>
+// std::find
+
 #include <string>
 // using std::string
 
+namespace {
+
 static llvm::cl::opt<std::string>
-    DDGEdgeAttributes("pedigree-ddg-edge-attrs", llvm::cl::Hidden,
-                      llvm::cl::desc("DOT edge attributes"));
+    DDGEdgeAttributes("pedigree-ddg-dot-edge-attrs", llvm::cl::Hidden,
+                      llvm::cl::desc("DDG DOT edge attributes"));
 
 static llvm::cl::opt<bool>
-    DDGSimple("pedigree-ddg-simple", llvm::cl::Hidden,
-              llvm::cl::desc("generate simple DOT graph"));
+    DDGSimple("pedigree-ddg-dot-simple", llvm::cl::Hidden,
+              llvm::cl::desc("generate simple DDG DOT graph"));
+
+static llvm::cl::list<std::string> DDGDOTFunctionWhitelist(
+    "pedigree-ddg-dot-func-wl", llvm::cl::Hidden,
+    llvm::cl::desc("generate DDG DOT graph only for these functions"));
+
+} // anonymous namespace end
 
 namespace llvm {
 
@@ -116,13 +128,25 @@ namespace pedigree {
 struct DDGPrinter : public llvm::DOTGraphTraitsPrinter<
                         DataDependenceGraphPass, false, DataDependenceGraph *,
                         llvm::AnalysisDependenceGraphPassTraits> {
+  using Base =
+      llvm::DOTGraphTraitsPrinter<DataDependenceGraphPass, false,
+                                  DataDependenceGraph *,
+                                  llvm::AnalysisDependenceGraphPassTraits>;
   static char ID;
 
-  DDGPrinter()
-      : llvm::DOTGraphTraitsPrinter<DataDependenceGraphPass, false,
-                                    DataDependenceGraph *,
-                                    llvm::AnalysisDependenceGraphPassTraits>(
-            "ddg", ID) {}
+  DDGPrinter() : Base("ddg", ID) {}
+
+  bool runOnFunction(llvm::Function &CurFunction) override {
+    auto found = std::find(std::begin(DDGDOTFunctionWhitelist),
+                           std::end(DDGDOTFunctionWhitelist),
+                           CurFunction.getName().str());
+
+    if (DDGDOTFunctionWhitelist.empty() ||
+        std::end(DDGDOTFunctionWhitelist) != found)
+      return Base::runOnFunction(CurFunction);
+    else
+      return false;
+  }
 };
 
 } // namespace pedigree end
