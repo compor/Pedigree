@@ -29,6 +29,9 @@
 #include <algorithm>
 // using std::for_each
 
+#include <string>
+// using std::string
+
 #include <cstdint>
 // using uint8_t
 
@@ -127,7 +130,8 @@ public:
 
   const DependenceGraphNode *getEntryNode() const { return begin()->second; }
   DependenceGraphNode *getEntryNode() {
-    return const_cast<DependenceGraphNode *>(getEntryNode());
+    return const_cast<DependenceGraphNode *>(
+        static_cast<const DataDependenceGraph *>(this)->getEntryNode());
   }
 
 private:
@@ -215,7 +219,11 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
-  static std::string getGraphName(GraphTy *G) { return "DDG"; }
+  static std::string getGraphName(GraphTy *) { return "DDG"; }
+
+  static std::string getNodeLabel(DependenceGraphNode *Node, GraphTy *Graph) {
+    return Node->getActual()->getName();
+  }
 };
 
 } // namespace llvm end
