@@ -113,28 +113,16 @@ struct AnalysisDependenceGraphPassTraits {
 
 namespace pedigree {
 
-template <bool Simple = false>
-struct DDGPrinterCommonBase
-    : public llvm::DOTGraphTraitsPrinter<
-          DataDependenceGraphPass, Simple, DataDependenceGraph *,
-          llvm::AnalysisDependenceGraphPassTraits> {
-  DDGPrinterCommonBase(char &ID)
-      : llvm::DOTGraphTraitsPrinter<DataDependenceGraphPass, Simple,
+struct DDGPrinter : public llvm::DOTGraphTraitsPrinter<
+                        DataDependenceGraphPass, false, DataDependenceGraph *,
+                        llvm::AnalysisDependenceGraphPassTraits> {
+  static char ID;
+
+  DDGPrinter()
+      : llvm::DOTGraphTraitsPrinter<DataDependenceGraphPass, false,
                                     DataDependenceGraph *,
                                     llvm::AnalysisDependenceGraphPassTraits>(
             "ddg", ID) {}
-};
-
-struct DDGPrinter : public DDGPrinterCommonBase<false> {
-  static char ID;
-
-  DDGPrinter() : DDGPrinterCommonBase<false>(ID) {}
-};
-
-struct DDGPrinterSimple : public DDGPrinterCommonBase<true> {
-  static char ID;
-
-  DDGPrinterSimple() : DDGPrinterCommonBase<true>(ID) {}
 };
 
 } // namespace pedigree end
@@ -143,13 +131,6 @@ char pedigree::DDGPrinter::ID = 0;
 static llvm::RegisterPass<pedigree::DDGPrinter>
     X("pedigree-ddg-dot", PRJ_CMDLINE_DESC("pedigree ddg DOT pass"), false,
       false);
-
-//
-
-char pedigree::DDGPrinterSimple::ID = 0;
-static llvm::RegisterPass<pedigree::DDGPrinterSimple>
-    Y("pedigree-ddg-dot-simple",
-      PRJ_CMDLINE_DESC("pedigree ddg simple DOT pass"), false, false);
 
 // plugin registration for clang
 
@@ -169,17 +150,3 @@ static void registerPedigreeDDGPrinter(const llvm::PassManagerBuilder &Builder,
 static llvm::RegisterStandardPasses
     RegisterPedigreeDDGPrinter(llvm::PassManagerBuilder::EP_EarlyAsPossible,
                                registerPedigreeDDGPrinter);
-
-//
-
-static void
-registerPedigreeDDGPrinterSimple(const llvm::PassManagerBuilder &Builder,
-                                 llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::DDGPrinterSimple());
-
-  return;
-}
-
-static llvm::RegisterStandardPasses RegisterPedigreeDDGPrinterSimple(
-    llvm::PassManagerBuilder::EP_EarlyAsPossible,
-    registerPedigreeDDGPrinterSimple);
