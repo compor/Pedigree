@@ -36,6 +36,10 @@ static llvm::cl::opt<std::string>
     DDGEdgeAttributes("pedigree-ddg-edge-attrs", llvm::cl::Hidden,
                       llvm::cl::desc("DOT edge attributes"));
 
+static llvm::cl::opt<bool>
+    DDGSimple("pedigree-ddg-simple", llvm::cl::Hidden,
+              llvm::cl::desc("generate simple DOT graph"));
+
 template <>
 struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
   using GraphTy = DataDependenceGraph;
@@ -47,7 +51,7 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
   std::string getNodeLabel(const DependenceGraphNode *Node,
                            const GraphTy *Graph) {
 
-    if (isSimple())
+    if (isSimple() || DDGSimple)
       return getSimpleNodeLabel(Node, Graph);
     else
       return getCompleteNodeLabel(Node, Graph);
