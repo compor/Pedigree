@@ -32,6 +32,10 @@
 
 namespace llvm {
 
+static llvm::cl::opt<std::string>
+    DDGEdgeAttributes("pedigree-ddg-edge-attrs", llvm::cl::Hidden,
+                      llvm::cl::desc("DOT edge attributes"));
+
 template <>
 struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
   using GraphTy = DataDependenceGraph;
@@ -82,7 +86,10 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
   getEdgeAttributes(const DependenceGraphNode *Node,
                     GraphTraits<GraphTy *>::ChildIteratorType EI,
                     const GraphTy *Graph) {
-    return "color=blue";
+    if (DDGEdgeAttributes.empty())
+      return "color=blue";
+    else
+      return DDGEdgeAttributes;
   }
 
   bool isNodeHidden(const DependenceGraphNode *Node) {
