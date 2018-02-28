@@ -35,6 +35,9 @@
 #include <cstdint>
 // using uint8_t
 
+#include <cassert>
+// using assert
+
 namespace pedigree {
 
 enum class DependenceType : uint8_t {
@@ -183,7 +186,10 @@ template <> struct GraphTraits<DependenceGraphNode *> {
     return llvm::map_iterator(G->end(), ChildDerefFuncTy(ChildDeref));
   }
 
-  static DependenceGraphNode *ChildDeref(ChildPairTy P) { return P.first; }
+  static DependenceGraphNode *ChildDeref(ChildPairTy P) {
+    assert(P.first && "Pointer to graph node is null!");
+    return P.first;
+  }
 };
 
 template <>
