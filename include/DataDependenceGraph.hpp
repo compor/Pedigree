@@ -275,6 +275,10 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
 
     return attr;
   }
+
+  bool isNodeHidden(const DependenceGraphNode *Node) {
+    return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
+  }
 };
 
 } // namespace llvm end
