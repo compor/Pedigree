@@ -30,8 +30,6 @@
 #include <string>
 // using std::string
 
-namespace llvm {
-
 static llvm::cl::opt<std::string>
     DDGEdgeAttributes("pedigree-ddg-edge-attrs", llvm::cl::Hidden,
                       llvm::cl::desc("DOT edge attributes"));
@@ -39,6 +37,8 @@ static llvm::cl::opt<std::string>
 static llvm::cl::opt<bool>
     DDGSimple("pedigree-ddg-simple", llvm::cl::Hidden,
               llvm::cl::desc("generate simple DOT graph"));
+
+namespace llvm {
 
 template <>
 struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
