@@ -235,6 +235,16 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
 
     return os.str();
   }
+
+  static std::string getNodeAttributes(const DependenceGraphNode *Node,
+                                       const GraphTy *Graph) {
+    std::string attr{};
+
+    if (Graph->getEntryNode() == Node)
+      attr = "color=grey,style=filled";
+
+    return attr;
+  }
 };
 
 } // namespace llvm end
