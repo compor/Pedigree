@@ -70,13 +70,15 @@ public:
   using edges_size_type = EdgeStorageTy::size_type;
 
   DependenceGraphNode(llvm::Instruction *CurInstruction)
-      : m_Actual(CurInstruction) {}
+      : m_Actual(CurInstruction), m_DependeeCount(0) {}
 
   llvm::Instruction *getActual() const { return m_Actual; }
 
   void addDependentNode(DependenceGraphNode *Node) {
     m_Edges.emplace_back(
         Node, DataDependenceInfo{DependenceType::flow, DependenceOrigin::data});
+
+    Node->incrementDependeeCount();
   }
 
   edges_size_type numEdges() { return m_Edges.size(); }
@@ -89,8 +91,14 @@ public:
   inline decltype(auto) begin() const { return m_Edges.begin(); }
   inline decltype(auto) end() const { return m_Edges.end(); }
 
+  inline unsigned getDependeeCount() const { return m_DependeeCount; }
+
 private:
+  inline void incrementDependeeCount() { ++m_DependeeCount; }
+  inline void decrementDependeeCount() { --m_DependeeCount; }
+
   llvm::Instruction *m_Actual;
+  unsigned m_DependeeCount;
 
   EdgeStorageTy m_Edges;
 };
