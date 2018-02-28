@@ -228,7 +228,11 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
   static std::string getGraphName(GraphTy *) { return "DDG"; }
 
   static std::string getNodeLabel(DependenceGraphNode *Node, GraphTy *Graph) {
-    return Node->getActual()->getName();
+    std::string s;
+    llvm::raw_string_ostream os(s);
+    Node->getActual()->print(os);
+
+    return os.str();
   }
 };
 
