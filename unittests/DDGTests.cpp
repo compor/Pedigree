@@ -6,7 +6,9 @@
 
 #include "TestCommon.hpp"
 
-#include "DataDependenceGraph.hpp"
+#include "DDG.hpp"
+
+#include "DDGBuilder.hpp"
 
 #include "gtest/gtest.h"
 // using testing::Test
@@ -28,8 +30,8 @@ struct DDGTestData {
   DDGTestData() = delete;
 
   std::string assemblyFile;
-  DataDependenceGraph::VerticesSizeTy numVertices;
-  DataDependenceGraph::EdgesSizeTy numEdges;
+  DDG::VerticesSizeTy numVertices;
+  DDG::EdgesSizeTy numEdges;
 };
 
 std::ostream &operator<<(std::ostream &os, const DDGTestData &td) {
@@ -53,8 +55,8 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  DataDependenceGraph ddg;
-  DataDependenceGraphBuilder ddgBuilder{ddg};
+  DDG ddg;
+  DDGBuilder ddgBuilder{ddg};
 
   ddgBuilder.visit(*curFunc);
 
