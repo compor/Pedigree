@@ -94,11 +94,9 @@ void DDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool DDGPass::runOnFunction(llvm::Function &CurFunc) {
-  DDG *ddg = new DDG;
-  DDGBuilder ddgBuilder{*ddg};
-
+  m_Graph = std::make_unique<DDG>();
+  DDGBuilder ddgBuilder{*m_Graph};
   ddgBuilder.visit(CurFunc);
-  m_Graph.reset(ddg);
 
   return false;
 }
