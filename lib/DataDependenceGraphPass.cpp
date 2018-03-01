@@ -37,8 +37,8 @@
 
 // plugin registration for opt
 
-char pedigree::DataDependenceGraphPass::ID = 0;
-static llvm::RegisterPass<pedigree::DataDependenceGraphPass>
+char pedigree::DDGPass::ID = 0;
+static llvm::RegisterPass<pedigree::DDGPass>
     X("pedigree-ddg", PRJ_CMDLINE_DESC("pedigree ddg pass"), false, false);
 
 // plugin registration for clang
@@ -51,7 +51,7 @@ static llvm::RegisterPass<pedigree::DataDependenceGraphPass>
 
 static void registerPedigreeDDGPass(const llvm::PassManagerBuilder &Builder,
                                     llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::DataDependenceGraphPass());
+  PM.add(new pedigree::DDGPass());
 
   return;
 }
@@ -89,11 +89,11 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 
 namespace pedigree {
 
-void DataDependenceGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+void DDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool DataDependenceGraphPass::runOnFunction(llvm::Function &CurFunc) {
+bool DDGPass::runOnFunction(llvm::Function &CurFunc) {
   DataDependenceGraph *ddg = new DataDependenceGraph;
   DataDependenceGraphBuilder ddgBuilder{*ddg};
 

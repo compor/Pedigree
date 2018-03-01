@@ -116,22 +116,18 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
 using namespace pedigree;
 
 struct AnalysisDependenceGraphPassTraits {
-  static DataDependenceGraph *getGraph(DataDependenceGraphPass *P) {
-    return &P->getGraph();
-  }
+  static DataDependenceGraph *getGraph(DDGPass *P) { return &P->getGraph(); }
 };
 
 } // namespace llvm end
 
 namespace pedigree {
 
-struct DDGPrinterPass
-    : public llvm::DOTGraphTraitsPrinter<
-          DataDependenceGraphPass, false, DataDependenceGraph *,
-          llvm::AnalysisDependenceGraphPassTraits> {
+struct DDGPrinterPass : public llvm::DOTGraphTraitsPrinter<
+                            DDGPass, false, DataDependenceGraph *,
+                            llvm::AnalysisDependenceGraphPassTraits> {
   using Base =
-      llvm::DOTGraphTraitsPrinter<DataDependenceGraphPass, false,
-                                  DataDependenceGraph *,
+      llvm::DOTGraphTraitsPrinter<DDGPass, false, DataDependenceGraph *,
                                   llvm::AnalysisDependenceGraphPassTraits>;
   static char ID;
 
