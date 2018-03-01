@@ -37,7 +37,18 @@ class DependenceGraphNode {
 public:
   using DependenceRecordTy =
       std::pair<DependenceGraphNode *, DataDependenceInfo>;
+
+private:
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
+  EdgeStorageTy m_Edges;
+
+  inline void incrementDependeeCount() { ++m_DependeeCount; }
+  inline void decrementDependeeCount() { --m_DependeeCount; }
+
+  llvm::Instruction *m_Actual;
+  unsigned m_DependeeCount;
+
+public:
   using EdgesSizeTy = EdgeStorageTy::size_type;
 
   using iterator = EdgeStorageTy::iterator;
@@ -63,20 +74,13 @@ public:
   inline decltype(auto) end() const { return m_Edges.end(); }
 
   inline unsigned getDependeeCount() const { return m_DependeeCount; }
-
-private:
-  inline void incrementDependeeCount() { ++m_DependeeCount; }
-  inline void decrementDependeeCount() { --m_DependeeCount; }
-
-  llvm::Instruction *m_Actual;
-  unsigned m_DependeeCount;
-
-  EdgeStorageTy m_Edges;
 };
 
 class DDG {
-public:
   using NodeMapTy = std::map<llvm::Instruction *, DependenceGraphNode *>;
+  NodeMapTy m_NodeMap;
+
+public:
   using VerticesSizeTy = NodeMapTy::size_type;
   using EdgesSizeTy = DependenceGraphNode::EdgesSizeTy;
 
@@ -115,9 +119,6 @@ public:
 
   const DependenceGraphNode *getEntryNode() const { return begin()->second; }
   DependenceGraphNode *getEntryNode() { return begin()->second; }
-
-private:
-  NodeMapTy m_NodeMap;
 };
 
 } // namespace pedigree end
