@@ -113,10 +113,10 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
   }
 };
 
-using namespace pedigree;
-
 struct AnalysisDependenceGraphPassTraits {
-  static DataDependenceGraph *getGraph(DDGPass *P) { return &P->getGraph(); }
+  static pedigree::DataDependenceGraph *getGraph(pedigree::DDGPass *P) {
+    return &P->getGraph();
+  }
 };
 
 } // namespace llvm end
@@ -150,8 +150,8 @@ struct DDGPrinterPass : public llvm::DOTGraphTraitsPrinter<
 
 char pedigree::DDGPrinterPass::ID = 0;
 static llvm::RegisterPass<pedigree::DDGPrinterPass>
-    X("pedigree-ddg-dot", PRJ_CMDLINE_DESC("pedigree ddg DOT pass"), false,
-      false);
+    PedigreeDDGDOT("pedigree-ddg-dot",
+                   PRJ_CMDLINE_DESC("pedigree ddg DOT pass"), false, false);
 
 // plugin registration for clang
 

@@ -2,17 +2,19 @@
 //
 //
 
-#ifndef DATADEPENDENCEGRAPHPASS_HPP
-#define DATADEPENDENCEGRAPHPASS_HPP
+#ifndef DDGPASS_HPP
+#define DDGPASS_HPP
 
 #include "Config.hpp"
+
+#include "DataDependenceGraph.hpp"
+
+#include "DDGBuilder.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::FunctionPass
 // using llvm::AnalysisUsage
 // using llvm::RegisterPass
-
-#include "DataDependenceGraph.hpp"
 
 #include <memory>
 // using std::unique_ptr
