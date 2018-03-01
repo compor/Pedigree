@@ -37,12 +37,12 @@
 namespace {
 
 static llvm::cl::opt<std::string>
-    DDGEdgeAttributes("pedigree-ddg-dot-edge-attrs", llvm::cl::Hidden,
-                      llvm::cl::desc("DDG DOT edge attributes"));
+    DDGDOTEdgeAttributes("pedigree-ddg-dot-edge-attrs", llvm::cl::Hidden,
+                         llvm::cl::desc("DDG DOT edge attributes"));
 
 static llvm::cl::opt<bool>
-    DDGSimple("pedigree-ddg-dot-simple", llvm::cl::Hidden,
-              llvm::cl::desc("generate simple DDG DOT graph"));
+    DDGDOTSimple("pedigree-ddg-dot-simple", llvm::cl::Hidden,
+                 llvm::cl::desc("generate simple DDG DOT graph"));
 
 static llvm::cl::list<std::string> DDGDOTFunctionWhitelist(
     "pedigree-ddg-dot-func-wl", llvm::cl::Hidden,
@@ -63,7 +63,7 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
   std::string getNodeLabel(const DependenceGraphNode *Node,
                            const GraphTy *Graph) {
 
-    if (isSimple() || DDGSimple)
+    if (isSimple() || DDGDOTSimple)
       return getSimpleNodeLabel(Node, Graph);
     else
       return getCompleteNodeLabel(Node, Graph);
@@ -102,10 +102,10 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
   getEdgeAttributes(const DependenceGraphNode *Node,
                     GraphTraits<GraphTy *>::ChildIteratorType EI,
                     const GraphTy *Graph) {
-    if (DDGEdgeAttributes.empty())
+    if (DDGDOTEdgeAttributes.empty())
       return "color=blue";
     else
-      return DDGEdgeAttributes;
+      return DDGDOTEdgeAttributes;
   }
 
   bool isNodeHidden(const DependenceGraphNode *Node) {
