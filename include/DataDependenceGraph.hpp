@@ -5,6 +5,8 @@
 #ifndef DATADEPENDENCEGRAPH_HPP
 #define DATADEPENDENCEGRAPH_HPP
 
+#include "Dependence.hpp"
+
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
@@ -30,25 +32,6 @@
 // using assert
 
 namespace pedigree {
-
-enum class DependenceType : uint8_t {
-  unknown = 0,
-  flow = 1,
-  anti = 2,
-  out = 4,
-};
-
-enum class DependenceOrigin : uint8_t {
-  unknown = 0,
-  data = 1,
-  memory = 2,
-  control = 4,
-};
-
-struct DataDependenceInfo {
-  DependenceType type;
-  DependenceOrigin origin;
-};
 
 class DependenceGraphNode {
 public:
