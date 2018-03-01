@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "DataDependenceGraph.hpp"
+#include "DDG.hpp"
 
 #include "DDGBuilder.hpp"
 
