@@ -125,16 +125,17 @@ struct AnalysisDependenceGraphPassTraits {
 
 namespace pedigree {
 
-struct DDGPrinter : public llvm::DOTGraphTraitsPrinter<
-                        DataDependenceGraphPass, false, DataDependenceGraph *,
-                        llvm::AnalysisDependenceGraphPassTraits> {
+struct DDGPrinterPass
+    : public llvm::DOTGraphTraitsPrinter<
+          DataDependenceGraphPass, false, DataDependenceGraph *,
+          llvm::AnalysisDependenceGraphPassTraits> {
   using Base =
       llvm::DOTGraphTraitsPrinter<DataDependenceGraphPass, false,
                                   DataDependenceGraph *,
                                   llvm::AnalysisDependenceGraphPassTraits>;
   static char ID;
 
-  DDGPrinter() : Base("ddg", ID) {}
+  DDGPrinterPass() : Base("ddg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
     auto found = std::find(std::begin(DDGDOTFunctionWhitelist),
@@ -151,8 +152,8 @@ struct DDGPrinter : public llvm::DOTGraphTraitsPrinter<
 
 } // namespace pedigree end
 
-char pedigree::DDGPrinter::ID = 0;
-static llvm::RegisterPass<pedigree::DDGPrinter>
+char pedigree::DDGPrinterPass::ID = 0;
+static llvm::RegisterPass<pedigree::DDGPrinterPass>
     X("pedigree-ddg-dot", PRJ_CMDLINE_DESC("pedigree ddg DOT pass"), false,
       false);
 
@@ -164,13 +165,14 @@ static llvm::RegisterPass<pedigree::DDGPrinter>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPedigreeDDGPrinter(const llvm::PassManagerBuilder &Builder,
-                                       llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::DDGPrinter());
+static void
+registerPedigreeDDGPrinterPass(const llvm::PassManagerBuilder &Builder,
+                               llvm::legacy::PassManagerBase &PM) {
+  PM.add(new pedigree::DDGPrinterPass());
 
   return;
 }
 
 static llvm::RegisterStandardPasses
-    RegisterPedigreeDDGPrinter(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                               registerPedigreeDDGPrinter);
+    RegisterPedigreeDDGPrinterPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
+                                   registerPedigreeDDGPrinterPass);
