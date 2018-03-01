@@ -74,7 +74,7 @@ private:
   EdgeStorageTy m_Edges;
 };
 
-class DataDependenceGraph {
+class DDG {
 public:
   using NodeMapTy = std::map<llvm::Instruction *, DependenceGraphNode *>;
   using VerticesSizeTy = NodeMapTy::size_type;
@@ -83,8 +83,8 @@ public:
   using iterator = NodeMapTy::iterator;
   using const_iterator = NodeMapTy::const_iterator;
 
-  DataDependenceGraph() = default;
-  ~DataDependenceGraph() {
+  DDG() = default;
+  ~DDG() {
     for (auto &e : m_NodeMap)
       delete e.second;
   }
@@ -116,7 +116,7 @@ public:
   const DependenceGraphNode *getEntryNode() const { return begin()->second; }
   DependenceGraphNode *getEntryNode() {
     return const_cast<DependenceGraphNode *>(
-        static_cast<const DataDependenceGraph *>(this)->getEntryNode());
+        static_cast<const DDG *>(this)->getEntryNode());
   }
 
 private:
@@ -158,9 +158,8 @@ template <> struct GraphTraits<DependenceGraphNode *> {
 };
 
 template <>
-struct GraphTraits<DataDependenceGraph *>
-    : public GraphTraits<DependenceGraphNode *> {
-  using GraphTy = DataDependenceGraph;
+struct GraphTraits<DDG *> : public GraphTraits<DependenceGraphNode *> {
+  using GraphTy = DDG;
 
   using NodePairTy = std::pair<llvm::Instruction *, DependenceGraphNode *>;
   using NodeDerefFuncTy = std::function<DependenceGraphNode &(NodePairTy)>;

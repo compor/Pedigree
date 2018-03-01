@@ -52,9 +52,8 @@ static llvm::cl::list<std::string> DDGDOTFunctionWhitelist(
 
 namespace llvm {
 
-template <>
-struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
-  using GraphTy = DataDependenceGraph;
+template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
+  using GraphTy = DDG;
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
@@ -114,7 +113,7 @@ struct DOTGraphTraits<DataDependenceGraph *> : public DefaultDOTGraphTraits {
 };
 
 struct AnalysisDependenceGraphPassTraits {
-  static pedigree::DataDependenceGraph *getGraph(pedigree::DDGPass *P) {
+  static pedigree::DDG *getGraph(pedigree::DDGPass *P) {
     return &P->getGraph();
   }
 };
@@ -123,11 +122,11 @@ struct AnalysisDependenceGraphPassTraits {
 
 namespace pedigree {
 
-struct DDGPrinterPass : public llvm::DOTGraphTraitsPrinter<
-                            DDGPass, false, DataDependenceGraph *,
-                            llvm::AnalysisDependenceGraphPassTraits> {
+struct DDGPrinterPass
+    : public llvm::DOTGraphTraitsPrinter<
+          DDGPass, false, DDG *, llvm::AnalysisDependenceGraphPassTraits> {
   using Base =
-      llvm::DOTGraphTraitsPrinter<DDGPass, false, DataDependenceGraph *,
+      llvm::DOTGraphTraitsPrinter<DDGPass, false, DDG *,
                                   llvm::AnalysisDependenceGraphPassTraits>;
   static char ID;
 

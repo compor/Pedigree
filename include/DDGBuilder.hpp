@@ -17,12 +17,11 @@
 
 namespace pedigree {
 
-class DataDependenceGraphBuilder
-    : public llvm::InstVisitor<DataDependenceGraphBuilder> {
-  DataDependenceGraph &m_Graph;
+class DDGBuilder : public llvm::InstVisitor<DDGBuilder> {
+  DDG &m_Graph;
 
 public:
-  DataDependenceGraphBuilder(DataDependenceGraph &Graph) : m_Graph(Graph) {}
+  DDGBuilder(DDG &Graph) : m_Graph(Graph) {}
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
     auto src = m_Graph.getOrInsertNode(&CurInstruction);

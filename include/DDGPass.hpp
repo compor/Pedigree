@@ -28,17 +28,16 @@ namespace pedigree {
 
 struct DDGPass : public llvm::FunctionPass {
   static char ID;
-  std::unique_ptr<DataDependenceGraph> m_Graph;
+  std::unique_ptr<DDG> m_Graph;
 
   DDGPass() : llvm::FunctionPass(ID) {}
 
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;
 
-  const DataDependenceGraph &getGraph() const { return *m_Graph; }
-  DataDependenceGraph &getGraph() {
-    return const_cast<DataDependenceGraph &>(
-        static_cast<const DDGPass *>(this)->getGraph());
+  const DDG &getGraph() const { return *m_Graph; }
+  DDG &getGraph() {
+    return const_cast<DDG &>(static_cast<const DDGPass *>(this)->getGraph());
   }
 };
 
