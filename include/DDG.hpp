@@ -114,10 +114,7 @@ public:
   inline decltype(auto) end() const { return m_NodeMap.end(); }
 
   const DependenceGraphNode *getEntryNode() const { return begin()->second; }
-  DependenceGraphNode *getEntryNode() {
-    return const_cast<DependenceGraphNode *>(
-        static_cast<const DDG *>(this)->getEntryNode());
-  }
+  DependenceGraphNode *getEntryNode() { return begin()->second; }
 
 private:
   NodeMapTy m_NodeMap;

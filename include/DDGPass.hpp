@@ -36,9 +36,7 @@ struct DDGPass : public llvm::FunctionPass {
   bool runOnFunction(llvm::Function &CurFunction) override;
 
   const DDG &getGraph() const { return *m_Graph; }
-  DDG &getGraph() {
-    return const_cast<DDG &>(static_cast<const DDGPass *>(this)->getGraph());
-  }
+  DDG &getGraph() { return *m_Graph; }
 };
 
 } // namespace pedigree end
