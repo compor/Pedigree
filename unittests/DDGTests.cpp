@@ -28,8 +28,8 @@ struct DDGTestData {
   DDGTestData() = delete;
 
   std::string assemblyFile;
-  DataDependenceGraph::vertices_size_type numVertices;
-  DataDependenceGraph::edges_size_type numEdges;
+  DataDependenceGraph::VerticesSizeTy numVertices;
+  DataDependenceGraph::EdgesSizeTy numEdges;
 };
 
 std::ostream &operator<<(std::ostream &os, const DDGTestData &td) {

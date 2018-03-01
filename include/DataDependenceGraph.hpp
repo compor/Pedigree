@@ -58,7 +58,7 @@ public:
   using DependenceRecordTy =
       std::pair<DependenceGraphNode *, DataDependenceInfo>;
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
-  using edges_size_type = EdgeStorageTy::size_type;
+  using EdgesSizeTy = EdgeStorageTy::size_type;
 
   using iterator = EdgeStorageTy::iterator;
   using const_iterator = EdgeStorageTy::const_iterator;
@@ -75,7 +75,7 @@ public:
     Node->incrementDependeeCount();
   }
 
-  edges_size_type numEdges() const { return m_Edges.size(); }
+  EdgesSizeTy numEdges() const { return m_Edges.size(); }
 
   inline decltype(auto) begin() { return m_Edges.begin(); }
   inline decltype(auto) end() { return m_Edges.end(); }
@@ -97,8 +97,8 @@ private:
 class DataDependenceGraph {
 public:
   using NodeMapTy = std::map<llvm::Instruction *, DependenceGraphNode *>;
-  using vertices_size_type = NodeMapTy::size_type;
-  using edges_size_type = DependenceGraphNode::edges_size_type;
+  using VerticesSizeTy = NodeMapTy::size_type;
+  using EdgesSizeTy = DependenceGraphNode::EdgesSizeTy;
 
   using iterator = NodeMapTy::iterator;
   using const_iterator = NodeMapTy::const_iterator;
@@ -119,9 +119,9 @@ public:
     return node = new DependenceGraphNode(curNode);
   }
 
-  vertices_size_type numVertices() const { return m_NodeMap.size(); }
+  VerticesSizeTy numVertices() const { return m_NodeMap.size(); }
 
-  edges_size_type numEdges() const {
+  EdgesSizeTy numEdges() const {
     NodeMapTy::size_type n{};
     std::for_each(std::begin(m_NodeMap), std::end(m_NodeMap),
                   [&n](const auto &e) { n += e.second->numEdges(); });
