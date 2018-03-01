@@ -34,8 +34,6 @@
 #include <string>
 // using std::string
 
-namespace {
-
 static llvm::cl::opt<std::string>
     DDGDOTEdgeAttributes("pedigree-ddg-dot-edge-attrs", llvm::cl::Hidden,
                          llvm::cl::desc("DDG DOT edge attributes"));
@@ -47,8 +45,6 @@ static llvm::cl::opt<bool>
 static llvm::cl::list<std::string> DDGDOTFunctionWhitelist(
     "pedigree-ddg-dot-func-wl", llvm::cl::Hidden,
     llvm::cl::desc("generate DDG DOT graph only for these functions"));
-
-} // anonymous namespace end
 
 namespace llvm {
 
@@ -149,8 +145,8 @@ struct DDGPrinterPass
 
 char pedigree::DDGPrinterPass::ID = 0;
 static llvm::RegisterPass<pedigree::DDGPrinterPass>
-    PedigreeDDGDOT("pedigree-ddg-dot",
-                   PRJ_CMDLINE_DESC("pedigree ddg DOT pass"), false, false);
+    X("pedigree-ddg-dot", PRJ_CMDLINE_DESC("pedigree ddg DOT pass"), false,
+      false);
 
 // plugin registration for clang
 
