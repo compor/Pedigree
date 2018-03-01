@@ -4,7 +4,7 @@
 
 #include "Utils.hpp"
 
-#include "DataDependenceGraphPass.hpp"
+#include "DDGPass.hpp"
 
 #include "llvm/IR/Function.h"
 // using llvm::Function

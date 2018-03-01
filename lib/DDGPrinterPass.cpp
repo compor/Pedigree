@@ -1,7 +1,7 @@
 
 #include "Utils.hpp"
 
-#include "DataDependenceGraphPass.hpp"
+#include "DDGPass.hpp"
 
 #include "llvm/Analysis/DOTGraphTraitsPass.h"
 // using llvm::DOTGraphTraitsPrinter
