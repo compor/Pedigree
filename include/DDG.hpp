@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_DATADEPENDENCEGRAPH_HPP
-#define PEDIGREE_DATADEPENDENCEGRAPH_HPP
+#ifndef PEDIGREE_DDG_HPP
+#define PEDIGREE_DDG_HPP
 
 #include "Dependence.hpp"
 
@@ -37,6 +37,7 @@ class DependenceNode {
 public:
   using DependenceRecordTy =
       std::pair<DependenceNode *, DataDependenceInfo>;
+  using UnderlyingTy = llvm::Instruction *;
 
 private:
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
@@ -45,7 +46,7 @@ private:
   inline void incrementDependeeCount() { ++m_DependeeCount; }
   inline void decrementDependeeCount() { --m_DependeeCount; }
 
-  llvm::Instruction *m_Actual;
+  UnderlyingTy m_Underlying;
   unsigned m_DependeeCount;
 
 public:
@@ -54,10 +55,10 @@ public:
   using iterator = EdgeStorageTy::iterator;
   using const_iterator = EdgeStorageTy::const_iterator;
 
-  DependenceNode(llvm::Instruction *CurInstruction)
-      : m_Actual(CurInstruction), m_DependeeCount(0) {}
+  DependenceNode(UnderlyingTy Unit)
+      : m_Underlying(Unit), m_DependeeCount(0) {}
 
-  llvm::Instruction *getActual() const { return m_Actual; }
+  UnderlyingTy getUnderlying() const { return m_Underlying; }
 
   void addDependentNode(DependenceNode *Node) {
     m_Edges.emplace_back(
