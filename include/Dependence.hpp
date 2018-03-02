@@ -5,6 +5,9 @@
 #ifndef DEPENDENCE_HPP
 #define DEPENDENCE_HPP
 
+#include <cstdint>
+// using uint8_t
+
 namespace pedigree {
 
 enum class DependenceType : uint8_t {

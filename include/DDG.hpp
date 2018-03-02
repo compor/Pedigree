@@ -25,9 +25,6 @@
 #include <algorithm>
 // using std::for_each
 
-#include <cstdint>
-// using uint8_t
-
 #include <cassert>
 // using assert
 
