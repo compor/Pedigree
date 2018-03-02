@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef DDGBUILDER_HPP
-#define DDGBUILDER_HPP
+#ifndef PEDIGREE_DDGBUILDER_HPP
+#define PEDIGREE_DDGBUILDER_HPP
 
 #include "Config.hpp"
 

@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef PEDIGREE_UTILS_HPP
+#define PEDIGREE_UTILS_HPP
 
 #include "Config.hpp"
 

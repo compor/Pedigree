@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef DDGPASS_HPP
-#define DDGPASS_HPP
+#ifndef PEDIGREE_DDGPASS_HPP
+#define PEDIGREE_DDGPASS_HPP
 
 #include "Config.hpp"
 

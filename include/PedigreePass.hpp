@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREEPASS_HPP
-#define PEDIGREEPASS_HPP
+#ifndef PEDIGREE_PEDIGREEPASS_HPP
+#define PEDIGREE_PEDIGREEPASS_HPP
 
 #include "llvm/Pass.h"
 // using llvm::FunctionPass
