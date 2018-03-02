@@ -33,10 +33,10 @@
 
 namespace pedigree {
 
-class DependenceGraphNode {
+class DependenceNode {
 public:
   using DependenceRecordTy =
-      std::pair<DependenceGraphNode *, DataDependenceInfo>;
+      std::pair<DependenceNode *, DataDependenceInfo>;
 
 private:
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
@@ -54,12 +54,12 @@ public:
   using iterator = EdgeStorageTy::iterator;
   using const_iterator = EdgeStorageTy::const_iterator;
 
-  DependenceGraphNode(llvm::Instruction *CurInstruction)
+  DependenceNode(llvm::Instruction *CurInstruction)
       : m_Actual(CurInstruction), m_DependeeCount(0) {}
 
   llvm::Instruction *getActual() const { return m_Actual; }
 
-  void addDependentNode(DependenceGraphNode *Node) {
+  void addDependentNode(DependenceNode *Node) {
     m_Edges.emplace_back(
         Node, DataDependenceInfo{DependenceType::flow, DependenceOrigin::data});
 
@@ -77,12 +77,12 @@ public:
 };
 
 class DDG {
-  using NodeMapTy = std::map<llvm::Instruction *, DependenceGraphNode *>;
+  using NodeMapTy = std::map<llvm::Instruction *, DependenceNode *>;
   NodeMapTy m_NodeMap;
 
 public:
   using VerticesSizeTy = NodeMapTy::size_type;
-  using EdgesSizeTy = DependenceGraphNode::EdgesSizeTy;
+  using EdgesSizeTy = DependenceNode::EdgesSizeTy;
 
   using iterator = NodeMapTy::iterator;
   using const_iterator = NodeMapTy::const_iterator;
@@ -93,14 +93,14 @@ public:
       delete e.second;
   }
 
-  DependenceGraphNode *
+  DependenceNode *
   getOrInsertNode(const llvm::Instruction *CurInstruction) {
     auto *curNode = const_cast<llvm::Instruction *>(CurInstruction);
     auto &node = m_NodeMap[curNode];
     if (node)
       return node;
 
-    return node = new DependenceGraphNode(curNode);
+    return node = new DependenceNode(curNode);
   }
 
   VerticesSizeTy numVertices() const { return m_NodeMap.size(); }
@@ -117,8 +117,8 @@ public:
   inline decltype(auto) begin() const { return m_NodeMap.begin(); }
   inline decltype(auto) end() const { return m_NodeMap.end(); }
 
-  const DependenceGraphNode *getEntryNode() const { return begin()->second; }
-  DependenceGraphNode *getEntryNode() { return begin()->second; }
+  const DependenceNode *getEntryNode() const { return begin()->second; }
+  DependenceNode *getEntryNode() { return begin()->second; }
 };
 
 } // namespace pedigree end
@@ -131,11 +131,11 @@ using namespace pedigree;
 
 // this template specialization is meant to be used as a supplement to the main
 // graph specialization
-template <> struct GraphTraits<DependenceGraphNode *> {
-  using NodeType = DependenceGraphNode;
+template <> struct GraphTraits<DependenceNode *> {
+  using NodeType = DependenceNode;
 
-  using ChildPairTy = DependenceGraphNode::DependenceRecordTy;
-  using ChildDerefFuncTy = std::function<DependenceGraphNode *(ChildPairTy)>;
+  using ChildPairTy = DependenceNode::DependenceRecordTy;
+  using ChildDerefFuncTy = std::function<DependenceNode *(ChildPairTy)>;
 
   using ChildIteratorType =
       llvm::mapped_iterator<NodeType::iterator, ChildDerefFuncTy>;
@@ -149,18 +149,18 @@ template <> struct GraphTraits<DependenceGraphNode *> {
     return llvm::map_iterator(G->end(), ChildDerefFuncTy(ChildDeref));
   }
 
-  static DependenceGraphNode *ChildDeref(ChildPairTy P) {
+  static DependenceNode *ChildDeref(ChildPairTy P) {
     assert(P.first && "Pointer to graph node is null!");
     return P.first;
   }
 };
 
 template <>
-struct GraphTraits<DDG *> : public GraphTraits<DependenceGraphNode *> {
+struct GraphTraits<DDG *> : public GraphTraits<DependenceNode *> {
   using GraphTy = DDG;
 
-  using NodePairTy = std::pair<llvm::Instruction *, DependenceGraphNode *>;
-  using NodeDerefFuncTy = std::function<DependenceGraphNode &(NodePairTy)>;
+  using NodePairTy = std::pair<llvm::Instruction *, DependenceNode *>;
+  using NodeDerefFuncTy = std::function<DependenceNode &(NodePairTy)>;
 
   using nodes_iterator =
       llvm::mapped_iterator<GraphTy::iterator, NodeDerefFuncTy>;
@@ -178,7 +178,7 @@ struct GraphTraits<DDG *> : public GraphTraits<DependenceGraphNode *> {
     return static_cast<unsigned>(G->numVertices());
   }
 
-  static DependenceGraphNode &NodeDeref(NodePairTy P) { return *P.second; }
+  static DependenceNode &NodeDeref(NodePairTy P) { return *P.second; }
 };
 
 } // namespace llvm end

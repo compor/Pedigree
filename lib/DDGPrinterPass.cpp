@@ -55,8 +55,7 @@ template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
 
   static std::string getGraphName(const GraphTy *) { return "DDG"; }
 
-  std::string getNodeLabel(const DependenceGraphNode *Node,
-                           const GraphTy *Graph) {
+  std::string getNodeLabel(const DependenceNode *Node, const GraphTy *Graph) {
 
     if (isSimple() || DDGDOTSimple)
       return getSimpleNodeLabel(Node, Graph);
@@ -64,7 +63,7 @@ template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
       return getCompleteNodeLabel(Node, Graph);
   }
 
-  static std::string getCompleteNodeLabel(const DependenceGraphNode *Node,
+  static std::string getCompleteNodeLabel(const DependenceNode *Node,
                                           const GraphTy *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
@@ -73,7 +72,7 @@ template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
     return os.str();
   }
 
-  static std::string getSimpleNodeLabel(const DependenceGraphNode *Node,
+  static std::string getSimpleNodeLabel(const DependenceNode *Node,
                                         const GraphTy *Graph) {
     auto name = Node->getActual()->getName();
 
@@ -83,7 +82,7 @@ template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
       return name.str();
   }
 
-  static std::string getNodeAttributes(const DependenceGraphNode *Node,
+  static std::string getNodeAttributes(const DependenceNode *Node,
                                        const GraphTy *Graph) {
     std::string attr;
 
@@ -94,7 +93,7 @@ template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
   }
 
   static std::string
-  getEdgeAttributes(const DependenceGraphNode *Node,
+  getEdgeAttributes(const DependenceNode *Node,
                     GraphTraits<GraphTy *>::ChildIteratorType EI,
                     const GraphTy *Graph) {
     if (DDGDOTEdgeAttributes.empty())
@@ -103,7 +102,7 @@ template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
       return DDGDOTEdgeAttributes;
   }
 
-  bool isNodeHidden(const DependenceGraphNode *Node) {
+  bool isNodeHidden(const DependenceNode *Node) {
     return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
   }
 };
