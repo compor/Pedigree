@@ -6,6 +6,8 @@
 
 #include "DDGPass.hpp"
 
+#include "DDGBuilder.hpp"
+
 #include "llvm/IR/Function.h"
 // using llvm::Function
 

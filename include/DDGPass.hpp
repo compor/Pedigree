@@ -9,8 +9,6 @@
 
 #include "DDG.hpp"
 
-#include "DDGBuilder.hpp"
-
 #include "llvm/Pass.h"
 // using llvm::FunctionPass
 // using llvm::AnalysisUsage
