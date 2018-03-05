@@ -6,6 +6,8 @@
 
 #include "CDGPass.hpp"
 
+#include "CDGBuilder.hpp"
+
 #include "llvm/IR/Function.h"
 // using llvm::Function
 
@@ -95,8 +97,7 @@ void CDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 
 bool CDGPass::runOnFunction(llvm::Function &CurFunc) {
   m_Graph = std::make_unique<CDG>();
-  // CDGBuilder cdgBuilder{*m_Graph};
-  // cdgBuilder.visit(CurFunc);
+  CDGBuilder cdgBuilder{*m_Graph};
 
   return false;
 }
