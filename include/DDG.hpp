@@ -32,8 +32,7 @@ namespace pedigree {
 
 class DependenceNode {
 public:
-  using DependenceRecordTy =
-      std::pair<DependenceNode *, DataDependenceInfo>;
+  using DependenceRecordTy = std::pair<DependenceNode *, DataDependenceInfo>;
   using UnderlyingTy = llvm::Instruction *;
 
 private:
@@ -52,8 +51,7 @@ public:
   using iterator = EdgeStorageTy::iterator;
   using const_iterator = EdgeStorageTy::const_iterator;
 
-  DependenceNode(UnderlyingTy Unit)
-      : m_Underlying(Unit), m_DependeeCount(0) {}
+  DependenceNode(UnderlyingTy Unit) : m_Underlying(Unit), m_DependeeCount(0) {}
 
   UnderlyingTy getUnderlying() const { return m_Underlying; }
 
@@ -75,7 +73,8 @@ public:
 };
 
 class DDG {
-  using NodeMapTy = std::map<llvm::Instruction *, DependenceNode *>;
+  using UnderlyingTy = DependenceNode::UnderlyingTy;
+  using NodeMapTy = std::map<UnderlyingTy, DependenceNode *>;
   NodeMapTy m_NodeMap;
 
 public:
@@ -91,14 +90,12 @@ public:
       delete e.second;
   }
 
-  DependenceNode *
-  getOrInsertNode(const llvm::Instruction *CurInstruction) {
-    auto *curNode = const_cast<llvm::Instruction *>(CurInstruction);
-    auto &node = m_NodeMap[curNode];
+  DependenceNode *getOrInsertNode(UnderlyingTy Unit) {
+    auto &node = m_NodeMap[Unit];
     if (node)
       return node;
 
-    return node = new DependenceNode(curNode);
+    return node = new DependenceNode(Unit);
   }
 
   VerticesSizeTy numVertices() const { return m_NodeMap.size(); }
@@ -153,8 +150,7 @@ template <> struct GraphTraits<DependenceNode *> {
   }
 };
 
-template <>
-struct GraphTraits<DDG *> : public GraphTraits<DependenceNode *> {
+template <> struct GraphTraits<DDG *> : public GraphTraits<DependenceNode *> {
   using GraphTy = DDG;
 
   using NodePairTy = std::pair<llvm::Instruction *, DependenceNode *>;
