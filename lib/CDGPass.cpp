@@ -49,7 +49,7 @@ static llvm::RegisterPass<pedigree::CDGPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPedigreeDDGPass(const llvm::PassManagerBuilder &Builder,
+static void registerPedigreeCDGPass(const llvm::PassManagerBuilder &Builder,
                                     llvm::legacy::PassManagerBase &PM) {
   PM.add(new pedigree::CDGPass());
 
@@ -57,20 +57,20 @@ static void registerPedigreeDDGPass(const llvm::PassManagerBuilder &Builder,
 }
 
 static llvm::RegisterStandardPasses
-    RegisterPedigreeDDGPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                            registerPedigreeDDGPass);
+    RegisterPedigreeCDGPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
+                            registerPedigreeCDGPass);
 
 //
 
 static llvm::cl::OptionCategory
-    PedigreeDDGPassCategory("Pedigree DDG Pass",
-                            "Options for Pedigree DDG pass");
+    PedigreeCDGPassCategory("Pedigree CDG Pass",
+                            "Options for Pedigree CDG pass");
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-cdg-debug", llvm::cl::desc("debug pedigree cdg pass"),
           llvm::cl::location(pedigree::utility::passDebugFlag),
-          llvm::cl::cat(PedigreeDDGPassCategory));
+          llvm::cl::cat(PedigreeCDGPassCategory));
 
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-cdg-debug-level",
@@ -82,7 +82,7 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
         clEnumValN(LogLevel::warning, "warning", "warning conditions"),
         clEnumValN(LogLevel::error, "error", "error conditions"),
         clEnumValN(LogLevel::debug, "debug", "debug messages"), nullptr),
-    llvm::cl::cat(PedigreeDDGPassCategory));
+    llvm::cl::cat(PedigreeCDGPassCategory));
 #endif // PEDIGREE_DEBUG
 
 //
@@ -95,8 +95,8 @@ void CDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 
 bool CDGPass::runOnFunction(llvm::Function &CurFunc) {
   m_Graph = std::make_unique<CDG>();
-  //DDGBuilder ddgBuilder{*m_Graph};
-  //ddgBuilder.visit(CurFunc);
+  // CDGBuilder cdgBuilder{*m_Graph};
+  // cdgBuilder.visit(CurFunc);
 
   return false;
 }
