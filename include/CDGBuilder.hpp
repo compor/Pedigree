@@ -9,6 +9,8 @@
 
 #include "CDG.hpp"
 
+#include "PostDominanceFrontier.hpp"
+
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
