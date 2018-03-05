@@ -65,6 +65,50 @@ public:
   inline unsigned getDependeeCount() const { return m_DependeeCount; }
 };
 
+class CDG {
+  using UnderlyingTy = ControlDependenceNode::UnderlyingTy;
+  using NodeMapTy = std::map<UnderlyingTy, ControlDependenceNode *>;
+  NodeMapTy m_NodeMap;
+
+public:
+  using VerticesSizeTy = NodeMapTy::size_type;
+  using EdgesSizeTy = ControlDependenceNode::EdgesSizeTy;
+
+  using iterator = NodeMapTy::iterator;
+  using const_iterator = NodeMapTy::const_iterator;
+
+  CDG() = default;
+  ~CDG() {
+    for (auto &e : m_NodeMap)
+      delete e.second;
+  }
+
+  ControlDependenceNode *getOrInsertNode(UnderlyingTy Unit) {
+    auto &node = m_NodeMap[Unit];
+    if (node)
+      return node;
+
+    return node = new ControlDependenceNode(Unit);
+  }
+
+  VerticesSizeTy numVertices() const { return m_NodeMap.size(); }
+
+  EdgesSizeTy numEdges() const {
+    NodeMapTy::size_type n{};
+    std::for_each(std::begin(m_NodeMap), std::end(m_NodeMap),
+                  [&n](const auto &e) { n += e.second->numEdges(); });
+    return n;
+  }
+
+  inline decltype(auto) begin() { return m_NodeMap.begin(); }
+  inline decltype(auto) end() { return m_NodeMap.end(); }
+  inline decltype(auto) begin() const { return m_NodeMap.begin(); }
+  inline decltype(auto) end() const { return m_NodeMap.end(); }
+
+  const ControlDependenceNode *getEntryNode() const { return begin()->second; }
+  ControlDependenceNode *getEntryNode() { return begin()->second; }
+};
+
 } // namespace pedigree end
 
 #endif // header
