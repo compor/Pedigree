@@ -14,6 +14,9 @@
 #include "llvm/Analysis/PostDominators.h"
 // using llvm::PostDominatorTree
 
+#include "llvm/ADT/SmallVector.h"
+// using llvm::SmallVector
+
 #include "gtest/gtest.h"
 // using testing::Test
 
@@ -59,10 +62,15 @@ TEST_P(PDFConstructionTest, PDFConstruction) {
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  llvm::PostDominatorTree pdt;
-  pdt.DT->recalculate(*curFunc);
+  llvm::PostDominatorTree curPDT;
+  curPDT.DT->recalculate(*curFunc);
 
-  // PostDominanceFrontier<llvm::BasicBlock> pdf;
+  PostDominanceFrontierBase<llvm::BasicBlock> pdf;
+
+  llvm::SmallVector<llvm::BasicBlock *, 32> traversal;
+  pdf.traverseBottomUp(traversal, *curPDT.DT, curPDT.DT->getRootNode());
+
+  // pdf.analyze(*curPDT.DT);
 }
 
 std::array<PDFTestData, 3> testData1 = {"hpc4pc_book_fig73.ll"};
