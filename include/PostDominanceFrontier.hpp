@@ -78,7 +78,25 @@ public:
   }
 
   const DomSetType &calculate(const DomTreeT &DT, const DomTreeNodeT *Node) {
-    return {};
+    this->Frontiers.clear();
+
+    llvm::SmallVector<BlockT *, 32> traversal;
+    traverseBottomUp(traversal, DT, Node);
+
+    // DF-local
+    for (auto &e : traversal)
+      for (auto &c : llvm::make_range(BlockTraits::child_begin(e),
+                                      BlockTraits::child_end(e)))
+        if (DT[c].getIDom()->getBlock() != e)
+          this->Frontiers[e].insert(c);
+
+    // DF-up
+    for (auto &e : traversal)
+      for (auto &c : DT[e])
+        if (c->getIDom() != e)
+          this->Frontiers[e].insert(e);
+
+    return this->Frontiers[Node->getBlock()];
   }
 };
 
