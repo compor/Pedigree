@@ -81,13 +81,13 @@ TEST_P(PDFConstructionTest, BottomUpTraversal) {
   llvm::SmallVector<llvm::BasicBlock *, 32> traversal;
   pdf.traverseBottomUp(traversal, *curPDT.DT, curPDT.DT->getRootNode());
 
-  decltype(td.traversalOrder) traversalNames;
+  decltype(td.traversalOrder) traversalOrder;
   std::for_each(traversal.begin(), traversal.end(),
-                [&traversalNames](const auto &e) {
-                  traversalNames.push_back(e->getName().str());
+                [&traversalOrder](const auto &e) {
+                  traversalOrder.push_back(e->getName().str());
                 });
 
-  EXPECT_EQ(traversalNames, td.traversalOrder);
+  EXPECT_EQ(traversalOrder, td.traversalOrder);
 }
 
 std::array<PDFTestData, 1> testData1 = {
