@@ -42,6 +42,7 @@ public:
   using DomTreeT = llvm::DominatorTreeBase<BlockT>;
   using DomTreeNodeT = llvm::DomTreeNodeBase<BlockT>;
   using DomSetType = typename Base::DomSetType;
+  using DomSetMapType = typename Base::DomSetMapType;
 
   PostDominanceFrontierBase() : Base(true) {}
 
