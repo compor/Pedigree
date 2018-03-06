@@ -43,22 +43,30 @@ struct PDFTestData {
   PDFTestData() = delete;
 
   std::string assemblyFile;
-  std::vector<std::string> blockNames;
+  std::vector<std::string> traversalOrder;
 };
 
 std::ostream &operator<<(std::ostream &os, const PDFTestData &td) {
   auto delim = ' ';
-  return os << delim << "assembly file: " << td.assemblyFile << delim;
+  std::stringstream ss;
+
+  ss << delim << "assembly file: " << td.assemblyFile << delim;
+
+  ss << "block names: ";
+  for (const auto &e : td.traversalOrder)
+    ss << e << delim;
+
+  return os << ss.str();
 }
 
 //
 
-class PDFConstructionTest : public TestIRAssemblyParser,
-                            public ::testing::TestWithParam<PDFTestData> {};
+struct PDFConstructionTest : public TestIRAssemblyParser,
+                             public ::testing::TestWithParam<PDFTestData> {};
 
 //
 
-TEST_P(PDFConstructionTest, PDFConstruction) {
+TEST_P(PDFConstructionTest, BottomUpTraversal) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
@@ -73,10 +81,20 @@ TEST_P(PDFConstructionTest, PDFConstruction) {
   llvm::SmallVector<llvm::BasicBlock *, 32> traversal;
   pdf.traverseBottomUp(traversal, *curPDT.DT, curPDT.DT->getRootNode());
 
-  // pdf.analyze(*curPDT.DT);
+  decltype(td.traversalOrder) traversalNames;
+  std::for_each(traversal.begin(), traversal.end(),
+                [&traversalNames](const auto &e) {
+                  traversalNames.push_back(e->getName().str());
+                });
+
+  EXPECT_EQ(traversalNames, td.traversalOrder);
 }
 
-std::array<PDFTestData, 3> testData1 = {"hpc4pc_book_fig73.ll"};
+std::array<PDFTestData, 1> testData1 = {
+    "hpc4pc_book_fig37.ll",
+    {"entry", "b_label", "while.body", "while.body.3", "if.then", "if.else",
+     "if.end", "while.cond.1", "while.end", "while.cond", "while.end.8",
+     "i_label", "j_label"}};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
                         ::testing::ValuesIn(testData1));
@@ -84,3 +102,4 @@ INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
 } // unnamed namespace end
 } // namespace testing end
 } // namespace pedigree end
+  // pdf.analyze(*curPDT.DT);
