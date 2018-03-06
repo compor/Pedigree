@@ -25,6 +25,9 @@
 #include "llvm/ADT/SmallPtrSet.h"
 // using llvm::SmallPtrSet
 
+#include "llvm/ADT/iterator_range.h"
+// using llvm::make_range
+
 #include <cassert>
 // using assert
 
@@ -59,11 +62,13 @@ public:
     workList.push_back(Node->getBlock());
 
     while (!workList.empty()) {
-      auto &top = *workList.rend();
+      auto &top = *workList.rbegin();
       if (!visited.count(top)) {
         visited.insert(top);
-        workList.append(BlockTraits::child_begin(top),
-                        BlockTraits::child_end(top));
+        for (const auto &e : llvm::make_range(BlockTraits::child_begin(top),
+                                              BlockTraits::child_end(top)))
+          if (!visited.count(e))
+            workList.push_back(e);
       } else {
         Traversal.push_back(top);
         workList.pop_back();
