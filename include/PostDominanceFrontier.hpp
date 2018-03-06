@@ -19,6 +19,12 @@
 #include "llvm/Analysis/DominanceFrontier.h"
 // using llvm::DominanceFrontierBase
 
+#include "llvm/ADT/SmallVector.h"
+// using llvm::SmallVector
+
+#include "llvm/ADT/SmallPtrSet.h"
+// using llvm::SmallPtrSet
+
 #include <cassert>
 // using assert
 
@@ -44,7 +50,28 @@ public:
     calculate(DT, DT[this->Roots[0]]);
   }
 
-  const DomSetType &calculate(const DomTreeT &DT, const DomTreeNodeT &Node) {
+  void traverseBottomUp(llvm::SmallVectorImpl<BlockT *> &Traversal,
+                        const DomTreeT &DT, const DomTreeNodeT *Node) {
+    constexpr size_t N = 32;
+    llvm::SmallVector<BlockT *, N> workList;
+    llvm::SmallPtrSet<BlockT *, N> visited;
+
+    workList.push_back(Node->getBlock());
+
+    while (!workList.empty()) {
+      auto &top = *workList.rend();
+      if (!visited.count(top)) {
+        visited.insert(top);
+        workList.append(BlockTraits::child_begin(top),
+                        BlockTraits::child_end(top));
+      } else {
+        Traversal.push_back(top);
+        workList.pop_back();
+      }
+    }
+  }
+
+  const DomSetType &calculate(const DomTreeT &DT, const DomTreeNodeT *Node) {
     return {};
   }
 };
