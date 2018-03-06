@@ -29,6 +29,9 @@
 #include <string>
 // using std::string
 
+#include <sstream>
+// using std::stringstream
+
 #include <iostream>
 // using std::ostream
 
