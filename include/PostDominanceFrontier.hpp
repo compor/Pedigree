@@ -26,7 +26,7 @@ namespace pedigree {
 
 template <typename BlockT>
 class PostDominanceFrontierBase : public llvm::DominanceFrontierBase<BlockT> {
-  using BlockTraits = llvm::GraphTraits<llvm::Inverse<BlockT>>;
+  using BlockTraits = llvm::GraphTraits<llvm::Inverse<BlockT *>>;
 
 public:
   using Base = llvm::DominanceFrontierBase<BlockT>;
