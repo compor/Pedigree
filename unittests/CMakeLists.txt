@@ -29,7 +29,8 @@ set(PRJ_TEST_NAME Test${PRJ_NAME})
 
 set(TEST_SOURCES 
   TestPedigreeOpt.cpp
-  DDGTests.cpp)
+  DDGTests.cpp
+  PostDominanceFrontierTests.cpp)
 
 add_executable(${PRJ_TEST_NAME} ${TEST_SOURCES})
 
