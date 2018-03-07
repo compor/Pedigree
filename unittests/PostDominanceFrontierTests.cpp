@@ -66,7 +66,7 @@ struct PDFConstructionTest : public TestIRAssemblyParser,
 
 //
 
-TEST_P(PDFConstructionTest, BottomUpTraversal) {
+TEST_P(PDFConstructionTest, DFSPostOrderTraversal) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
@@ -79,7 +79,7 @@ TEST_P(PDFConstructionTest, BottomUpTraversal) {
   PostDominanceFrontierBase<llvm::BasicBlock> pdf;
 
   llvm::SmallVector<llvm::BasicBlock *, 32> traversal;
-  pdf.traverseBottomUp(traversal, *curPDT.DT, curPDT.DT->getRootNode());
+  pdf.traverseDFSPostOrder(traversal, *curPDT.DT, curPDT.DT->getRootNode());
 
   decltype(td.traversalOrder) traversalOrder;
   std::for_each(traversal.begin(), traversal.end(),

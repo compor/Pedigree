@@ -54,7 +54,7 @@ public:
     calculate(DT, DT[this->Roots[0]]);
   }
 
-  void traverseBottomUp(llvm::SmallVectorImpl<BlockT *> &Traversal,
+  void traverseDFSPostOrder(llvm::SmallVectorImpl<BlockT *> &Traversal,
                         const DomTreeT &DT, const DomTreeNodeT *Node) {
     constexpr size_t N = 32;
     llvm::SmallVector<BlockT *, N> workList;
@@ -81,7 +81,7 @@ public:
     this->Frontiers.clear();
 
     llvm::SmallVector<BlockT *, 32> traversal;
-    traverseBottomUp(traversal, DT, Node);
+    traverseDFSPostOrder(traversal, DT, Node);
 
     // DF-local
     for (auto &e : traversal)
