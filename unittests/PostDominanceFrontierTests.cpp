@@ -152,7 +152,7 @@ TEST_P(PDFConstructionTest, PDFConstruction) {
   curPDT.DT->recalculate(*curFunc);
 
   PostDominanceFrontierBase<llvm::BasicBlock> pdf;
-  pdf.analyze(*(curPDT.DT));
+  pdf.analyze(*curPDT.DT);
 
   auto found =
       std::find_if(std::begin(*curFunc), std::end(*curFunc),
