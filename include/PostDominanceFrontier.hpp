@@ -91,18 +91,18 @@ public:
     for (auto &e : traversal)
       this->Frontiers[e] = {};
 
-    // DF-local
-    for (auto &e : traversal)
+    for (auto &e : traversal) {
+      // DF-local
       for (const auto &c : graph_children(e))
         if (DT[c]->getIDom()->getBlock() != e)
           this->Frontiers[e].insert(c);
 
-    // DF-up
-    for (auto &e : traversal)
+      // DF-up
       for (auto &d : *DT[e])
         for (auto &f : this->Frontiers[d->getBlock()])
           if (DT[f]->getIDom()->getBlock() != e)
             this->Frontiers[e].insert(f);
+    }
 
     return this->Frontiers[Node->getBlock()];
   }
