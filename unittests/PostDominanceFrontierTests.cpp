@@ -95,7 +95,7 @@ TEST_P(PDFTraversalTest, DFSPostOrderTraversal) {
                   traversalOrder.push_back(e->getName().str());
                 });
 
-  EXPECT_EQ(traversalOrder, td.traversalOrder);
+  EXPECT_EQ(td.traversalOrder, traversalOrder);
 }
 
 std::array<PDFTraversalTestData, 1> testData1 = {
@@ -166,7 +166,7 @@ TEST_P(PDFConstructionTest, PDFConstruction) {
   for (const auto &e : frontier->second)
     frontierNames.insert(e->getName().str());
 
-  EXPECT_EQ(frontierNames, td.frontier);
+  EXPECT_EQ(td.frontier, frontierNames);
 }
 
 std::array<PDFConstructionTestData, 2> testData2 = {
