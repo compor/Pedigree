@@ -26,8 +26,12 @@
 #include <vector>
 // using std::vector
 
+#include <set>
+// using std::set
+
 #include <algorithm>
 // using std::for_each
+// using std::find_if
 
 #include <string>
 // using std::string
@@ -103,7 +107,74 @@ std::array<PDFTraversalTestData, 1> testData1 = {
 INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFTraversalTest,
                         ::testing::ValuesIn(testData1));
 
+//
+//
+//
+
+struct PDFConstructionTestData {
+  PDFConstructionTestData() = delete;
+
+  std::string assemblyFile;
+  std::string node;
+  std::set<std::string> frontier;
+};
+
+std::ostream &operator<<(std::ostream &os, const PDFConstructionTestData &td) {
+  auto delim = ' ';
+  std::stringstream ss;
+
+  ss << delim << "assembly file: " << td.assemblyFile << delim
+     << "node: " << td.node << delim;
+
+  ss << "frontier: ";
+  for (const auto &e : td.frontier)
+    ss << e << delim;
+
+  return os << ss.str();
+}
+
+//
+
+struct PDFConstructionTest
+    : public TestIRAssemblyParser,
+      public ::testing::TestWithParam<PDFConstructionTestData> {};
+
+//
+
+TEST_P(PDFConstructionTest, PDFConstruction) {
+  auto td = GetParam();
+
+  parseAssemblyFile(td.assemblyFile);
+  auto *curFunc = m_Module->getFunction("foo");
+  ASSERT_FALSE(nullptr == curFunc);
+
+  llvm::PostDominatorTree curPDT;
+  curPDT.DT->recalculate(*curFunc);
+
+  PostDominanceFrontierBase<llvm::BasicBlock> pdf;
+  pdf.analyze(*(curPDT.DT));
+
+  auto found =
+      std::find_if(std::begin(*curFunc), std::end(*curFunc),
+                   [&td](const auto &e) { return e.getName() == td.node; });
+  ASSERT_FALSE(found == std::end(*curFunc));
+
+  auto frontier = pdf.find(&*found);
+  ASSERT_FALSE(frontier == std::end(pdf));
+
+  std::set<std::string> frontierNames;
+  for (const auto &e : frontier->second)
+    frontierNames.insert(e->getName().str());
+
+  EXPECT_EQ(frontierNames, td.frontier);
+}
+
+std::array<PDFConstructionTestData, 1> testData2 = {
+    "hpc4pc_book_fig37.ll", "j_label", {}};
+
+INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
+                        ::testing::ValuesIn(testData2));
+
 } // unnamed namespace end
 } // namespace testing end
 } // namespace pedigree end
-  // pdf.analyze(*curPDT.DT);
