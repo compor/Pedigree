@@ -37,6 +37,11 @@ template <typename BlockT>
 class PostDominanceFrontierBase : public llvm::DominanceFrontierBase<BlockT> {
   using BlockTraits = llvm::GraphTraits<llvm::Inverse<BlockT *>>;
 
+  auto children(BlockT *BB) {
+    return llvm::make_range(BlockTraits::child_begin(BB),
+                            BlockTraits::child_end(BB));
+  }
+
 public:
   using Base = llvm::DominanceFrontierBase<BlockT>;
   using DomTreeT = llvm::DominatorTreeBase<BlockT>;
@@ -55,7 +60,7 @@ public:
   }
 
   void traverseDFSPostOrder(llvm::SmallVectorImpl<BlockT *> &Traversal,
-                        const DomTreeT &DT, const DomTreeNodeT *Node) {
+                            const DomTreeT &DT, const DomTreeNodeT *Node) {
     constexpr size_t N = 32;
     llvm::SmallVector<BlockT *, N> workList;
     llvm::SmallPtrSet<BlockT *, N> visited;
@@ -66,8 +71,7 @@ public:
       auto &top = *workList.rbegin();
       if (!visited.count(top)) {
         visited.insert(top);
-        for (const auto &e : llvm::make_range(BlockTraits::child_begin(top),
-                                              BlockTraits::child_end(top)))
+        for (const auto &e : children(top))
           if (!visited.count(e))
             workList.push_back(e);
       } else {
@@ -85,8 +89,7 @@ public:
 
     // DF-local
     for (auto &e : traversal)
-      for (auto &c : llvm::make_range(BlockTraits::child_begin(e),
-                                      BlockTraits::child_end(e)))
+      for (auto &c : children(e))
         if (DT[c].getIDom()->getBlock() != e)
           this->Frontiers[e].insert(c);
 
