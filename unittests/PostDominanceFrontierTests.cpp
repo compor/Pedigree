@@ -26,6 +26,9 @@
 #include <vector>
 // using std::vector
 
+#include <algorithm>
+// using std::for_each
+
 #include <string>
 // using std::string
 
@@ -39,14 +42,14 @@ namespace pedigree {
 namespace testing {
 namespace {
 
-struct PDFTestData {
-  PDFTestData() = delete;
+struct PDFTraversalTestData {
+  PDFTraversalTestData() = delete;
 
   std::string assemblyFile;
   std::vector<std::string> traversalOrder;
 };
 
-std::ostream &operator<<(std::ostream &os, const PDFTestData &td) {
+std::ostream &operator<<(std::ostream &os, const PDFTraversalTestData &td) {
   auto delim = ' ';
   std::stringstream ss;
 
@@ -61,12 +64,13 @@ std::ostream &operator<<(std::ostream &os, const PDFTestData &td) {
 
 //
 
-struct PDFConstructionTest : public TestIRAssemblyParser,
-                             public ::testing::TestWithParam<PDFTestData> {};
+struct PDFTraversalTest
+    : public TestIRAssemblyParser,
+      public ::testing::TestWithParam<PDFTraversalTestData> {};
 
 //
 
-TEST_P(PDFConstructionTest, DFSPostOrderTraversal) {
+TEST_P(PDFTraversalTest, DFSPostOrderTraversal) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
@@ -90,13 +94,13 @@ TEST_P(PDFConstructionTest, DFSPostOrderTraversal) {
   EXPECT_EQ(traversalOrder, td.traversalOrder);
 }
 
-std::array<PDFTestData, 1> testData1 = {
+std::array<PDFTraversalTestData, 1> testData1 = {
     "hpc4pc_book_fig37.ll",
     {"entry", "b_label", "while.body", "while.body.3", "if.then", "if.else",
      "if.end", "while.cond.1", "while.end", "while.cond", "while.end.8",
      "i_label", "j_label"}};
 
-INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
+INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFTraversalTest,
                         ::testing::ValuesIn(testData1));
 
 } // unnamed namespace end
