@@ -50,7 +50,7 @@ struct PDFTraversalTestData {
   PDFTraversalTestData() = delete;
 
   std::string assemblyFile;
-  std::vector<std::string> traversalOrder;
+  std::vector<std::string> traversal;
 };
 
 std::ostream &operator<<(std::ostream &os, const PDFTraversalTestData &td) {
@@ -60,7 +60,7 @@ std::ostream &operator<<(std::ostream &os, const PDFTraversalTestData &td) {
   ss << delim << "assembly file: " << td.assemblyFile << delim;
 
   ss << "block names: ";
-  for (const auto &e : td.traversalOrder)
+  for (const auto &e : td.traversal)
     ss << e << delim;
 
   return os << ss.str();
@@ -89,13 +89,13 @@ TEST_P(PDFTraversalTest, DFSPostOrderTraversal) {
   llvm::SmallVector<llvm::BasicBlock *, 32> traversal;
   pdf.traverseDFSPostOrder(traversal, *curPDT.DT, curPDT.DT->getRootNode());
 
-  decltype(td.traversalOrder) traversalOrder;
+  decltype(td.traversal) traversalNames;
   std::for_each(traversal.begin(), traversal.end(),
-                [&traversalOrder](const auto &e) {
-                  traversalOrder.push_back(e->getName().str());
+                [&traversalNames](const auto &e) {
+                  traversalNames.push_back(e->getName().str());
                 });
 
-  EXPECT_EQ(td.traversalOrder, traversalOrder);
+  EXPECT_EQ(td.traversal, traversalNames);
 }
 
 std::array<PDFTraversalTestData, 1> testData1 = {
