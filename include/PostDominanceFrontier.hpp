@@ -95,8 +95,8 @@ public:
 
     // DF-up
     for (auto &e : traversal)
-      for (auto &c : DT[e])
-        if (c->getIDom() != e)
+      for (auto &c : *DT[e])
+        if (c->getIDom()->getBlock() != e)
           this->Frontiers[e].insert(e);
 
     return this->Frontiers[Node->getBlock()];
