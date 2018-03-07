@@ -88,6 +88,9 @@ public:
     llvm::SmallVector<BlockT *, 32> traversal;
     traverseDFSPostOrder(traversal, DT, Node);
 
+    for (auto &e : traversal)
+      this->Frontiers[e] = {};
+
     // DF-local
     for (auto &e : traversal)
       for (const auto &c : children(e))
