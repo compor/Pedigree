@@ -37,7 +37,7 @@ template <typename BlockT>
 class PostDominanceFrontierBase : public llvm::DominanceFrontierBase<BlockT> {
   using BlockTraits = llvm::GraphTraits<llvm::Inverse<BlockT *>>;
 
-  auto children(BlockT *BB) const {
+  auto graph_children(BlockT *BB) const {
     return llvm::make_range(BlockTraits::child_begin(BB),
                             BlockTraits::child_end(BB));
   }
@@ -72,7 +72,7 @@ public:
       auto &top = *workList.rbegin();
       if (!visited.count(top)) {
         visited.insert(top);
-        for (const auto &c : children(top))
+        for (const auto &c : graph_children(top))
           if (!visited.count(c))
             workList.push_back(c);
       } else {
@@ -93,7 +93,7 @@ public:
 
     // DF-local
     for (auto &e : traversal)
-      for (const auto &c : children(e))
+      for (const auto &c : graph_children(e))
         if (DT[c]->getIDom()->getBlock() != e)
           this->Frontiers[e].insert(c);
 
