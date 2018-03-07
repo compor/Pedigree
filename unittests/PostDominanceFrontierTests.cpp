@@ -169,8 +169,9 @@ TEST_P(PDFConstructionTest, PDFConstruction) {
   EXPECT_EQ(frontierNames, td.frontier);
 }
 
-std::array<PDFConstructionTestData, 1> testData2 = {
-    "hpc4pc_book_fig37.ll", "j_label", {}};
+std::array<PDFConstructionTestData, 2> testData2 = {
+    "hpc4pc_book_fig37.ll", "j_label",      {},
+    "hpc4pc_book_fig37.ll", "while.cond.1", {"while.cond.1", "while.cond"}};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
                         ::testing::ValuesIn(testData2));
