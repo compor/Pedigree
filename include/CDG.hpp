@@ -111,4 +111,64 @@ public:
 
 } // namespace pedigree end
 
+namespace llvm {
+
+// graph traits specializations
+
+using namespace pedigree;
+
+// this template specialization is meant to be used as a supplement to the main
+// graph specialization
+template <> struct GraphTraits<ControlDependenceNode *> {
+  using NodeType = ControlDependenceNode;
+
+  using ChildPairTy = ControlDependenceNode::DependenceRecordTy;
+  using ChildDerefFuncTy = std::function<ControlDependenceNode *(ChildPairTy)>;
+
+  using ChildIteratorType =
+      llvm::mapped_iterator<NodeType::iterator, ChildDerefFuncTy>;
+
+  static NodeType *getEntryNode(NodeType *G) { return G; }
+
+  static ChildIteratorType child_begin(NodeType *G) {
+    return llvm::map_iterator(G->begin(), ChildDerefFuncTy(ChildDeref));
+  }
+  static ChildIteratorType child_end(NodeType *G) {
+    return llvm::map_iterator(G->end(), ChildDerefFuncTy(ChildDeref));
+  }
+
+  static ControlDependenceNode *ChildDeref(ChildPairTy P) {
+    assert(P.first && "Pointer to graph node is null!");
+    return P.first;
+  }
+};
+
+template <>
+struct GraphTraits<CDG *> : public GraphTraits<ControlDependenceNode *> {
+  using GraphTy = CDG;
+
+  using NodePairTy = std::pair<llvm::BasicBlock *, ControlDependenceNode *>;
+  using NodeDerefFuncTy = std::function<ControlDependenceNode &(NodePairTy)>;
+
+  using nodes_iterator =
+      llvm::mapped_iterator<GraphTy::iterator, NodeDerefFuncTy>;
+
+  static NodeType *getEntryNode(GraphTy *G) { return G->getEntryNode(); }
+
+  static nodes_iterator nodes_begin(GraphTy *G) {
+    return llvm::map_iterator(G->begin(), NodeDerefFuncTy(NodeDeref));
+  }
+  static nodes_iterator nodes_end(GraphTy *G) {
+    return llvm::map_iterator(G->end(), NodeDerefFuncTy(NodeDeref));
+  }
+
+  static unsigned size(GraphTy *G) {
+    return static_cast<unsigned>(G->numVertices());
+  }
+
+  static ControlDependenceNode &NodeDeref(NodePairTy P) { return *P.second; }
+};
+
+} // namespace llvm end
+
 #endif // header
