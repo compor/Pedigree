@@ -1,5 +1,5 @@
 /* high performance compilers for parallel computing book by Michael Wolfe -
- * figure 3.7 */
+ * figure 3.21 */
 
 /*
  * clang -c -emit-llvm file.c
@@ -11,25 +11,20 @@ void foo() {
   int k = 0;
   int i = 0;
 
-b_label:
-  k += 3;
-
-  while (k < 10) {
-    while (i < 30) {
-      if (i < 5)
-        i += 2;
+  if (k > 0) {
+    while (k < 15) {
+      if (k < 10)
+        k++;
       else
-        i += 3;
+        k += 3;
 
-      i++;
+      k++;
     }
 
-    k++;
+  g_label:
+    k += 2;
   }
 
-i_label:
-  k += 7;
-
-j_label:
-  k += 4;
+h_label:
+  k++;
 }

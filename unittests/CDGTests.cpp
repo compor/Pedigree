@@ -64,10 +64,11 @@ TEST_P(CDGConstructionTest, CDGConstruction) {
   EXPECT_EQ(td.numEdges, cdg.numEdges());
 }
 
-std::array<CDGTestData, 4> testData1 = {{{"whalebook_fig81.ll", 6, 3},
+std::array<CDGTestData, 5> testData1 = {{{"whalebook_fig81.ll", 6, 3},
                                          {"whalebook_fig85.ll", 5, 4},
                                          {"whalebook_fig821.ll", 7, 4},
-                                         {"hpc4pc_book_fig37.ll", 13, 9}}};
+                                         {"hpc4pc_book_fig37.ll", 13, 9},
+                                         {"hpc4pc_book_fig321.ll", 11, 9}}};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, CDGConstructionTest,
                         ::testing::ValuesIn(testData1));
