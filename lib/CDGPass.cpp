@@ -35,7 +35,7 @@
 // using DEBUG macro
 // using llvm::dbgs
 
-#define DEBUG_TYPE "pedigreecdg"
+#define DEBUG_TYPE "pedigree-cdg"
 
 // plugin registration for opt
 
