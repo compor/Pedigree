@@ -74,11 +74,9 @@ public:
   template <typename T> void build(T &Unit) { visit(Unit); }
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
-    if (!CurInstruction.mayReadOrWriteMemory() &&
+    if (CurInstruction.mayReadOrWriteMemory() &&
         !llvm::ImmutableCallSite(&CurInstruction))
-      return;
-
-    visitMemRefInstruction(CurInstruction);
+      visitMemRefInstruction(CurInstruction);
   }
 };
 
