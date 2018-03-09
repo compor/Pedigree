@@ -39,24 +39,25 @@ class MDALocalMDGBuilder : public llvm::InstVisitor<MDALocalMDGBuilder> {
   llvm::MemoryDependenceAnalysis &m_MDA;
   bool m_isBlockLocal;
 
+  void getFunctionLocalDependees(
+      llvm::Instruction &CurInstruction,
+      llvm::SmallVectorImpl<llvm::Instruction *> &Dependees) {
+    llvm::SmallVector<llvm::NonLocalDepResult, 8> result;
+    m_MDA.getNonLocalPointerDependency(&CurInstruction, result);
+
+    for (const auto &e : result)
+      Dependees.push_back(e.getResult().getInst());
+  }
+
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
-    auto dst = m_Graph.getOrInsertNode(&CurInstruction);
-
     auto query = m_MDA.getDependency(&CurInstruction);
-    assert(query.getInst() && "Dependee instruction is null!");
-
+    auto dst = m_Graph.getOrInsertNode(&CurInstruction);
     llvm::SmallVector<llvm::Instruction *, 8> dependees;
 
-    if (query.isNonLocal()) {
-      llvm::SmallVector<llvm::NonLocalDepResult, 8> result;
-      m_MDA.getNonLocalPointerDependency(&CurInstruction, result);
-
-      for (const auto &e : result)
-        dependees.push_back(e.getResult().getInst());
-    } else {
-      if (query.isDef())
-        dependees.push_back(query.getInst());
-    }
+    if (query.isNonLocal())
+      getFunctionLocalDependees(CurInstruction, dependees);
+    else if (query.isDef())
+      dependees.push_back(query.getInst()); // TODO what about clobbers?
 
     for (const auto &e : dependees) {
       auto src = m_Graph.getOrInsertNode(e);
