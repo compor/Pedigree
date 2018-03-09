@@ -23,6 +23,8 @@ class DDGBuilder : public llvm::InstVisitor<DDGBuilder> {
 public:
   DDGBuilder(DDG &Graph) : m_Graph(Graph) {}
 
+  template <typename T> void build(T &Unit) { visit(Unit); }
+
   void visitInstruction(llvm::Instruction &CurInstruction) {
     auto src = m_Graph.getOrInsertNode(&CurInstruction);
     for (auto &u : CurInstruction.uses()) {

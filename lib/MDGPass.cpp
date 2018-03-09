@@ -106,8 +106,8 @@ void MDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 bool MDGPass::runOnFunction(llvm::Function &CurFunc) {
   m_Graph = std::make_unique<MDG>();
   auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
-  MDASimpleMDGBuilder mdgBuilder{*m_Graph, mda};
-  mdgBuilder.visit(CurFunc);
+  MDASimpleMDGBuilder builder{*m_Graph, mda};
+  builder.build(CurFunc);
 
   return false;
 }

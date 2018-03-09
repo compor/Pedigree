@@ -97,8 +97,8 @@ void CDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 
 bool CDGPass::runOnFunction(llvm::Function &CurFunc) {
   m_Graph = std::make_unique<CDG>();
-  CDGBuilder cdgBuilder{*m_Graph};
-  cdgBuilder.build(CurFunc);
+  CDGBuilder builder{*m_Graph};
+  builder.build(CurFunc);
 
   return false;
 }

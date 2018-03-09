@@ -29,6 +29,8 @@ public:
       : m_Graph(Graph),
         m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)) {}
 
+  template <typename T> void build(T &Unit) { visit(Unit); }
+
   void visitInstruction(llvm::Instruction &CurInstruction) {
     // TODO maybe we should consider providing an option for not including nodes
     // in the graph unless they have an edge
