@@ -136,7 +136,8 @@ set(LIB_SOURCES
   lib/DDGPrinterPass.cpp
   lib/CDGPass.cpp
   lib/CDGPrinterPass.cpp
-  lib/MDGPass.cpp)
+  lib/MDGPass.cpp
+  lib/MDGPrinterPass.cpp)
 
 set(LIB_NAME "LLVM${PRJ_NAME}Pass")
 set(OBJ_LIB_NAME "${LIB_NAME}_obj")
