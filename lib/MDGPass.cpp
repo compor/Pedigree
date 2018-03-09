@@ -6,7 +6,13 @@
 
 #include "MDGPass.hpp"
 
-#include "MDGBuilder.hpp"
+#include "MDASimpleMDGBuilder.hpp"
+
+#include "llvm/Analysis/MemoryDependenceAnalysis.h"
+// using llvm::MemoryDependenceAnalysis
+
+#include "llvm/Analysis/AliasAnalysis.h"
+// using llvm::AliasAnalysis
 
 #include "llvm/IR/Function.h"
 // using llvm::Function
@@ -92,13 +98,16 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 namespace pedigree {
 
 void MDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+  AU.addRequiredTransitive<llvm::AliasAnalysis>();
+  AU.addRequiredTransitive<llvm::MemoryDependenceAnalysis>();
   AU.setPreservesAll();
 }
 
 bool MDGPass::runOnFunction(llvm::Function &CurFunc) {
   m_Graph = std::make_unique<MDG>();
-  //MDGBuilder mdgBuilder{*m_Graph};
-  //mdgBuilder.visit(CurFunc);
+  auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
+  MDASimpleMDGBuilder mdgBuilder{*m_Graph, mda};
+  mdgBuilder.visit(CurFunc);
 
   return false;
 }
