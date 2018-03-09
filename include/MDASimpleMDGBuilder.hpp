@@ -46,11 +46,11 @@ public:
     if (!CurInstruction.mayReadOrWriteMemory())
       return;
 
-    auto result = m_MDA.getDependency(&CurInstruction);
+    auto query = m_MDA.getDependency(&CurInstruction);
 
-    if (!result.isNonLocal()) {
-      if (result.getInst() && result.isDef()) {
-        auto src = m_Graph.getOrInsertNode(result.getInst());
+    if (!query.isNonLocal()) {
+      if (query.getInst() && query.isDef()) {
+        auto src = m_Graph.getOrInsertNode(query.getInst());
         src->addDependentNode(dst);
       }
     } else {
