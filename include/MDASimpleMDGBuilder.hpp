@@ -12,6 +12,9 @@
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
+#include "llvm/IR/CallSite.h"
+// using llvm::ImmutableCallSite
+
 #include "llvm/IR/InstVisitor.h"
 // using llvm::InstVisitor
 
@@ -53,6 +56,8 @@ public:
         auto src = m_Graph.getOrInsertNode(query.getInst());
         src->addDependentNode(dst);
       }
+    } else if (auto CS = llvm::ImmutableCallSite(&CurInstruction)) {
+      return;
     } else {
       llvm::SmallVector<llvm::NonLocalDepResult, 8> result;
       m_MDA.getNonLocalPointerDependency(&CurInstruction, result);
