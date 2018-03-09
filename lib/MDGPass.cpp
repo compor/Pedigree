@@ -6,7 +6,7 @@
 
 #include "MDGPass.hpp"
 
-#include "MDASimpleMDGBuilder.hpp"
+#include "MDALocalMDGBuilder.hpp"
 
 #include "llvm/Analysis/MemoryDependenceAnalysis.h"
 // using llvm::MemoryDependenceAnalysis
