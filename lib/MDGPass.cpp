@@ -8,6 +8,8 @@
 
 #include "MDALocalMDGBuilder.hpp"
 
+#include "DAMDGBuilder.hpp"
+
 #include "llvm/Analysis/MemoryDependenceAnalysis.h"
 // using llvm::MemoryDependenceAnalysis
 
