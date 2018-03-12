@@ -12,9 +12,6 @@
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
-#include "llvm/IR/CallSite.h"
-// using llvm::ImmutableCallSite
-
 #include "llvm/IR/InstVisitor.h"
 // using llvm::InstVisitor
 
@@ -45,8 +42,7 @@ public:
   template <typename T> void build(T &Unit) { visit(Unit); }
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
-    if (CurInstruction.mayReadOrWriteMemory() &&
-        !llvm::ImmutableCallSite(&CurInstruction))
+    if (CurInstruction.mayReadOrWriteMemory())
       visitMemRefInstruction(CurInstruction);
   }
 };
