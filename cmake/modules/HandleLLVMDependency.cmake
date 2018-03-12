@@ -18,8 +18,10 @@ macro(handle_llvm_dependency isStandaloneBuild)
     # http://llvm.org/docs/CMake.html#cmake-out-of-source-pass
     # for allowing future inclusion of the plugin in the LLVM source tree
     # by using LLVM's internal cmake functions and utilities
-    set(LLVM_RUNTIME_OUTPUT_INTDIR "${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INT_DIR}")
-    set(LLVM_LIBRARY_OUTPUT_INTDIR "${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INT_DIR}")
+    set(LLVM_RUNTIME_OUTPUT_INTDIR
+      "${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INT_DIR}")
+    set(LLVM_LIBRARY_OUTPUT_INTDIR
+      "${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INT_DIR}")
   endif()
 
   # Required if these functions are used:

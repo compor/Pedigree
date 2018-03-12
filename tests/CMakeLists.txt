@@ -34,9 +34,9 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${PRJ_TEST_CONFIG_FILE}.in"
   ${PRJ_TEST_CONFIG_FILE})
 
 add_custom_target(lit_tests
-    COMMAND ${PYTHON_EXECUTABLE} -m lit.main "${CMAKE_CURRENT_BINARY_DIR}" -v)
+  COMMAND ${PYTHON_EXECUTABLE} -m lit.main "${CMAKE_CURRENT_BINARY_DIR}" -v)
 
-  add_dependencies(lit_tests ${LIT_TESTEE_LIB})
+add_dependencies(lit_tests ${LIT_TESTEE_LIB})
 
 add_dependencies(check lit_tests)
 
