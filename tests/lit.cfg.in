@@ -1,6 +1,4 @@
 import os
-import re
-import platform
 
 from lit import formats
 
@@ -26,10 +24,9 @@ config.substitutions.append(('%testeelib',
                              "@TESTEE_PREFIX@@LIT_TESTEE_LIB@@TESTEE_SUFFIX@"))
 
 # environment: Set PATH as required
-config.environment['PATH'] = os.pathsep.join(["@LLVM_TOOLS_BINARY_DIR@",
-                                              config.environment['PATH']])
+config.environment['PATH'] = os.pathsep.join(
+    ["@LLVM_TOOLS_BINARY_DIR@", config.environment['PATH']])
 config.environment['PRJ_NAME'] = "@PRJ_NAME@"
 config.environment['LLVM_ROOT'] = "@LLVM_INSTALL_PREFIX@"
 
 # vim:ft=python
-
