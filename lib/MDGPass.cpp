@@ -13,6 +13,9 @@
 #include "llvm/Analysis/MemoryDependenceAnalysis.h"
 // using llvm::MemoryDependenceAnalysis
 
+#include "llvm/Analysis/DependenceAnalysis.h"
+// using llvm::DependenceAnalysis
+
 #include "llvm/Analysis/AliasAnalysis.h"
 // using llvm::AliasAnalysis
 
@@ -76,6 +79,19 @@ static llvm::cl::OptionCategory
     PedigreeMDGPassCategory("Pedigree MDG Pass",
                             "Options for Pedigree MDG pass");
 
+enum class AnalysisBackendType : uint8_t { MDA, DA };
+
+static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
+    "pedigree-mdg-analysis-backend",
+    llvm::cl::desc("analysis backend selection"),
+    llvm::cl::values(clEnumValN(AnalysisBackendType::MDA, "mda",
+                                "Memory Dependency Analysis"),
+                     clEnumValN(AnalysisBackendType::DA, "da",
+                                "Dependence Analysis"),
+                     nullptr),
+    llvm::cl::init(AnalysisBackendType::MDA),
+    llvm::cl::cat(PedigreeMDGPassCategory));
+
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-mdg-debug", llvm::cl::desc("debug pedigree mdg pass"),
@@ -102,14 +118,22 @@ namespace pedigree {
 void MDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.addRequiredTransitive<llvm::AliasAnalysis>();
   AU.addRequiredTransitive<llvm::MemoryDependenceAnalysis>();
+  AU.addRequiredTransitive<llvm::DependenceAnalysis>();
   AU.setPreservesAll();
 }
 
 bool MDGPass::runOnFunction(llvm::Function &CurFunc) {
   m_Graph = std::make_unique<MDG>();
-  auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
-  MDALocalMDGBuilder builder{*m_Graph, mda};
-  builder.build(CurFunc);
+
+  if (AnalysisBackendType::DA == AnalysisBackendOption) {
+    auto &da = getAnalysis<llvm::DependenceAnalysis>();
+    DAMDGBuilder builder{*m_Graph, da};
+    builder.build(CurFunc);
+  } else {
+    auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
+    MDALocalMDGBuilder builder{*m_Graph, mda};
+    builder.build(CurFunc);
+  }
 
   return false;
 }
