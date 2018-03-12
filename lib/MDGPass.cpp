@@ -92,6 +92,22 @@ static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
     llvm::cl::init(AnalysisBackendType::MDA),
     llvm::cl::cat(PedigreeMDGPassCategory));
 
+static llvm::cl::opt<pedigree::MDALocalMDGBuilder::AnalysisScope>
+    AnalysisBackendScopeOption(
+        "pedigree-mdg-analysis-backend-scope",
+        llvm::cl::desc("analysis backend scope"),
+        llvm::cl::values(
+            clEnumValN(pedigree::MDALocalMDGBuilder::AnalysisScope::Block,
+                       "block", "basic block"),
+            clEnumValN(pedigree::MDALocalMDGBuilder::AnalysisScope::Function,
+                       "function", "function"),
+            clEnumValN(
+                pedigree::MDALocalMDGBuilder::AnalysisScope::Interprocedural,
+                "interprocedural", "interprocedural"),
+            nullptr),
+        llvm::cl::init(pedigree::MDALocalMDGBuilder::AnalysisScope::Block),
+        llvm::cl::cat(PedigreeMDGPassCategory));
+
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-mdg-debug", llvm::cl::desc("debug pedigree mdg pass"),
@@ -131,7 +147,7 @@ bool MDGPass::runOnFunction(llvm::Function &CurFunc) {
     builder.build(CurFunc);
   } else {
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
-    MDALocalMDGBuilder builder{*m_Graph, mda};
+    MDALocalMDGBuilder builder{*m_Graph, mda, AnalysisBackendScopeOption};
     builder.build(CurFunc);
   }
 
