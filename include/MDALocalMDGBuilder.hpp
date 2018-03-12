@@ -26,6 +26,9 @@
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
 
+#include <cstdint>
+// using uint8_t
+
 #include <cassert>
 // using assert
 
@@ -35,13 +38,33 @@ namespace pedigree {
 // in the graph unless they have an edge
 
 class MDALocalMDGBuilder : public llvm::InstVisitor<MDALocalMDGBuilder> {
+public:
+  enum class AnalysisScope : uint8_t { Block, Function, Interprocedural };
+
+  MDALocalMDGBuilder(MDG &Graph, const llvm::MemoryDependenceAnalysis &MDA,
+                     AnalysisScope scope = AnalysisScope::Block)
+      : m_Graph(Graph),
+        m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
+        m_Scope(scope) {}
+
+  template <typename T> void build(T &Unit) { visit(Unit); }
+
+  void visitInstruction(llvm::Instruction &CurInstruction) {
+    if (CurInstruction.mayReadOrWriteMemory())
+      visitMemRefInstruction(CurInstruction);
+  }
+
+private:
   MDG &m_Graph;
   llvm::MemoryDependenceAnalysis &m_MDA;
-  bool m_isBlockLocal;
+  AnalysisScope m_Scope;
 
   void getInterproceduralDependees(
       llvm::CallSite CS,
       llvm::SmallVectorImpl<llvm::Instruction *> &Dependees) {
+    if (!CS)
+      return;
+
     auto &result = m_MDA.getNonLocalCallDependency(CS);
 
     for (auto &e : result)
@@ -63,32 +86,22 @@ class MDALocalMDGBuilder : public llvm::InstVisitor<MDALocalMDGBuilder> {
     auto dst = m_Graph.getOrInsertNode(&CurInstruction);
     llvm::SmallVector<llvm::Instruction *, 8> dependees;
 
-    if (query.isNonLocal() && !m_isBlockLocal)
-      if (auto cs = llvm::CallSite(&CurInstruction))
-        getInterproceduralDependees(cs, dependees);
-      else
+    if (query.isNonLocal()) {
+      if (m_Scope >= AnalysisScope::Interprocedural)
+        getInterproceduralDependees(llvm::CallSite(&CurInstruction), dependees);
+      else if (m_Scope >= AnalysisScope::Function)
         getFunctionLocalDependees(CurInstruction, dependees);
-    else if (query.isDef())
-      dependees.push_back(query.getInst()); // TODO what about clobbers?
+    } else {
+      // AnalysisScope::Block is the minimum and thus always on
+      // TODO what about clobbers?
+      if (query.isDef())
+        dependees.push_back(query.getInst());
+    }
 
     for (const auto &e : dependees) {
       auto src = m_Graph.getOrInsertNode(e);
       src->addDependentNode(dst);
     }
-  }
-
-public:
-  MDALocalMDGBuilder(MDG &Graph, const llvm::MemoryDependenceAnalysis &MDA,
-                     bool isBlockLocal = true)
-      : m_Graph(Graph),
-        m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
-        m_isBlockLocal(isBlockLocal) {}
-
-  template <typename T> void build(T &Unit) { visit(Unit); }
-
-  void visitInstruction(llvm::Instruction &CurInstruction) {
-    if (CurInstruction.mayReadOrWriteMemory())
-      visitMemRefInstruction(CurInstruction);
   }
 };
 
