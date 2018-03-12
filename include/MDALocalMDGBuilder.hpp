@@ -13,7 +13,7 @@
 // using llvm::Instruction
 
 #include "llvm/IR/CallSite.h"
-// using llvm::ImmutableCallSite
+// using llvm::CallSite
 
 #include "llvm/IR/InstVisitor.h"
 // using llvm::InstVisitor
@@ -39,6 +39,15 @@ class MDALocalMDGBuilder : public llvm::InstVisitor<MDALocalMDGBuilder> {
   llvm::MemoryDependenceAnalysis &m_MDA;
   bool m_isBlockLocal;
 
+  void getInterproceduralDependees(
+      llvm::CallSite CS,
+      llvm::SmallVectorImpl<llvm::Instruction *> &Dependees) {
+    auto &result = m_MDA.getNonLocalCallDependency(CS);
+
+    for (auto &e : result)
+      Dependees.push_back(e.getResult().getInst());
+  }
+
   void getFunctionLocalDependees(
       llvm::Instruction &CurInstruction,
       llvm::SmallVectorImpl<llvm::Instruction *> &Dependees) {
@@ -54,8 +63,11 @@ class MDALocalMDGBuilder : public llvm::InstVisitor<MDALocalMDGBuilder> {
     auto dst = m_Graph.getOrInsertNode(&CurInstruction);
     llvm::SmallVector<llvm::Instruction *, 8> dependees;
 
-    if (query.isNonLocal())
-      getFunctionLocalDependees(CurInstruction, dependees);
+    if (query.isNonLocal() && !m_isBlockLocal)
+      if (auto cs = llvm::CallSite(&CurInstruction))
+        getInterproceduralDependees(cs, dependees);
+      else
+        getFunctionLocalDependees(CurInstruction, dependees);
     else if (query.isDef())
       dependees.push_back(query.getInst()); // TODO what about clobbers?
 
@@ -75,8 +87,7 @@ public:
   template <typename T> void build(T &Unit) { visit(Unit); }
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
-    if (CurInstruction.mayReadOrWriteMemory() &&
-        !llvm::ImmutableCallSite(&CurInstruction))
+    if (CurInstruction.mayReadOrWriteMemory())
       visitMemRefInstruction(CurInstruction);
   }
 };
