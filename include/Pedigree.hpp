@@ -10,7 +10,12 @@
 
 namespace pedigree {
 
-enum class AnalysisScope : uint8_t { Block, Function, Interprocedural };
+enum class AnalysisScope : uint8_t {
+  Unavailable,
+  Block,
+  Function,
+  Interprocedural
+};
 
 } // namespace pedigree end
 
