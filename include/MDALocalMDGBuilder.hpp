@@ -26,9 +26,6 @@
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
 
-#include <cassert>
-// using assert
-
 namespace pedigree {
 
 // TODO maybe we should consider providing an option for not including nodes
