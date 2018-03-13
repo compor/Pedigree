@@ -48,6 +48,9 @@
 // using DEBUG macro
 // using llvm::dbgs
 
+#include <cassert>
+// using assert
+
 #define DEBUG_TYPE "pedigree-mdg"
 
 // plugin registration for opt
@@ -125,6 +128,11 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
     llvm::cl::cat(PedigreeMDGPassCategory));
 #endif // PEDIGREE_DEBUG
 
+static void checkCmdLineOptions() {
+  assert(AnalysisBackendType::DA == AnalysisBackendOption &&
+         pedigree::AnalysisScope::Function != AnalysisBackendScopeOption && "");
+}
+
 //
 
 namespace pedigree {
@@ -137,6 +145,8 @@ void MDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool MDGPass::runOnFunction(llvm::Function &CurFunc) {
+  checkCmdLineOptions();
+
   m_Graph = std::make_unique<MDG>();
 
   if (AnalysisBackendType::DA == AnalysisBackendOption) {
