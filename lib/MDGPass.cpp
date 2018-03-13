@@ -94,8 +94,7 @@ static llvm::cl::OptionCategory
 enum class AnalysisBackendType : uint8_t { MDA, DA, MemorySSA };
 
 static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
-    "pedigree-mdg-analysis-backend",
-    llvm::cl::desc("analysis backend selection"),
+    "pedigree-mdg-backend", llvm::cl::desc("analysis backend selection"),
     llvm::cl::values(clEnumValN(AnalysisBackendType::MDA, "mda",
                                 "Memory Dependence Analysis"),
                      clEnumValN(AnalysisBackendType::DA, "da",
@@ -106,8 +105,7 @@ static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
     llvm::cl::cat(PedigreeMDGPassCategory));
 
 static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
-    "pedigree-mdg-analysis-backend-scope",
-    llvm::cl::desc("analysis backend scope"),
+    "pedigree-mdg-backend-scope", llvm::cl::desc("analysis backend scope"),
     llvm::cl::values(
         clEnumValN(pedigree::AnalysisScope::Block, "block", "basic block"),
         clEnumValN(pedigree::AnalysisScope::Function, "function", "function"),
