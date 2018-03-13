@@ -26,9 +26,6 @@
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
 
-#include <cstdint>
-// using uint8_t
-
 #include <cassert>
 // using assert
 
@@ -39,8 +36,6 @@ namespace pedigree {
 
 class MDALocalMDGBuilder : public llvm::InstVisitor<MDALocalMDGBuilder> {
 public:
-  enum class AnalysisScope : uint8_t { Block, Function, Interprocedural };
-
   MDALocalMDGBuilder(MDG &Graph, const llvm::MemoryDependenceAnalysis &MDA,
                      AnalysisScope scope = AnalysisScope::Block)
       : m_Graph(Graph),

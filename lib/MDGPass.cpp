@@ -4,6 +4,8 @@
 
 #include "Utils.hpp"
 
+#include "Pedigree.hpp"
+
 #include "MDGPass.hpp"
 
 #include "MDALocalMDGBuilder.hpp"
@@ -92,21 +94,17 @@ static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
     llvm::cl::init(AnalysisBackendType::MDA),
     llvm::cl::cat(PedigreeMDGPassCategory));
 
-static llvm::cl::opt<pedigree::MDALocalMDGBuilder::AnalysisScope>
-    AnalysisBackendScopeOption(
-        "pedigree-mdg-analysis-backend-scope",
-        llvm::cl::desc("analysis backend scope"),
-        llvm::cl::values(
-            clEnumValN(pedigree::MDALocalMDGBuilder::AnalysisScope::Block,
-                       "block", "basic block"),
-            clEnumValN(pedigree::MDALocalMDGBuilder::AnalysisScope::Function,
-                       "function", "function"),
-            clEnumValN(
-                pedigree::MDALocalMDGBuilder::AnalysisScope::Interprocedural,
-                "interprocedural", "interprocedural"),
-            nullptr),
-        llvm::cl::init(pedigree::MDALocalMDGBuilder::AnalysisScope::Block),
-        llvm::cl::cat(PedigreeMDGPassCategory));
+static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
+    "pedigree-mdg-analysis-backend-scope",
+    llvm::cl::desc("analysis backend scope"),
+    llvm::cl::values(
+        clEnumValN(pedigree::AnalysisScope::Block, "block", "basic block"),
+        clEnumValN(pedigree::AnalysisScope::Function, "function", "function"),
+        clEnumValN(pedigree::AnalysisScope::Interprocedural, "interprocedural",
+                   "interprocedural"),
+        nullptr),
+    llvm::cl::init(pedigree::AnalysisScope::Block),
+    llvm::cl::cat(PedigreeMDGPassCategory));
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
