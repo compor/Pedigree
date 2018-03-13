@@ -12,11 +12,18 @@
 
 #include "DAMDGBuilder.hpp"
 
+#include "llvm/Config/llvm-config.h"
+
 #include "llvm/Analysis/MemoryDependenceAnalysis.h"
 // using llvm::MemoryDependenceAnalysis
 
 #include "llvm/Analysis/DependenceAnalysis.h"
 // using llvm::DependenceAnalysis
+
+#if LLVM_VERSION_MAJOR >= 4 && LLVM_VERSION_MINOR >= 0
+#include "llvm/Analysis/MemorySSA.h"
+#include "llvm/Analysis/MemorySSAUpdater.h"
+#endif
 
 #include "llvm/Analysis/AliasAnalysis.h"
 // using llvm::AliasAnalysis
@@ -84,15 +91,16 @@ static llvm::cl::OptionCategory
     PedigreeMDGPassCategory("Pedigree MDG Pass",
                             "Options for Pedigree MDG pass");
 
-enum class AnalysisBackendType : uint8_t { MDA, DA };
+enum class AnalysisBackendType : uint8_t { MDA, DA, MemorySSA };
 
 static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
     "pedigree-mdg-analysis-backend",
     llvm::cl::desc("analysis backend selection"),
     llvm::cl::values(clEnumValN(AnalysisBackendType::MDA, "mda",
-                                "Memory Dependency Analysis"),
+                                "Memory Dependence Analysis"),
                      clEnumValN(AnalysisBackendType::DA, "da",
                                 "Dependence Analysis"),
+                     clEnumValN(AnalysisBackendType::MemorySSA, "memssa", ""),
                      nullptr),
     llvm::cl::init(AnalysisBackendType::MDA),
     llvm::cl::cat(PedigreeMDGPassCategory));
@@ -131,6 +139,13 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 static void checkCmdLineOptions() {
   assert(AnalysisBackendType::DA == AnalysisBackendOption &&
          pedigree::AnalysisScope::Function != AnalysisBackendScopeOption && "");
+
+#if LLVM_VERSION_MAJOR >= 4 && LLVM_VERSION_MINOR >= 0
+  ;
+#else
+  assert(AnalysisBackendType::MemorySSA == AnalysisBackendOption &&
+         "MemorySSA is not part of this LLVM version!");
+#endif
 }
 
 //
