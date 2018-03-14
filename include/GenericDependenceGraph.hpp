@@ -71,9 +71,7 @@ namespace pedigree {
 
 // generic base for easing the task of creating graph traits for graph nodes
 
-template <typename NodeT,
-          typename DependenceNodeT = GenericDependenceNode<NodeT>>
-struct DependenceNodeGraphTraitsBase {
+template <typename DependenceNodeT> struct DependenceNodeGraphTraitsBase {
   using NodeType = DependenceNodeT;
 
   using ChildPairTy = typename NodeType::DependenceRecordTy;
