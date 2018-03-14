@@ -13,11 +13,15 @@
 #include "boost/any.hpp"
 // using boost::any
 
+#include <vector>
+// using std::vector
+
 #include <utility>
 // using std::pair
 
-#include <vector>
-// using std::vector
+#include <iterator>
+// using std::begin
+// using std::end
 
 namespace pedigree {
 
@@ -83,10 +87,13 @@ template <typename DependenceNodeT> struct DependenceNodeGraphTraitsBase {
   static NodeType *getEntryNode(NodeType *G) { return G; }
 
   static ChildIteratorType child_begin(NodeType *G) {
-    return llvm::map_iterator(G->begin(), ChildDerefFuncTy(ChildDeref));
+    using std::begin;
+    return llvm::map_iterator(begin(*G), ChildDerefFuncTy(ChildDeref));
   }
+
   static ChildIteratorType child_end(NodeType *G) {
-    return llvm::map_iterator(G->end(), ChildDerefFuncTy(ChildDeref));
+    using std::end;
+    return llvm::map_iterator(end(*G), ChildDerefFuncTy(ChildDeref));
   }
 
   static NodeType *ChildDeref(ChildPairTy P) {
