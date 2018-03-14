@@ -72,6 +72,14 @@ public:
 // generic base for easing the task of creating graph traits for graph nodes
 
 template <typename DependenceNodeT> struct DependenceNodeGraphTraitsBase {
+  static_assert(
+      std::is_same<typename std::is_pointer<DependenceNodeT>::type,
+                   std::false_type::type>::value,
+      "Traits class needs to be partially specialized for pointer types!");
+};
+
+template <typename DependenceNodeT>
+struct DependenceNodeGraphTraitsBase<DependenceNodeT *> {
   using NodeType = DependenceNodeT;
 
   using ChildPairTy = typename NodeType::DependenceRecordTy;

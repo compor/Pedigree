@@ -78,35 +78,15 @@ namespace llvm {
 // node traits specialization meant to be used as a supplement to the graph
 // traits specialization
 
-// this template specialization is meant to be used as a supplement to the main
-// graph specialization
-template <> struct GraphTraits<ControlDependenceNode *> {
-  using NodeType = ControlDependenceNode;
-
-  using ChildPairTy = NodeType::DependenceRecordTy;
-  using ChildDerefFuncTy = std::function<NodeType *(ChildPairTy)>;
-
-  using ChildIteratorType =
-      llvm::mapped_iterator<NodeType::iterator, ChildDerefFuncTy>;
-
-  static NodeType *getEntryNode(NodeType *G) { return G; }
-
-  static ChildIteratorType child_begin(NodeType *G) {
-    return llvm::map_iterator(G->begin(), ChildDerefFuncTy(ChildDeref));
-  }
-  static ChildIteratorType child_end(NodeType *G) {
-    return llvm::map_iterator(G->end(), ChildDerefFuncTy(ChildDeref));
-  }
-
-  static NodeType *ChildDeref(ChildPairTy P) {
-    assert(P.first && "Pointer to graph node is null!");
-    return P.first;
-  }
-};
+template <>
+struct GraphTraits<pedigree::ControlDependenceNode *>
+    : public pedigree::DependenceNodeGraphTraitsBase<
+          pedigree::ControlDependenceNode *> {};
 
 template <>
-struct GraphTraits<CDG *> : public GraphTraits<ControlDependenceNode *> {
-  using GraphTy = CDG;
+struct GraphTraits<pedigree::CDG *>
+    : public GraphTraits<pedigree::ControlDependenceNode *> {
+  using GraphTy = pedigree::CDG;
 
   using NodePairTy =
       std::pair<llvm::BasicBlock *, pedigree::ControlDependenceNode *>;
