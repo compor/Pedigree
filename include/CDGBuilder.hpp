@@ -39,7 +39,7 @@ public:
       auto dst = m_Graph.getOrInsertNode(f.first);
       for (auto &e : f.second) {
         auto src = m_Graph.getOrInsertNode(e);
-        src->addDependentNode(dst);
+        src->addDependentNode(dst, {});
       }
     }
   }
