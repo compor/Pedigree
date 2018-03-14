@@ -67,11 +67,7 @@ public:
   inline unsigned getDependeeCount() const { return m_DependeeCount; }
 };
 
-} // namespace pedigree end
-
 // graph traits specializations
-
-namespace pedigree {
 
 // generic base for easing the task of creating graph traits for graph nodes
 

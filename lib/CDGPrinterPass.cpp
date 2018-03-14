@@ -1,3 +1,6 @@
+//
+//
+//
 
 #include "Utils.hpp"
 
@@ -48,14 +51,15 @@ static llvm::cl::list<std::string> CDGDOTFunctionWhitelist(
 
 namespace llvm {
 
-template <> struct DOTGraphTraits<CDG *> : public DefaultDOTGraphTraits {
-  using GraphTy = CDG;
+template <>
+struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
+  using GraphTy = pedigree::CDG;
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
   static std::string getGraphName(const GraphTy *) { return "CDG"; }
 
-  std::string getNodeLabel(const ControlDependenceNode *Node,
+  std::string getNodeLabel(const pedigree::ControlDependenceNode *Node,
                            const GraphTy *Graph) {
 
     if (isSimple() || CDGDOTSimple)
@@ -64,8 +68,9 @@ template <> struct DOTGraphTraits<CDG *> : public DefaultDOTGraphTraits {
       return getCompleteNodeLabel(Node, Graph);
   }
 
-  static std::string getCompleteNodeLabel(const ControlDependenceNode *Node,
-                                          const GraphTy *Graph) {
+  static std::string
+  getCompleteNodeLabel(const pedigree::ControlDependenceNode *Node,
+                       const GraphTy *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
     Node->getUnderlying()->print(os);
@@ -73,15 +78,17 @@ template <> struct DOTGraphTraits<CDG *> : public DefaultDOTGraphTraits {
     return os.str();
   }
 
-  static std::string getSimpleNodeLabel(const ControlDependenceNode *Node,
-                                        const GraphTy *Graph) {
+  static std::string
+  getSimpleNodeLabel(const pedigree::ControlDependenceNode *Node,
+                     const GraphTy *Graph) {
     auto name = Node->getUnderlying()->getName();
 
     return name.str();
   }
 
-  static std::string getNodeAttributes(const ControlDependenceNode *Node,
-                                       const GraphTy *Graph) {
+  static std::string
+  getNodeAttributes(const pedigree::ControlDependenceNode *Node,
+                    const GraphTy *Graph) {
     std::string attr;
 
     if (Graph->getEntryNode() == Node)
@@ -91,7 +98,7 @@ template <> struct DOTGraphTraits<CDG *> : public DefaultDOTGraphTraits {
   }
 
   static std::string
-  getEdgeAttributes(const ControlDependenceNode *Node,
+  getEdgeAttributes(const pedigree::ControlDependenceNode *Node,
                     GraphTraits<GraphTy *>::ChildIteratorType EI,
                     const GraphTy *Graph) {
     if (CDGDOTEdgeAttributes.empty())
@@ -100,7 +107,7 @@ template <> struct DOTGraphTraits<CDG *> : public DefaultDOTGraphTraits {
       return CDGDOTEdgeAttributes;
   }
 
-  bool isNodeHidden(const ControlDependenceNode *Node) {
+  bool isNodeHidden(const pedigree::ControlDependenceNode *Node) {
     return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
   }
 };

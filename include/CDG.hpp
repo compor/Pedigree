@@ -75,7 +75,8 @@ namespace llvm {
 
 // graph traits specializations
 
-using namespace pedigree;
+// node traits specialization meant to be used as a supplement to the graph
+// traits specialization
 
 // this template specialization is meant to be used as a supplement to the main
 // graph specialization
@@ -107,8 +108,10 @@ template <>
 struct GraphTraits<CDG *> : public GraphTraits<ControlDependenceNode *> {
   using GraphTy = CDG;
 
-  using NodePairTy = std::pair<llvm::BasicBlock *, ControlDependenceNode *>;
-  using NodeDerefFuncTy = std::function<ControlDependenceNode &(NodePairTy)>;
+  using NodePairTy =
+      std::pair<llvm::BasicBlock *, pedigree::ControlDependenceNode *>;
+  using NodeDerefFuncTy =
+      std::function<pedigree::ControlDependenceNode &(NodePairTy)>;
 
   using nodes_iterator =
       llvm::mapped_iterator<GraphTy::iterator, NodeDerefFuncTy>;
@@ -126,7 +129,9 @@ struct GraphTraits<CDG *> : public GraphTraits<ControlDependenceNode *> {
     return static_cast<unsigned>(G->numVertices());
   }
 
-  static ControlDependenceNode &NodeDeref(NodePairTy P) { return *P.second; }
+  static pedigree::ControlDependenceNode &NodeDeref(NodePairTy P) {
+    return *P.second;
+  }
 };
 
 } // namespace llvm end
