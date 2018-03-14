@@ -7,6 +7,9 @@
 
 #include "Dependence.hpp"
 
+#include "boost/any.hpp"
+// using boost::any
+
 #include <utility>
 // using std::pair
 
@@ -19,8 +22,7 @@ template <typename NodeT> class GenericDependenceNode {
 public:
   using NodeTy = NodeT;
   using UnderlyingTy = NodeT *;
-  using DependenceRecordTy =
-      std::pair<GenericDependenceNode *, DataDependenceInfo>;
+  using DependenceRecordTy = std::pair<GenericDependenceNode *, boost::any>;
 
 private:
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
@@ -43,10 +45,8 @@ public:
 
   UnderlyingTy getUnderlying() const { return m_Underlying; }
 
-  void addDependentNode(GenericDependenceNode *Node) {
-    m_Edges.emplace_back(
-        Node, DataDependenceInfo{DependenceType::flow, DependenceOrigin::data});
-
+  void addDependentNode(GenericDependenceNode *Node, const boost::any &Info) {
+    m_Edges.emplace_back(Node, Info);
     Node->incrementDependeeCount();
   }
 
