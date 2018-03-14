@@ -122,8 +122,8 @@ using namespace pedigree;
 template <> struct GraphTraits<ControlDependenceNode *> {
   using NodeType = ControlDependenceNode;
 
-  using ChildPairTy = ControlDependenceNode::DependenceRecordTy;
-  using ChildDerefFuncTy = std::function<ControlDependenceNode *(ChildPairTy)>;
+  using ChildPairTy = NodeType::DependenceRecordTy;
+  using ChildDerefFuncTy = std::function<NodeType *(ChildPairTy)>;
 
   using ChildIteratorType =
       llvm::mapped_iterator<NodeType::iterator, ChildDerefFuncTy>;
@@ -137,7 +137,7 @@ template <> struct GraphTraits<ControlDependenceNode *> {
     return llvm::map_iterator(G->end(), ChildDerefFuncTy(ChildDeref));
   }
 
-  static ControlDependenceNode *ChildDeref(ChildPairTy P) {
+  static NodeType *ChildDeref(ChildPairTy P) {
     assert(P.first && "Pointer to graph node is null!");
     return P.first;
   }
