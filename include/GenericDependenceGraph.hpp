@@ -29,9 +29,9 @@ template <typename NodeT> class GenericDependenceNode {
 public:
   using NodeTy = NodeT;
   using UnderlyingTy = NodeT *;
-  using DependenceRecordTy = std::pair<GenericDependenceNode *, boost::any>;
 
 private:
+  using DependenceRecordTy = std::pair<GenericDependenceNode *, boost::any>;
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
   EdgeStorageTy m_Edges;
 
@@ -42,6 +42,7 @@ private:
   unsigned m_DependeeCount;
 
 public:
+  using value_type = typename EdgeStorageTy::value_type;
   using EdgesSizeTy = typename EdgeStorageTy::size_type;
 
   using iterator = typename EdgeStorageTy::iterator;
@@ -82,7 +83,7 @@ template <typename DependenceNodeT>
 struct DependenceNodeGraphTraitsBase<DependenceNodeT *> {
   using NodeType = DependenceNodeT;
 
-  using ChildPairTy = typename NodeType::DependenceRecordTy;
+  using ChildPairTy = typename NodeType::value_type;
   using ChildDerefFuncTy = std::function<NodeType *(ChildPairTy)>;
 
   using ChildIteratorType =
