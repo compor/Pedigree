@@ -51,22 +51,22 @@ static llvm::cl::list<std::string> DDGDOTFunctionWhitelist(
 
 namespace llvm {
 
-template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
-  using GraphTy = DDG;
+template <>
+struct DOTGraphTraits<pedigree::DDG *> : public DefaultDOTGraphTraits {
+  using GraphTy = pedigree::DDG;
+  using GT = GraphTraits<pedigree::DDG *>;
+  using NodeType = GT::NodeType;
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
   static std::string getGraphName(const GraphTy *) { return "DDG"; }
 
-  std::string getNodeLabel(const DependenceNode *Node, const GraphTy *Graph) {
-
-    if (isSimple() || DDGDOTSimple)
-      return getSimpleNodeLabel(Node, Graph);
-    else
-      return getCompleteNodeLabel(Node, Graph);
+  std::string getNodeLabel(const NodeType *Node, const GraphTy *Graph) {
+    return isSimple() || DDGDOTSimple ? getSimpleNodeLabel(Node, Graph)
+                                      : getCompleteNodeLabel(Node, Graph);
   }
 
-  static std::string getCompleteNodeLabel(const DependenceNode *Node,
+  static std::string getCompleteNodeLabel(const NodeType *Node,
                                           const GraphTy *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
@@ -75,17 +75,14 @@ template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
     return os.str();
   }
 
-  static std::string getSimpleNodeLabel(const DependenceNode *Node,
+  static std::string getSimpleNodeLabel(const NodeType *Node,
                                         const GraphTy *Graph) {
     auto name = Node->getUnderlying()->getName();
 
-    if (name.empty())
-      return Node->getUnderlying()->getOpcodeName();
-    else
-      return name.str();
+    return name.empty() ? Node->getUnderlying()->getOpcodeName() : name.str();
   }
 
-  static std::string getNodeAttributes(const DependenceNode *Node,
+  static std::string getNodeAttributes(const NodeType *Node,
                                        const GraphTy *Graph) {
     std::string attr;
 
@@ -95,17 +92,14 @@ template <> struct DOTGraphTraits<DDG *> : public DefaultDOTGraphTraits {
     return attr;
   }
 
-  static std::string
-  getEdgeAttributes(const DependenceNode *Node,
-                    GraphTraits<GraphTy *>::ChildIteratorType EI,
-                    const GraphTy *Graph) {
-    if (DDGDOTEdgeAttributes.empty())
-      return "color=blue";
-    else
-      return DDGDOTEdgeAttributes;
+  static std::string getEdgeAttributes(const NodeType *Node,
+                                       GT::ChildIteratorType EI,
+                                       const GraphTy *Graph) {
+    return DDGDOTEdgeAttributes.empty() ? "color=blue"
+                                        : DDGDOTEdgeAttributes.getValue();
   }
 
-  bool isNodeHidden(const DependenceNode *Node) {
+  bool isNodeHidden(const NodeType *Node) {
     return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
   }
 };
@@ -120,11 +114,11 @@ struct AnalysisDependenceGraphPassTraits {
 
 namespace pedigree {
 
-struct DDGPrinterPass
-    : public llvm::DOTGraphTraitsPrinter<
-          DDGPass, false, DDG *, llvm::AnalysisDependenceGraphPassTraits> {
+struct DDGPrinterPass : public llvm::DOTGraphTraitsPrinter<
+                            DDGPass, false, pedigree::DDG *,
+                            llvm::AnalysisDependenceGraphPassTraits> {
   using Base =
-      llvm::DOTGraphTraitsPrinter<DDGPass, false, DDG *,
+      llvm::DOTGraphTraitsPrinter<DDGPass, false, pedigree::DDG *,
                                   llvm::AnalysisDependenceGraphPassTraits>;
   static char ID;
 

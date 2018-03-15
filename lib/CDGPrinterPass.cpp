@@ -54,23 +54,20 @@ namespace llvm {
 template <>
 struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
   using GraphTy = pedigree::CDG;
+  using GT = GraphTraits<pedigree::CDG *>;
+  using NodeType = GT::NodeType;
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
   static std::string getGraphName(const GraphTy *) { return "CDG"; }
 
-  std::string getNodeLabel(const pedigree::ControlDependenceNode *Node,
-                           const GraphTy *Graph) {
-
-    if (isSimple() || CDGDOTSimple)
-      return getSimpleNodeLabel(Node, Graph);
-    else
-      return getCompleteNodeLabel(Node, Graph);
+  std::string getNodeLabel(const NodeType *Node, const GraphTy *Graph) {
+    return isSimple() || CDGDOTSimple ? getSimpleNodeLabel(Node, Graph)
+                                      : getCompleteNodeLabel(Node, Graph);
   }
 
-  static std::string
-  getCompleteNodeLabel(const pedigree::ControlDependenceNode *Node,
-                       const GraphTy *Graph) {
+  static std::string getCompleteNodeLabel(const NodeType *Node,
+                                          const GraphTy *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
     Node->getUnderlying()->print(os);
@@ -78,17 +75,15 @@ struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
     return os.str();
   }
 
-  static std::string
-  getSimpleNodeLabel(const pedigree::ControlDependenceNode *Node,
-                     const GraphTy *Graph) {
+  static std::string getSimpleNodeLabel(const NodeType *Node,
+                                        const GraphTy *Graph) {
     auto name = Node->getUnderlying()->getName();
 
     return name.str();
   }
 
-  static std::string
-  getNodeAttributes(const pedigree::ControlDependenceNode *Node,
-                    const GraphTy *Graph) {
+  static std::string getNodeAttributes(const NodeType *Node,
+                                       const GraphTy *Graph) {
     std::string attr;
 
     if (Graph->getEntryNode() == Node)
@@ -97,17 +92,14 @@ struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
     return attr;
   }
 
-  static std::string
-  getEdgeAttributes(const pedigree::ControlDependenceNode *Node,
-                    GraphTraits<GraphTy *>::ChildIteratorType EI,
-                    const GraphTy *Graph) {
-    if (CDGDOTEdgeAttributes.empty())
-      return "color=blue";
-    else
-      return CDGDOTEdgeAttributes;
+  static std::string getEdgeAttributes(const NodeType *Node,
+                                       GT::ChildIteratorType EI,
+                                       const GraphTy *Graph) {
+    return CDGDOTEdgeAttributes.empty() ? "color=blue"
+                                        : CDGDOTEdgeAttributes.getValue();
   }
 
-  bool isNodeHidden(const pedigree::ControlDependenceNode *Node) {
+  bool isNodeHidden(const NodeType *Node) {
     return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
   }
 };
