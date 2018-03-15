@@ -100,8 +100,7 @@ struct GraphTraits<pedigree::CDG *>
   using GraphTy = pedigree::CDG;
 
   using NodePairTy = GraphTy::value_type;
-  using NodeDerefFuncTy =
-      std::function<pedigree::ControlDependenceNode &(NodePairTy &)>;
+  using NodeDerefFuncTy = std::function<NodeType &(NodePairTy &)>;
 
   using nodes_iterator =
       llvm::mapped_iterator<GraphTy::iterator, NodeDerefFuncTy>;
@@ -126,9 +125,7 @@ struct GraphTraits<pedigree::CDG *>
   // graph class itself
   // TODO this also forces us to use a ref to pass the node pair since the
   // current smart pointer used disallows copy
-  static pedigree::ControlDependenceNode &NodeDeref(NodePairTy &P) {
-    return *P.second.get();
-  }
+  static NodeType &NodeDeref(NodePairTy &P) { return *P.second.get(); }
 };
 
 } // namespace llvm end
