@@ -15,15 +15,15 @@
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
-#include <vector>
-// using std::vector
+#include <map>
+// using std::map
 
 #include <memory>
 // using std::unique_ptr
 // using std::make_unique
 
-#include <utility>
-// using std::pair
+#include <algorithm>
+// using std::for_each
 
 #include <iterator>
 // using std::begin
@@ -50,9 +50,6 @@ public:
 
   using iterator = NodeMapTy::iterator;
   using const_iterator = NodeMapTy::const_iterator;
-
-  CDG() = default;
-  ~CDG() = default;
 
   decltype(auto) getOrInsertNode(UnderlyingTy Unit) {
     auto &node = m_NodeMap[Unit];
