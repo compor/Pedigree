@@ -34,14 +34,14 @@ namespace pedigree {
 using ControlDependenceNode = GenericDependenceNode<llvm::BasicBlock>;
 
 class CDG {
-  using UnderlyingTy = ControlDependenceNode::UnderlyingTy;
-  using NodeMapTy =
-      std::map<UnderlyingTy, std::unique_ptr<ControlDependenceNode>>;
+  using NodeTy = ControlDependenceNode;
+  using UnderlyingTy = NodeTy::UnderlyingTy;
+  using NodeMapTy = std::map<UnderlyingTy, std::unique_ptr<NodeTy>>;
   NodeMapTy m_NodeMap;
 
 public:
   using VerticesSizeTy = NodeMapTy::size_type;
-  using EdgesSizeTy = ControlDependenceNode::EdgesSizeTy;
+  using EdgesSizeTy = NodeTy::EdgesSizeTy;
   // TODO hide the exposure of internal implemenation using smart pointer
   // TODO potentially use a std::reference_wrapper?
   // this is important because map-like containers expose the semantic
@@ -57,7 +57,7 @@ public:
   decltype(auto) getOrInsertNode(UnderlyingTy Unit) {
     auto &node = m_NodeMap[Unit];
     if (!node)
-      node = std::make_unique<ControlDependenceNode>(Unit);
+      node = std::make_unique<NodeTy>(Unit);
 
     return node.get();
   }
@@ -76,10 +76,8 @@ public:
   inline decltype(auto) begin() const { return m_NodeMap.begin(); }
   inline decltype(auto) end() const { return m_NodeMap.end(); }
 
-  const ControlDependenceNode *getEntryNode() const {
-    return begin()->second.get();
-  }
-  ControlDependenceNode *getEntryNode() { return begin()->second.get(); }
+  const NodeTy *getEntryNode() const { return begin()->second.get(); }
+  NodeTy *getEntryNode() { return begin()->second.get(); }
 };
 
 } // namespace pedigree end
