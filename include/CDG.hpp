@@ -42,6 +42,10 @@ class CDG {
 public:
   using VerticesSizeTy = NodeMapTy::size_type;
   using EdgesSizeTy = ControlDependenceNode::EdgesSizeTy;
+  // TODO hide the exposure of internal implemenation using smart pointer
+  // TODO potentially use a std::reference_wrapper?
+  // this is important because map-like containers expose the semantic
+  // immutability of their keys as const key_type in their value_type
   using value_type = typename NodeMapTy::value_type;
 
   using iterator = NodeMapTy::iterator;
@@ -119,6 +123,11 @@ struct GraphTraits<pedigree::CDG *>
     return static_cast<unsigned>(G->numVertices());
   }
 
+  // TODO we might need to hide the implementation detail of using a smart
+  // pointer in the graph class by mapping the iterator provided by it in the
+  // graph class itself
+  // TODO this also forces us to use a ref to pass the node pair since the
+  // current smart pointer used disallows copy
   static pedigree::ControlDependenceNode &NodeDeref(NodePairTy &P) {
     return *P.second.get();
   }
