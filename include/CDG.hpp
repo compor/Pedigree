@@ -97,7 +97,14 @@ struct GraphTraits<pedigree::CDG *>
   using GraphTy = pedigree::CDG;
 
   using NodePairTy = GraphTy::value_type;
-  using NodeDerefFuncTy = std::function<NodeType &(NodePairTy &)>;
+
+  // TODO we might need to hide the implementation detail of using a smart
+  // pointer in the graph class by mapping the iterator provided by it in the
+  // graph class itself
+  // TODO this also forces us to use a ref to pass the node pair since the
+  // current smart pointer used disallows copy
+  static NodeType &NodeDeref(NodePairTy &P) { return *P.second.get(); }
+  using NodeDerefFuncTy = std::function<decltype(NodeDeref)>;
 
   using nodes_iterator =
       llvm::mapped_iterator<GraphTy::iterator, NodeDerefFuncTy>;
@@ -108,6 +115,7 @@ struct GraphTraits<pedigree::CDG *>
     using std::begin;
     return llvm::map_iterator(begin(*G), NodeDerefFuncTy(NodeDeref));
   }
+
   static nodes_iterator nodes_end(GraphTy *G) {
     using std::end;
     return llvm::map_iterator(end(*G), NodeDerefFuncTy(NodeDeref));
@@ -116,13 +124,6 @@ struct GraphTraits<pedigree::CDG *>
   static unsigned size(GraphTy *G) {
     return static_cast<unsigned>(G->numVertices());
   }
-
-  // TODO we might need to hide the implementation detail of using a smart
-  // pointer in the graph class by mapping the iterator provided by it in the
-  // graph class itself
-  // TODO this also forces us to use a ref to pass the node pair since the
-  // current smart pointer used disallows copy
-  static NodeType &NodeDeref(NodePairTy &P) { return *P.second.get(); }
 };
 
 } // namespace llvm end

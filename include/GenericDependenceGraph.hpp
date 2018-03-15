@@ -16,6 +16,11 @@
 #include <utility>
 // using std::pair
 
+#include <type_traits>
+// using std::is_same
+// using std::is_pointer
+// using std::false_type
+
 #include <iterator>
 // using std::begin
 // using std::end

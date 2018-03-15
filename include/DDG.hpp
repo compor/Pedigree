@@ -106,6 +106,7 @@ struct GraphTraits<pedigree::DDG *>
     using std::begin;
     return llvm::map_iterator(begin(*G), NodeDerefFuncTy(NodeDeref));
   }
+
   static nodes_iterator nodes_end(GraphTy *G) {
     using std::end;
     return llvm::map_iterator(end(*G), NodeDerefFuncTy(NodeDeref));
