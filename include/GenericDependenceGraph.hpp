@@ -24,11 +24,10 @@ namespace pedigree {
 
 struct NoEdgeInfo {};
 
-template <typename NodeT, typename EdgeInfoT = NoEdgeInfo>
+template <typename WrappedNodeT, typename EdgeInfoT = NoEdgeInfo>
 class GenericDependenceNode {
 public:
-  using NodeTy = NodeT;
-  using UnderlyingTy = NodeT *;
+  using UnderlyingTy = WrappedNodeT *;
   using EdgeInfoTy = EdgeInfoT;
 
 private:
