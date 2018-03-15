@@ -10,9 +10,6 @@
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
-#include "boost/any.hpp"
-// using boost::any
-
 #include <vector>
 // using std::vector
 
@@ -25,13 +22,17 @@
 
 namespace pedigree {
 
-template <typename NodeT> class GenericDependenceNode {
+struct NoEdgeInfo {};
+
+template <typename NodeT, typename EdgeInfoT = NoEdgeInfo>
+class GenericDependenceNode {
 public:
   using NodeTy = NodeT;
   using UnderlyingTy = NodeT *;
+  using EdgeInfoTy = EdgeInfoT;
 
 private:
-  using DependenceRecordTy = std::pair<GenericDependenceNode *, boost::any>;
+  using DependenceRecordTy = std::pair<GenericDependenceNode *, EdgeInfoTy>;
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
   EdgeStorageTy m_Edges;
 
@@ -53,7 +54,7 @@ public:
 
   UnderlyingTy getUnderlying() const { return m_Underlying; }
 
-  void addDependentNode(GenericDependenceNode *Node, const boost::any &Info) {
+  void addDependentNode(GenericDependenceNode *Node, const EdgeInfoTy &Info) {
     m_Edges.emplace_back(Node, Info);
     Node->incrementDependeeCount();
   }
