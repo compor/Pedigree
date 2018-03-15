@@ -15,16 +15,6 @@
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
-#include <map>
-// using std::map
-
-#include <memory>
-// using std::unique_ptr
-// using std::make_unique
-
-#include <algorithm>
-// using std::for_each
-
 #include <iterator>
 // using std::begin
 // using std::end
@@ -33,45 +23,7 @@ namespace pedigree {
 
 using MemoryDependenceNode = GenericDependenceNode<llvm::Instruction>;
 
-class MDG {
-  using NodeTy = MemoryDependenceNode;
-  using UnderlyingTy = NodeTy::UnderlyingTy;
-  using NodeMapTy = std::map<UnderlyingTy, std::unique_ptr<NodeTy>>;
-  NodeMapTy m_NodeMap;
-
-public:
-  using VerticesSizeTy = NodeMapTy::size_type;
-  using EdgesSizeTy = NodeTy::EdgesSizeTy;
-  using value_type = NodeMapTy::value_type;
-
-  using iterator = NodeMapTy::iterator;
-  using const_iterator = NodeMapTy::const_iterator;
-
-  NodeTy *getOrInsertNode(UnderlyingTy Unit) {
-    auto &node = m_NodeMap[Unit];
-    if (!node)
-      node = std::make_unique<NodeTy>(Unit);
-
-    return node.get();
-  }
-
-  VerticesSizeTy numVertices() const { return m_NodeMap.size(); }
-
-  EdgesSizeTy numEdges() const {
-    NodeMapTy::size_type n{};
-    std::for_each(std::begin(m_NodeMap), std::end(m_NodeMap),
-                  [&n](const auto &e) { n += e.second.get()->numEdges(); });
-    return n;
-  }
-
-  inline decltype(auto) begin() { return m_NodeMap.begin(); }
-  inline decltype(auto) end() { return m_NodeMap.end(); }
-  inline decltype(auto) begin() const { return m_NodeMap.begin(); }
-  inline decltype(auto) end() const { return m_NodeMap.end(); }
-
-  const NodeTy *getEntryNode() const { return begin()->second.get(); }
-  NodeTy *getEntryNode() { return begin()->second.get(); }
-};
+using MDG = GenericDependenceGraph<MemoryDependenceNode>;
 
 } // namespace pedigree end
 
