@@ -31,7 +31,7 @@ public:
       auto *user = llvm::dyn_cast<llvm::Instruction>(u.getUser());
       if (user) {
         auto dst = m_Graph.getOrInsertNode(user);
-        src->addDependentNode(dst);
+        src->addDependentNode(dst, {});
       }
     }
   }

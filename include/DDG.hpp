@@ -7,95 +7,52 @@
 
 #include "Dependence.hpp"
 
+#include "GenericDependenceGraph.hpp"
+
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
-#include <vector>
-// using std::vector
-
 #include <map>
 // using std::map
 
-#include <utility>
-// using std::pair
+#include <memory>
+// using std::unique_ptr
+// using std::make_unique
 
 #include <algorithm>
 // using std::for_each
 
-#include <cassert>
-// using assert
+#include <iterator>
+// using std::begin
+// using std::end
 
 namespace pedigree {
 
-class DependenceNode {
-public:
-  using DependenceRecordTy = std::pair<DependenceNode *, DataDependenceInfo>;
-  using UnderlyingTy = llvm::Instruction *;
-
-private:
-  using EdgeStorageTy = std::vector<DependenceRecordTy>;
-  EdgeStorageTy m_Edges;
-
-  inline void incrementDependeeCount() { ++m_DependeeCount; }
-  inline void decrementDependeeCount() { --m_DependeeCount; }
-
-  UnderlyingTy m_Underlying;
-  unsigned m_DependeeCount;
-
-public:
-  using EdgesSizeTy = EdgeStorageTy::size_type;
-
-  using iterator = EdgeStorageTy::iterator;
-  using const_iterator = EdgeStorageTy::const_iterator;
-
-  DependenceNode(UnderlyingTy Unit) : m_Underlying(Unit), m_DependeeCount(0) {}
-
-  UnderlyingTy getUnderlying() const { return m_Underlying; }
-
-  void addDependentNode(DependenceNode *Node) {
-    m_Edges.emplace_back(
-        Node, DataDependenceInfo{DependenceType::flow, DependenceOrigin::data});
-
-    Node->incrementDependeeCount();
-  }
-
-  EdgesSizeTy numEdges() const { return m_Edges.size(); }
-
-  inline decltype(auto) begin() { return m_Edges.begin(); }
-  inline decltype(auto) end() { return m_Edges.end(); }
-  inline decltype(auto) begin() const { return m_Edges.begin(); }
-  inline decltype(auto) end() const { return m_Edges.end(); }
-
-  inline unsigned getDependeeCount() const { return m_DependeeCount; }
-};
+using DataDependenceNode = GenericDependenceNode<llvm::Instruction>;
 
 class DDG {
-  using UnderlyingTy = DependenceNode::UnderlyingTy;
-  using NodeMapTy = std::map<UnderlyingTy, DependenceNode *>;
+  using NodeTy = DataDependenceNode;
+  using UnderlyingTy = NodeTy::UnderlyingTy;
+  using NodeMapTy = std::map<UnderlyingTy, std::unique_ptr<NodeTy>>;
   NodeMapTy m_NodeMap;
 
 public:
   using VerticesSizeTy = NodeMapTy::size_type;
-  using EdgesSizeTy = DependenceNode::EdgesSizeTy;
+  using EdgesSizeTy = NodeTy::EdgesSizeTy;
+  using value_type = typename NodeMapTy::value_type;
 
   using iterator = NodeMapTy::iterator;
   using const_iterator = NodeMapTy::const_iterator;
 
-  DDG() = default;
-  ~DDG() {
-    for (auto &e : m_NodeMap)
-      delete e.second;
-  }
-
-  DependenceNode *getOrInsertNode(UnderlyingTy Unit) {
+  NodeTy *getOrInsertNode(UnderlyingTy Unit) {
     auto &node = m_NodeMap[Unit];
-    if (node)
-      return node;
+    if (!node)
+      node = std::make_unique<NodeTy>(Unit);
 
-    return node = new DependenceNode(Unit);
+    return node.get();
   }
 
   VerticesSizeTy numVertices() const { return m_NodeMap.size(); }
@@ -103,7 +60,7 @@ public:
   EdgesSizeTy numEdges() const {
     NodeMapTy::size_type n{};
     std::for_each(std::begin(m_NodeMap), std::end(m_NodeMap),
-                  [&n](const auto &e) { n += e.second->numEdges(); });
+                  [&n](const auto &e) { n += e.second.get()->numEdges(); });
     return n;
   }
 
@@ -112,8 +69,8 @@ public:
   inline decltype(auto) begin() const { return m_NodeMap.begin(); }
   inline decltype(auto) end() const { return m_NodeMap.end(); }
 
-  const DependenceNode *getEntryNode() const { return begin()->second; }
-  DependenceNode *getEntryNode() { return begin()->second; }
+  const NodeTy *getEntryNode() const { return begin()->second.get(); }
+  NodeTy *getEntryNode() { return begin()->second.get(); }
 };
 
 } // namespace pedigree end
@@ -122,39 +79,23 @@ namespace llvm {
 
 // graph traits specializations
 
-using namespace pedigree;
+// node traits specialization meant to be used as a supplement to the graph
+// traits specialization
 
-// this template specialization is meant to be used as a supplement to the main
-// graph specialization
-template <> struct GraphTraits<DependenceNode *> {
-  using NodeType = DependenceNode;
+template <>
+struct GraphTraits<pedigree::DataDependenceNode *>
+    : public pedigree::DependenceNodeGraphTraitsBase<
+          pedigree::DataDependenceNode *> {};
 
-  using ChildPairTy = DependenceNode::DependenceRecordTy;
-  using ChildDerefFuncTy = std::function<DependenceNode *(ChildPairTy)>;
+template <>
+struct GraphTraits<pedigree::DDG *>
+    : public GraphTraits<pedigree::DataDependenceNode *> {
+  using GraphTy = pedigree::DDG;
 
-  using ChildIteratorType =
-      llvm::mapped_iterator<NodeType::iterator, ChildDerefFuncTy>;
+  using NodePairTy = GraphTy::value_type;
 
-  static NodeType *getEntryNode(NodeType *G) { return G; }
-
-  static ChildIteratorType child_begin(NodeType *G) {
-    return llvm::map_iterator(G->begin(), ChildDerefFuncTy(ChildDeref));
-  }
-  static ChildIteratorType child_end(NodeType *G) {
-    return llvm::map_iterator(G->end(), ChildDerefFuncTy(ChildDeref));
-  }
-
-  static DependenceNode *ChildDeref(ChildPairTy P) {
-    assert(P.first && "Pointer to graph node is null!");
-    return P.first;
-  }
-};
-
-template <> struct GraphTraits<DDG *> : public GraphTraits<DependenceNode *> {
-  using GraphTy = DDG;
-
-  using NodePairTy = std::pair<llvm::Instruction *, DependenceNode *>;
-  using NodeDerefFuncTy = std::function<DependenceNode &(NodePairTy)>;
+  static NodeType &NodeDeref(NodePairTy &P) { return *P.second.get(); }
+  using NodeDerefFuncTy = std::function<decltype(NodeDeref)>;
 
   using nodes_iterator =
       llvm::mapped_iterator<GraphTy::iterator, NodeDerefFuncTy>;
@@ -162,17 +103,17 @@ template <> struct GraphTraits<DDG *> : public GraphTraits<DependenceNode *> {
   static NodeType *getEntryNode(GraphTy *G) { return G->getEntryNode(); }
 
   static nodes_iterator nodes_begin(GraphTy *G) {
-    return llvm::map_iterator(G->begin(), NodeDerefFuncTy(NodeDeref));
+    using std::begin;
+    return llvm::map_iterator(begin(*G), NodeDerefFuncTy(NodeDeref));
   }
   static nodes_iterator nodes_end(GraphTy *G) {
-    return llvm::map_iterator(G->end(), NodeDerefFuncTy(NodeDeref));
+    using std::end;
+    return llvm::map_iterator(end(*G), NodeDerefFuncTy(NodeDeref));
   }
 
   static unsigned size(GraphTy *G) {
     return static_cast<unsigned>(G->numVertices());
   }
-
-  static DependenceNode &NodeDeref(NodePairTy P) { return *P.second; }
 };
 
 } // namespace llvm end
