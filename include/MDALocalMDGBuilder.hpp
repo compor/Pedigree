@@ -92,7 +92,7 @@ private:
 
     for (const auto &e : dependees) {
       auto src = m_Graph.getOrInsertNode(e);
-      src->addDependentNode(dst);
+      src->addDependentNode(dst, {});
     }
   }
 };

@@ -50,7 +50,7 @@ public:
       for (auto jj = ii; jj != ie; ++jj)
         if (auto D = m_DA.depends(*ii, *jj, true)) {
           auto dst = m_Graph.getOrInsertNode(*jj);
-          src->addDependentNode(dst);
+          src->addDependentNode(dst, {});
         }
     }
   }

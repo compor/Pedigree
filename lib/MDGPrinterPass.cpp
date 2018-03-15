@@ -51,22 +51,22 @@ static llvm::cl::list<std::string> MDGDOTFunctionWhitelist(
 
 namespace llvm {
 
-template <> struct DOTGraphTraits<MDG *> : public DefaultDOTGraphTraits {
-  using GraphTy = MDG;
+template <>
+struct DOTGraphTraits<pedigree::MDG *> : public DefaultDOTGraphTraits {
+  using GraphTy = pedigree::MDG;
+  using GT = GraphTraits<pedigree::MDG *>;
+  using NodeType = GT::NodeType;
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
   static std::string getGraphName(const GraphTy *) { return "MDG"; }
 
-  std::string getNodeLabel(const MemoryDependenceNode *Node, const GraphTy *Graph) {
-
-    if (isSimple() || MDGDOTSimple)
-      return getSimpleNodeLabel(Node, Graph);
-    else
-      return getCompleteNodeLabel(Node, Graph);
+  std::string getNodeLabel(const NodeType *Node, const GraphTy *Graph) {
+    return isSimple() || MDGDOTSimple ? getSimpleNodeLabel(Node, Graph)
+                                      : getCompleteNodeLabel(Node, Graph);
   }
 
-  static std::string getCompleteNodeLabel(const MemoryDependenceNode *Node,
+  static std::string getCompleteNodeLabel(const NodeType *Node,
                                           const GraphTy *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
@@ -75,7 +75,7 @@ template <> struct DOTGraphTraits<MDG *> : public DefaultDOTGraphTraits {
     return os.str();
   }
 
-  static std::string getSimpleNodeLabel(const MemoryDependenceNode *Node,
+  static std::string getSimpleNodeLabel(const NodeType *Node,
                                         const GraphTy *Graph) {
     auto name = Node->getUnderlying()->getName();
 
@@ -85,7 +85,7 @@ template <> struct DOTGraphTraits<MDG *> : public DefaultDOTGraphTraits {
       return name.str();
   }
 
-  static std::string getNodeAttributes(const MemoryDependenceNode *Node,
+  static std::string getNodeAttributes(const NodeType *Node,
                                        const GraphTy *Graph) {
     std::string attr;
 
@@ -95,17 +95,14 @@ template <> struct DOTGraphTraits<MDG *> : public DefaultDOTGraphTraits {
     return attr;
   }
 
-  static std::string
-  getEdgeAttributes(const MemoryDependenceNode *Node,
-                    GraphTraits<GraphTy *>::ChildIteratorType EI,
-                    const GraphTy *Graph) {
-    if (MDGDOTEdgeAttributes.empty())
-      return "color=blue";
-    else
-      return MDGDOTEdgeAttributes;
+  static std::string getEdgeAttributes(const NodeType *Node,
+                                       GT::ChildIteratorType EI,
+                                       const GraphTy *Graph) {
+    return MDGDOTEdgeAttributes.empty() ? "color=blue"
+                                        : MDGDOTEdgeAttributes.getValue();
   }
 
-  bool isNodeHidden(const MemoryDependenceNode *Node) {
+  bool isNodeHidden(const NodeType *Node) {
     return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
   }
 };
