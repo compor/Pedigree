@@ -42,6 +42,7 @@ struct NoEdgeInfo {};
 template <typename WrappedNodeT, typename EdgeInfoT = NoEdgeInfo>
 class GenericDependenceNode {
 public:
+  using NodeType = GenericDependenceNode;
   using UnderlyingTy = WrappedNodeT *;
   using EdgeInfoTy = EdgeInfoT;
 
@@ -74,6 +75,7 @@ public:
   }
 
   EdgesSizeTy numEdges() const { return m_Edges.size(); }
+  decltype(auto) size() const { return numEdges(); }
 
   inline decltype(auto) begin() { return m_Edges.begin(); }
   inline decltype(auto) end() { return m_Edges.end(); }
