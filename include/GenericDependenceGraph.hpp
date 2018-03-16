@@ -31,6 +31,9 @@
 // using std::is_pointer
 // using std::false_type
 
+#include <functional>
+// using std::function
+
 #include <iterator>
 // using std::begin
 // using std::end
@@ -81,6 +84,22 @@ public:
   inline decltype(auto) end() { return m_Edges.end(); }
   inline decltype(auto) begin() const { return m_Edges.begin(); }
   inline decltype(auto) end() const { return m_Edges.end(); }
+
+  static GenericDependenceNode *nodes_iterator_map(value_type &P) {
+    assert(P.first && "Pointer to graph node is null!");
+    return P.first;
+  }
+
+  using nodes_iterator = llvm::mapped_iterator<
+      iterator, std::function<GenericDependenceNode *(value_type &)>>;
+
+  inline decltype(auto) nodes_begin() {
+    return nodes_iterator(m_Edges.begin(), nodes_iterator_map);
+  }
+
+  inline decltype(auto) nodes_end() {
+    return nodes_iterator(m_Edges.end(), nodes_iterator_map);
+  }
 
   inline unsigned getDependeeCount() const { return m_DependeeCount; }
 };
