@@ -163,28 +163,16 @@ template <typename DependenceNodeT>
 struct DependenceNodeGraphTraitsBase<DependenceNodeT *> {
   using NodeType = DependenceNodeT;
 
-  using ChildPairTy = typename NodeType::value_type;
-  using ChildDerefFuncTy = std::function<NodeType *(ChildPairTy)>;
-
-  using ChildIteratorType =
-      llvm::mapped_iterator<typename NodeType::iterator, ChildDerefFuncTy>;
-
   static NodeType *getEntryNode(NodeType *G) { return G; }
+  static unsigned size(NodeType *G) { return G->size(); }
 
-  static ChildIteratorType child_begin(NodeType *G) {
-    using std::begin;
-    return llvm::map_iterator(begin(*G), ChildDerefFuncTy(ChildDeref));
-  }
+  using ChildIteratorType = typename DependenceNodeT::nodes_iterator;
+  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
+  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
 
-  static ChildIteratorType child_end(NodeType *G) {
-    using std::end;
-    return llvm::map_iterator(end(*G), ChildDerefFuncTy(ChildDeref));
-  }
-
-  static NodeType *ChildDeref(ChildPairTy P) {
-    assert(P.first && "Pointer to graph node is null!");
-    return P.first;
-  }
+  using nodes_iterator = typename DependenceNodeT::nodes_iterator;
+  static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
+  static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
 };
 
 } // namespace pedigree end
