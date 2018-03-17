@@ -106,6 +106,7 @@ public:
 
 template <typename NodeT> class GenericDependenceGraph {
   using NodeTy = NodeT;
+  using NodeType = NodeT;
   using UnderlyingTy = typename NodeTy::UnderlyingTy;
   using NodeMapTy = std::map<UnderlyingTy, std::unique_ptr<NodeTy>>;
   NodeMapTy m_NodeMap;
@@ -131,6 +132,7 @@ public:
   }
 
   VerticesSizeTy numVertices() const { return m_NodeMap.size(); }
+  decltype(auto) size() const { return numVertices(); }
 
   EdgesSizeTy numEdges() const {
     EdgesSizeTy n{};
@@ -143,6 +145,22 @@ public:
   inline decltype(auto) end() { return m_NodeMap.end(); }
   inline decltype(auto) begin() const { return m_NodeMap.begin(); }
   inline decltype(auto) end() const { return m_NodeMap.end(); }
+
+  static NodeType *nodes_iterator_map(value_type &P) {
+    assert(P.first && "Pointer to graph node is null!");
+    return *P.second.get();
+  }
+
+  using nodes_iterator =
+      llvm::mapped_iterator<iterator, std::function<NodeTy *(value_type &)>>;
+
+  inline decltype(auto) nodes_begin() {
+    return nodes_iterator(m_NodeMap.begin(), nodes_iterator_map);
+  }
+
+  inline decltype(auto) nodes_end() {
+    return nodes_iterator(m_NodeMap.end(), nodes_iterator_map);
+  }
 
   const NodeTy *getEntryNode() const { return begin()->second.get(); }
   NodeTy *getEntryNode() { return begin()->second.get(); }
