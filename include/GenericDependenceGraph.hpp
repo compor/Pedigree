@@ -52,11 +52,11 @@ public:
 private:
   using DependenceRecordTy = std::pair<GenericDependenceNode *, EdgeInfoTy>;
   using EdgeStorageTy = std::vector<DependenceRecordTy>;
-  EdgeStorageTy m_Edges;
 
   inline void incrementDependeeCount() { ++m_DependeeCount; }
   inline void decrementDependeeCount() { --m_DependeeCount; }
 
+  EdgeStorageTy m_Edges;
   UnderlyingTy m_Underlying;
   unsigned m_DependeeCount;
 
@@ -69,6 +69,29 @@ public:
 
   GenericDependenceNode(UnderlyingTy Unit)
       : m_Underlying(Unit), m_DependeeCount(0) {}
+
+  GenericDependenceNode(const GenericDependenceNode &) = delete;
+  GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
+
+  GenericDependenceNode(const GenericDependenceNode &&Other)
+      : m_Edges(std::move(Other.Edges)),
+        m_Underlying(std::move(Other.m_Underlying)),
+        m_DependeeCount(std::move(Other.m_DependeeCount)) {
+    Other.m_Edges.clear();
+    Other.m_Underlying = {};
+    Other.m_DependeeCount = {};
+  }
+
+  GenericDependenceNode &operator=(const GenericDependenceNode &&Other) {
+    m_Edges = std::move(Other.m_Edges);
+    m_Underlying = std::move(Other.m_Underlying);
+    m_DependeeCount = std::move(Other.m_DependeeCount);
+
+    Other.m_Edges.clear();
+    Other.m_Underlying = {};
+    Other.m_DependeeCount = {};
+    return *this;
+  };
 
   UnderlyingTy getUnderlying() const { return m_Underlying; }
 
@@ -111,6 +134,7 @@ public:
 private:
   using UnderlyingTy = typename NodeType::UnderlyingTy;
   using NodeMapTy = std::map<UnderlyingTy, std::unique_ptr<NodeType>>;
+
   NodeMapTy m_NodeMap;
 
 public:
@@ -124,6 +148,22 @@ public:
 
   using iterator = typename NodeMapTy::iterator;
   using const_iterator = typename NodeMapTy::const_iterator;
+
+  GenericDependenceGraph() = default;
+  GenericDependenceGraph(const GenericDependenceGraph &) = delete;
+  GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
+
+  GenericDependenceGraph(const GenericDependenceGraph &&Other)
+      : m_NodeMap(std::move(Other.m_NodeMap)) {
+    Other.m_NodeMap.clear();
+  }
+
+  GenericDependenceGraph &operator=(const GenericDependenceGraph &&Other) {
+    m_NodeMap = std::move(Other.m_NodeMap);
+    Other.m_NodeMap.clear();
+
+    return *this;
+  }
 
   decltype(auto) getOrInsertNode(UnderlyingTy Unit) {
     auto &node = m_NodeMap[Unit];
