@@ -10,6 +10,8 @@
 
 namespace pedigree {
 
+struct NoEdgeInfo {};
+
 enum class DependenceType : uint8_t {
   unknown = 0,
   flow = 1,

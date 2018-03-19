@@ -40,8 +40,6 @@
 
 namespace pedigree {
 
-struct NoEdgeInfo {};
-
 template <typename WrappedNodeT, typename EdgeInfoT = NoEdgeInfo>
 class GenericDependenceNode {
 public:
