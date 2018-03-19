@@ -195,6 +195,28 @@ struct DependenceNodeGraphTraitsBase<DependenceNodeT *> {
   static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
 };
 
+template <typename GraphT> struct DependenceGraphGraphTraitsBase {
+  static_assert(
+      std::is_same<typename std::is_pointer<GraphT>::type,
+                   std::false_type::type>::value,
+      "Traits class needs to be partially specialized for pointer types!");
+};
+
+template <typename GraphT> struct DependenceGraphGraphTraitsBase<GraphT *> {
+  using NodeType = typename GraphT::NodeType;
+
+  static NodeType *getEntryNode(NodeType *G) { return G->getEntryNode(); }
+  static unsigned size(NodeType *G) { return G->size(); }
+
+  using ChildIteratorType = typename NodeType::nodes_iterator;
+  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
+  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
+
+  using nodes_iterator = typename GraphT::nodes_iterator;
+  static decltype(auto) nodes_begin(GraphT *G) { return G->nodes_begin(); }
+  static decltype(auto) nodes_end(GraphT *G) { return G->nodes_end(); }
+};
+
 } // namespace pedigree end
 
 #endif // header
