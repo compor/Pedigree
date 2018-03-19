@@ -8,8 +8,8 @@
 #include <bitset>
 // using std::bitset
 
-#include <cstdint>
-// using uint8_t
+#include <cstddef>
+// using std::size_t
 
 #include <type_traits>
 // using std::underlying_type
@@ -32,14 +32,14 @@ template <> struct DependenceInfoTraits<NoDependenceInfo> {
 
 //
 
-enum class DependenceType : uint8_t {
+enum class DependenceType : std::size_t {
   unknown = 0,
   flow,
   anti,
   out,
 };
 
-enum class DependenceOrigin : uint8_t {
+enum class DependenceOrigin : std::size_t {
   unknown = 0,
   data,
   memory,
