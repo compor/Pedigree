@@ -36,12 +36,12 @@ namespace llvm {
 
 template <>
 struct GraphTraits<pedigree::ControlDependenceNode *>
-    : public pedigree::DependenceNodeGraphTraitsBase<
+    : public pedigree::LLVMDependenceNodeTraitsBase<
           pedigree::ControlDependenceNode *> {};
 
 template <>
 struct GraphTraits<pedigree::CDG *>
-    : public pedigree::DependenceGraphGraphTraitsBase<pedigree::CDG *> {};
+    : public pedigree::LLVMDependenceGraphTraitsBase<pedigree::CDG *> {};
 
 } // namespace llvm end
 

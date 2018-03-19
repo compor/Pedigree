@@ -36,7 +36,7 @@ namespace llvm {
 
 template <>
 struct GraphTraits<pedigree::MemoryDependenceNode *>
-    : public pedigree::DependenceNodeGraphTraitsBase<
+    : public pedigree::LLVMDependenceNodeTraitsBase<
           pedigree::MemoryDependenceNode *> {};
 
 template <>

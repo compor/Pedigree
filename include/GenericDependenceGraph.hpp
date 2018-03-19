@@ -172,7 +172,7 @@ public:
 
 // generic base for easing the task of creating graph traits for graph nodes
 
-template <typename DependenceNodeT> struct DependenceNodeGraphTraitsBase {
+template <typename DependenceNodeT> struct LLVMDependenceNodeTraitsBase {
   static_assert(
       std::is_same<typename std::is_pointer<DependenceNodeT>::type,
                    std::false_type::type>::value,
@@ -180,7 +180,7 @@ template <typename DependenceNodeT> struct DependenceNodeGraphTraitsBase {
 };
 
 template <typename DependenceNodeT>
-struct DependenceNodeGraphTraitsBase<DependenceNodeT *> {
+struct LLVMDependenceNodeTraitsBase<DependenceNodeT *> {
   using NodeType = DependenceNodeT;
 
   static NodeType *getEntryNode(NodeType *G) { return G; }
@@ -195,14 +195,14 @@ struct DependenceNodeGraphTraitsBase<DependenceNodeT *> {
   static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
 };
 
-template <typename GraphT> struct DependenceGraphGraphTraitsBase {
+template <typename GraphT> struct LLVMDependenceGraphTraitsBase {
   static_assert(
       std::is_same<typename std::is_pointer<GraphT>::type,
                    std::false_type::type>::value,
       "Traits class needs to be partially specialized for pointer types!");
 };
 
-template <typename GraphT> struct DependenceGraphGraphTraitsBase<GraphT *> {
+template <typename GraphT> struct LLVMDependenceGraphTraitsBase<GraphT *> {
   using NodeType = typename GraphT::NodeType;
 
   static NodeType *getEntryNode(NodeType *G) { return G->getEntryNode(); }
