@@ -97,8 +97,7 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
   static std::string toDOTAttributes(const BasicDependenceInfo &I) {
     auto attr = toDOTColor(I);
 
-    if (I.isOrigin(DependenceOrigin::memory) ||
-        I.isOrigin(DependenceOrigin::data))
+    if (I.isOrigin(DependenceOrigin::memory))
       attr += " " + toDOTLabel(I);
 
     return attr;
