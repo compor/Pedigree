@@ -149,8 +149,8 @@ public:
   inline decltype(auto) end() const { return m_NodeMap.end(); }
 
   static NodeType *nodes_iterator_map(value_type &P) {
-    assert(P.first && "Pointer to graph node is null!");
-    return *P.second.get();
+    assert(P.second.get() && "Pointer to graph node is null!");
+    return P.second.get();
   }
 
   using nodes_iterator =
