@@ -98,6 +98,16 @@ public:
     Node->incrementDependeeCount();
   }
 
+  const EdgeInfoTy &getEdgeInfo(NodeType *Node) const {
+    auto found =
+        std::find_if(m_Edges.begin(), m_Edges.end(),
+                     [&Node](const auto &e) { return Node == e.first; });
+
+    assert(found != m_Edges.end() && "Edge could not be found!");
+
+    return (*found).second;
+  }
+
   EdgesSizeTy numEdges() const { return m_Edges.size(); }
   decltype(auto) size() const { return numEdges(); }
 
