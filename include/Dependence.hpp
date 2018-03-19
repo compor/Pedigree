@@ -95,8 +95,18 @@ template <> struct DependenceInfoTraits<NoDependenceInfo> {
 
 template <> struct DependenceInfoTraits<BasicDependenceInfo> {
   static std::string toDOTAttributes(const BasicDependenceInfo &I) {
+    auto attr = toDOTColor(I);
+
+    if (I.isOrigin(DependenceOrigin::memory) ||
+        I.isOrigin(DependenceOrigin::data))
+      attr += " " + toDOTLabel(I);
+
+    return attr;
+  }
+
+  static std::string toDOTColor(const BasicDependenceInfo &I) {
     std::stringstream colorAttribute{};
-    std::vector<std::string> colors;
+    std::vector<std::string> colors{3};
 
     colorAttribute << "color=\"";
 
@@ -120,6 +130,26 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
     colorAttribute << "\"";
 
     return colorAttribute.str();
+  }
+
+  static std::string toDOTLabel(const BasicDependenceInfo &I) {
+    std::string label{"label=\""};
+
+    if (I.isHazard(DependenceHazard::flow))
+      label += "F";
+
+    if (I.isHazard(DependenceHazard::anti))
+      label += "A";
+
+    if (I.isHazard(DependenceHazard::out))
+      label += "O";
+
+    label += "\"";
+
+    if (I.isUknownHazard())
+      label = "label=\"U\"";
+
+    return label;
   }
 };
 
