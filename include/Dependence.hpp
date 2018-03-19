@@ -20,7 +20,8 @@ struct NoDependenceInfo {};
 
 //
 
-enum class DependenceType : std::size_t {
+// also known as load-store classification (see OCMA book)
+enum class DependenceHazard : std::size_t {
   unknown = 0,
   flow,
   anti,
@@ -35,19 +36,19 @@ enum class DependenceOrigin : std::size_t {
 };
 
 class BasicDependenceInfo {
-  using DependenceTypeTy = std::underlying_type<DependenceType>::type;
+  using DependenceHazardTy = std::underlying_type<DependenceHazard>::type;
   using DependenceOriginTy = std::underlying_type<DependenceOrigin>::type;
 
-  std::bitset<sizeof(DependenceTypeTy)> type;
+  std::bitset<sizeof(DependenceHazardTy)> type;
   std::bitset<sizeof(DependenceOriginTy)> origin;
 
 public:
-  void setType(DependenceType DepType) {
-    this->type.set(static_cast<DependenceTypeTy>(DepType));
+  void setHazard(DependenceHazard Hazard) {
+    this->type.set(static_cast<DependenceHazardTy>(Hazard));
   }
 
-  bool isType(DependenceType DepType) {
-    return this->type.test(static_cast<DependenceTypeTy>(DepType));
+  bool isHazard(DependenceHazard Hazard) {
+    return this->type.test(static_cast<DependenceHazardTy>(Hazard));
   }
 
   void setOrigin(DependenceOrigin Origin) {
