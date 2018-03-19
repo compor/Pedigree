@@ -39,22 +39,22 @@ class BasicDependenceInfo {
   using DependenceHazardTy = std::underlying_type<DependenceHazard>::type;
   using DependenceOriginTy = std::underlying_type<DependenceOrigin>::type;
 
-  std::bitset<sizeof(DependenceHazardTy)> type;
+  std::bitset<sizeof(DependenceHazardTy)> hazard;
   std::bitset<sizeof(DependenceOriginTy)> origin;
 
 public:
   void setHazard(DependenceHazard Hazard) {
-    this->type.set(static_cast<DependenceHazardTy>(Hazard));
+    this->hazard.set(static_cast<DependenceHazardTy>(Hazard));
   }
 
   bool isHazard(DependenceHazard Hazard) const {
-    return this->type.test(static_cast<DependenceHazardTy>(Hazard));
+    return this->hazard.test(static_cast<DependenceHazardTy>(Hazard));
   }
 
-  bool isUknownHazard() const { return this->type.none(); }
+  bool isUknownHazard() const { return this->hazard.none(); }
 
   void setOrigin(DependenceOrigin Origin) {
-    this->type.set(static_cast<DependenceOriginTy>(Origin));
+    this->origin.set(static_cast<DependenceOriginTy>(Origin));
   }
 
   bool isOrigin(DependenceOrigin Origin) const {
