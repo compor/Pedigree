@@ -40,7 +40,7 @@
 
 namespace pedigree {
 
-template <typename WrappedNodeT, typename EdgeInfoT = NoEdgeInfo>
+template <typename WrappedNodeT, typename EdgeInfoT = NoDependenceInfo>
 class GenericDependenceNode {
 public:
   using NodeType = GenericDependenceNode;

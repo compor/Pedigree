@@ -5,30 +5,38 @@
 #ifndef DEPENDENCE_HPP
 #define DEPENDENCE_HPP
 
+#include <bitset>
+// using std::bitset
+
 #include <cstdint>
 // using uint8_t
 
+#include <type_traits>
+// using std::underlying_type
+
 namespace pedigree {
 
-struct NoEdgeInfo {};
+struct NoDependenceInfo {};
+
+//
 
 enum class DependenceType : uint8_t {
   unknown = 0,
-  flow = 1,
-  anti = 2,
-  out = 4,
+  flow,
+  anti,
+  out,
 };
 
 enum class DependenceOrigin : uint8_t {
   unknown = 0,
-  data = 1,
-  memory = 2,
-  control = 4,
+  data,
+  memory,
+  control,
 };
 
-struct DataDependenceInfo {
-  DependenceType type;
-  DependenceOrigin origin;
+struct BasicDependenceInfo {
+  std::bitset<sizeof(std::underlying_type<DependenceType>::type)> type;
+  std::bitset<sizeof(std::underlying_type<DependenceOrigin>::type)> origin;
 };
 
 } // namespace pedigree end
