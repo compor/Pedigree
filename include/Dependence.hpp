@@ -47,7 +47,7 @@ public:
     this->type.set(static_cast<DependenceHazardTy>(Hazard));
   }
 
-  bool isHazard(DependenceHazard Hazard) {
+  bool isHazard(DependenceHazard Hazard) const {
     return this->type.test(static_cast<DependenceHazardTy>(Hazard));
   }
 
@@ -57,7 +57,7 @@ public:
     this->type.set(static_cast<DependenceOriginTy>(Origin));
   }
 
-  bool isOrigin(DependenceOrigin Origin) {
+  bool isOrigin(DependenceOrigin Origin) const {
     return this->origin.test(static_cast<DependenceOriginTy>(Origin));
   }
 
