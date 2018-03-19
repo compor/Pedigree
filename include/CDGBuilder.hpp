@@ -35,11 +35,14 @@ public:
     PostDominanceFrontierBase<llvm::BasicBlock> pdf;
     pdf.analyze(*curPDT.DT);
 
+    BasicDependenceInfo info{};
+    info.setOrigin(DependenceOrigin::control);
+
     for (auto &f : pdf) {
       auto dst = m_Graph.getOrInsertNode(f.first);
       for (auto &e : f.second) {
         auto src = m_Graph.getOrInsertNode(e);
-        src->addDependentNode(dst, {});
+        src->addDependentNode(dst, info);
       }
     }
   }

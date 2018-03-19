@@ -21,7 +21,8 @@
 
 namespace pedigree {
 
-using ControlDependenceNode = GenericDependenceNode<llvm::BasicBlock>;
+using ControlDependenceNode =
+    GenericDependenceNode<llvm::BasicBlock, BasicDependenceInfo>;
 
 using CDG = GenericDependenceGraph<ControlDependenceNode>;
 
