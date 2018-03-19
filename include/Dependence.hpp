@@ -16,7 +16,19 @@
 
 namespace pedigree {
 
+template <typename InfoT> struct DependenceInfoTraits {
+  static std::string toDOTAttributes(const InfoT &I) {
+    return I.toDOTAttributes();
+  }
+};
+
 struct NoDependenceInfo {};
+
+template <> struct DependenceInfoTraits<NoDependenceInfo> {
+  static std::string toDOTAttributes(const NoDependenceInfo &I) {
+    return std::string{"color=purple"};
+  }
+};
 
 //
 
