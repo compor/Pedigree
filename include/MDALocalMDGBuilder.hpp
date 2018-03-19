@@ -90,9 +90,14 @@ private:
         dependees.push_back(query.getInst());
     }
 
+    BasicDependenceInfo info{};
+    info.setOrigin(DependenceOrigin::memory);
+    // TODO
+    // info.setHazard();
+
     for (const auto &e : dependees) {
       auto src = m_Graph.getOrInsertNode(e);
-      src->addDependentNode(dst, {});
+      src->addDependentNode(dst, info);
     }
   }
 };

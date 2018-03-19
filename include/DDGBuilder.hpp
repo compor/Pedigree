@@ -26,12 +26,17 @@ public:
   template <typename T> void build(T &Unit) { visit(Unit); }
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
+    BasicDependenceInfo info{};
+    info.setOrigin(DependenceOrigin::data);
+    // always flow for SSA use-def chains
+    // info.setHazard(DependenceHazard::flow);
+
     auto src = m_Graph.getOrInsertNode(&CurInstruction);
     for (auto &u : CurInstruction.uses()) {
       auto *user = llvm::dyn_cast<llvm::Instruction>(u.getUser());
       if (user) {
         auto dst = m_Graph.getOrInsertNode(user);
-        src->addDependentNode(dst, {});
+        src->addDependentNode(dst, info);
       }
     }
   }

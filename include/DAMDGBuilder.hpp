@@ -42,6 +42,11 @@ public:
   template <typename T> void build(T &Unit) {
     visit(Unit);
 
+    BasicDependenceInfo info{};
+    info.setOrigin(DependenceOrigin::memory);
+    // TODO
+    // info.setHazard();
+
     for (auto ii = std::begin(m_MemInstructions),
               ie = std::end(m_MemInstructions);
          ii != ie; ++ii) {
@@ -50,7 +55,7 @@ public:
       for (auto jj = ii; jj != ie; ++jj)
         if (auto D = m_DA.depends(*ii, *jj, true)) {
           auto dst = m_Graph.getOrInsertNode(*jj);
-          src->addDependentNode(dst, {});
+          src->addDependentNode(dst, info);
         }
     }
   }

@@ -21,7 +21,8 @@
 
 namespace pedigree {
 
-using DataDependenceNode = GenericDependenceNode<llvm::Instruction>;
+using DataDependenceNode =
+    GenericDependenceNode<llvm::Instruction, BasicDependenceInfo>;
 
 using DDG = GenericDependenceGraph<DataDependenceNode>;
 
