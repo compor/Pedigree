@@ -5,6 +5,8 @@
 #ifndef DEPENDENCE_HPP
 #define DEPENDENCE_HPP
 
+#include "boost/operators.hpp"
+
 #include <bitset>
 // using std::bitset
 
@@ -31,7 +33,9 @@
 
 namespace pedigree {
 
-struct NoDependenceInfo {};
+struct NoDependenceInfo : private boost::orable<NoDependenceInfo> {
+  NoDependenceInfo &operator|=(const NoDependenceInfo &) { return *this; }
+};
 
 //
 
@@ -50,7 +54,7 @@ enum class DependenceOrigin : std::size_t {
   control,
 };
 
-class BasicDependenceInfo {
+class BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
   using DependenceHazardTy = std::underlying_type<DependenceHazard>::type;
   using DependenceOriginTy = std::underlying_type<DependenceOrigin>::type;
 
@@ -77,6 +81,12 @@ public:
   }
 
   bool isUknownOrigin() const { return this->origin.none(); }
+
+  BasicDependenceInfo &operator|=(const BasicDependenceInfo &Other) {
+    this->hazard |= Other.hazard;
+    this->origin |= Other.origin;
+    return *this;
+  }
 };
 
 // traits
