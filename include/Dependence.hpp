@@ -101,13 +101,13 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
     colorAttribute << "color=\"";
 
     if (I.isOrigin(DependenceOrigin::control))
-      colors.emplace_back("red");
+      colors.emplace_back("red;0.33");
 
     if (I.isOrigin(DependenceOrigin::memory))
-      colors.emplace_back("purple");
+      colors.emplace_back("purple;0.33");
 
     if (I.isOrigin(DependenceOrigin::data))
-      colors.emplace_back("blue");
+      colors.emplace_back("blue;0.33");
 
     if (I.isUknownOrigin()) {
       colors.clear();
