@@ -105,15 +105,17 @@ public:
 };
 
 template <typename NodeT> class GenericDependenceGraph {
-  using NodeTy = NodeT;
+public:
   using NodeType = NodeT;
-  using UnderlyingTy = typename NodeTy::UnderlyingTy;
-  using NodeMapTy = std::map<UnderlyingTy, std::unique_ptr<NodeTy>>;
+
+private:
+  using UnderlyingTy = typename NodeType::UnderlyingTy;
+  using NodeMapTy = std::map<UnderlyingTy, std::unique_ptr<NodeType>>;
   NodeMapTy m_NodeMap;
 
 public:
   using VerticesSizeTy = typename NodeMapTy::size_type;
-  using EdgesSizeTy = typename NodeTy::EdgesSizeTy;
+  using EdgesSizeTy = typename NodeType::EdgesSizeTy;
   // TODO hide the exposure of internal implemenation using smart pointer
   // TODO potentially use a std::reference_wrapper?
   // this is important because map-like containers expose the semantic
@@ -126,7 +128,7 @@ public:
   decltype(auto) getOrInsertNode(UnderlyingTy Unit) {
     auto &node = m_NodeMap[Unit];
     if (!node)
-      node = std::make_unique<NodeTy>(Unit);
+      node = std::make_unique<NodeType>(Unit);
 
     return node.get();
   }
@@ -152,7 +154,7 @@ public:
   }
 
   using nodes_iterator =
-      llvm::mapped_iterator<iterator, std::function<NodeTy *(value_type &)>>;
+      llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
 
   inline decltype(auto) nodes_begin() {
     return nodes_iterator(m_NodeMap.begin(), nodes_iterator_map);
@@ -162,8 +164,8 @@ public:
     return nodes_iterator(m_NodeMap.end(), nodes_iterator_map);
   }
 
-  const NodeTy *getEntryNode() const { return begin()->second.get(); }
-  NodeTy *getEntryNode() { return begin()->second.get(); }
+  const NodeType *getEntryNode() const { return begin()->second.get(); }
+  NodeType *getEntryNode() { return begin()->second.get(); }
 };
 
 // graph traits specializations
@@ -184,11 +186,11 @@ struct DependenceNodeGraphTraitsBase<DependenceNodeT *> {
   static NodeType *getEntryNode(NodeType *G) { return G; }
   static unsigned size(NodeType *G) { return G->size(); }
 
-  using ChildIteratorType = typename DependenceNodeT::nodes_iterator;
+  using ChildIteratorType = typename NodeType::nodes_iterator;
   static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
 
-  using nodes_iterator = typename DependenceNodeT::nodes_iterator;
+  using nodes_iterator = typename NodeType::nodes_iterator;
   static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
 };
