@@ -95,7 +95,10 @@ struct DOTGraphTraits<pedigree::DDG *> : public DefaultDOTGraphTraits {
   static std::string getEdgeAttributes(const NodeType *Node,
                                        GT::ChildIteratorType EI,
                                        const GraphTy *Graph) {
-    return DDGDOTEdgeAttributes.empty() ? "color=blue"
+    using DIT = pedigree::DependenceInfoTraits<NodeType::EdgeInfoTy>;
+    auto attr = DIT::toDOTAttributes(Node->getEdgeInfo(*EI));
+
+    return DDGDOTEdgeAttributes.empty() ? attr
                                         : DDGDOTEdgeAttributes.getValue();
   }
 
