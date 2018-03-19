@@ -22,14 +22,14 @@ struct NoDependenceInfo {};
 
 // also known as load-store classification (see OCMA book)
 enum class DependenceHazard : std::size_t {
-  unknown = 0,
+  // unknown = 0,
   flow,
   anti,
   out,
 };
 
 enum class DependenceOrigin : std::size_t {
-  unknown = 0,
+  // unknown = 0,
   data,
   memory,
   control,
@@ -51,6 +51,8 @@ public:
     return this->type.test(static_cast<DependenceHazardTy>(Hazard));
   }
 
+  bool isUknownHazard() const { return this->type.none(); }
+
   void setOrigin(DependenceOrigin Origin) {
     this->type.set(static_cast<DependenceOriginTy>(Origin));
   }
@@ -58,6 +60,8 @@ public:
   bool isOrigin(DependenceOrigin Origin) {
     return this->origin.test(static_cast<DependenceOriginTy>(Origin));
   }
+
+  bool isUknownOrigin() const { return this->origin.none(); }
 };
 
 // traits
