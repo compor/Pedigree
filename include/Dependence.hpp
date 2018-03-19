@@ -8,6 +8,21 @@
 #include <bitset>
 // using std::bitset
 
+#include <string>
+// using std::string
+
+#include <sstream>
+// using std::stringstream
+
+#include <vector>
+// using std::vector
+
+#include <algorithm>
+// using std::copy
+
+#include <iterator>
+// using std::ostream_iterator
+
 #include <cstddef>
 // using std::size_t
 
@@ -74,7 +89,37 @@ template <typename InfoT> struct DependenceInfoTraits {
 
 template <> struct DependenceInfoTraits<NoDependenceInfo> {
   static std::string toDOTAttributes(const NoDependenceInfo &I) {
-    return std::string{"color=blue;"};
+    return std::string{"color=black"};
+  }
+};
+
+template <> struct DependenceInfoTraits<BasicDependenceInfo> {
+  static std::string toDOTAttributes(const BasicDependenceInfo &I) {
+    std::stringstream colorAttribute{};
+    std::vector<std::string> colors;
+
+    colorAttribute << "color=\"";
+
+    if (I.isOrigin(DependenceOrigin::control))
+      colors.emplace_back("red");
+
+    if (I.isOrigin(DependenceOrigin::memory))
+      colors.emplace_back("purple");
+
+    if (I.isOrigin(DependenceOrigin::data))
+      colors.emplace_back("blue");
+
+    if (I.isUknownOrigin()) {
+      colors.clear();
+      colors.emplace_back("gray");
+    }
+
+    std::copy(colors.begin(), colors.end(),
+              std::ostream_iterator<std::string>(colorAttribute, ":"));
+
+    colorAttribute << "\"";
+
+    return colorAttribute.str();
   }
 };
 
