@@ -59,12 +59,16 @@ struct GenericDependenceGraphTest : public ::testing::Test {
 
 TEST_F(GenericDependenceGraphTest, NodeComparison) {
   EXPECT_EQ(true, DepNodes1[0]->compare(*DepNodes2[0]));
+  EXPECT_EQ(false, *DepNodes1[0] == *DepNodes2[0]);
   EXPECT_EQ(false, DepNodes1[1]->compare(*DepNodes2[1]));
+  EXPECT_EQ(true, *DepNodes1[1] == *DepNodes2[1]);
 }
 
 TEST_F(GenericDependenceGraphTest, GraphComparison) {
   EXPECT_EQ(true, G1.compare(G2));
+  EXPECT_EQ(false, G1 == G2);
   EXPECT_EQ(false, G1.compare(G1b));
+  EXPECT_EQ(true, G1 == G1b);
 }
 
 } // unnamed namespace end
