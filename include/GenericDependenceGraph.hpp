@@ -232,6 +232,25 @@ public:
 
   const NodeType *getEntryNode() const { return begin()->second.get(); }
   NodeType *getEntryNode() { return begin()->second.get(); }
+
+  bool compare(const GenericDependenceGraph &Other) const {
+    if (numVertices() != Other.numVertices() || numEdges() != Other.numEdges())
+      return true;
+
+    for (const auto &e : *this) {
+      auto found = Other.m_NodeMap.find(e.first);
+      if (found == Other.m_NodeMap.end())
+        return true;
+
+      const auto &curNode = e.second;
+      const auto &foundNode = (*found).second;
+
+      if (curNode->compare(*foundNode))
+        return true;
+    }
+
+    return false;
+  }
 };
 
 // graph traits specializations
