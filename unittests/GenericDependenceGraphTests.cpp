@@ -24,34 +24,47 @@ namespace {
 
 //
 
-struct GenericDependenceNodeTest : public ::testing::Test {
+struct GenericDependenceGraphTest : public ::testing::Test {
   using TestNodeTy = GenericDependenceNode<int>;
-  std::array<int, 4> nodes{1, 3, 5, 7};
-  std::vector<TestNodeTy> depNodes;
+  std::array<int, 4> TestNodes{1, 3, 5, 7};
+
+  std::vector<TestNodeTy *> DepNodes1;
+  std::vector<TestNodeTy *> DepNodes1b;
+  std::vector<TestNodeTy *> DepNodes2;
+
+  GenericDependenceGraph<TestNodeTy> G1, G1b, G2;
 
   void SetUp() override {
-    for (auto &e : nodes)
-      depNodes.emplace_back(&e);
+    for (auto &e : TestNodes) {
+      DepNodes1.emplace_back(G1.getOrInsertNode(&e));
+      DepNodes1b.emplace_back(G1b.getOrInsertNode(&e));
+      DepNodes2.emplace_back(G2.getOrInsertNode(&e));
+    }
 
-    depNodes[0].addDependentNode(&depNodes[1], {});
-    depNodes[0].addDependentNode(&depNodes[2], {});
-    depNodes[0].addDependentNode(&depNodes[3], {});
+    DepNodes1[0]->addDependentNode(DepNodes1[1], {});
+    DepNodes1[0]->addDependentNode(DepNodes1[2], {});
+    DepNodes1[0]->addDependentNode(DepNodes1[3], {});
+
+    DepNodes1b[0]->addDependentNode(DepNodes1b[1], {});
+    DepNodes1b[0]->addDependentNode(DepNodes1b[2], {});
+    DepNodes1b[0]->addDependentNode(DepNodes1b[3], {});
+
+    DepNodes2[3]->addDependentNode(DepNodes2[0], {});
+    DepNodes2[3]->addDependentNode(DepNodes2[1], {});
+    DepNodes2[3]->addDependentNode(DepNodes2[2], {});
   }
 };
 
 //
 
-TEST_F(GenericDependenceNodeTest, Comparison) {
-  std::vector<TestNodeTy> otherDepNodes;
-  for (auto &e : nodes)
-    otherDepNodes.emplace_back(&e);
+TEST_F(GenericDependenceGraphTest, NodeComparison) {
+  EXPECT_EQ(true, DepNodes1[0]->compare(*DepNodes2[0]));
+  EXPECT_EQ(false, DepNodes1[1]->compare(*DepNodes2[1]));
+}
 
-  otherDepNodes[3].addDependentNode(&otherDepNodes[0], {});
-  otherDepNodes[3].addDependentNode(&otherDepNodes[1], {});
-  otherDepNodes[3].addDependentNode(&otherDepNodes[2], {});
-
-  EXPECT_EQ(true, depNodes[0].compare(otherDepNodes[0]));
-  EXPECT_EQ(false, depNodes[1].compare(otherDepNodes[1]));
+TEST_F(GenericDependenceGraphTest, GraphComparison) {
+  EXPECT_EQ(true, G1.compare(G2));
+  EXPECT_EQ(false, G1.compare(G1b));
 }
 
 } // unnamed namespace end
