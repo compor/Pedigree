@@ -71,8 +71,8 @@ public:
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
-  GenericDependenceNode(const GenericDependenceNode &&Other)
-      : m_Edges(std::move(Other.Edges)),
+  GenericDependenceNode(GenericDependenceNode &&Other)
+      : m_Edges(std::move(Other.m_Edges)),
         m_Underlying(std::move(Other.m_Underlying)),
         m_DependeeCount(std::move(Other.m_DependeeCount)) {
     Other.m_Edges.clear();
@@ -80,7 +80,7 @@ public:
     Other.m_DependeeCount = {};
   }
 
-  GenericDependenceNode &operator=(const GenericDependenceNode &&Other) {
+  GenericDependenceNode &operator=(GenericDependenceNode &&Other) {
     m_Edges = std::move(Other.m_Edges);
     m_Underlying = std::move(Other.m_Underlying);
     m_DependeeCount = std::move(Other.m_DependeeCount);
