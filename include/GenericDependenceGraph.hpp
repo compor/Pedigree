@@ -7,6 +7,9 @@
 
 #include "Dependence.hpp"
 
+#include "llvm/ADT/SmallPtrSet.h"
+// using llvm::SmallPtrSet
+
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
@@ -133,6 +136,21 @@ public:
   }
 
   inline unsigned getDependeeCount() const { return m_DependeeCount; }
+
+  bool compare(const GenericDependenceNode &Other) const {
+    if (this->numEdges() != Other.numEdges())
+      return true;
+
+    llvm::SmallPtrSet<const WrappedNodeT *, 8> otherChildren;
+    for (const auto &e : Other)
+      otherChildren.insert(e.first->getUnderlying());
+
+    for (const auto &e : *this)
+      if (otherChildren.count(e.first->getUnderlying()) == 0)
+        return true;
+
+    return false;
+  }
 };
 
 template <typename NodeT> class GenericDependenceGraph {
