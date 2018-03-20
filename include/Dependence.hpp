@@ -54,6 +54,7 @@ enum class DependenceOrigin : std::size_t {
   control,
 };
 
+// TODO maybe use this as an aggregate/result of orable operations
 class BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
   using DependenceHazardTy = std::underlying_type<DependenceHazard>::type;
   using DependenceOriginTy = std::underlying_type<DependenceOrigin>::type;
