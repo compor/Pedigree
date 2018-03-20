@@ -29,6 +29,7 @@ set(PRJ_TEST_NAME Test${PRJ_NAME})
 
 set(TEST_SOURCES
   TestPedigreeOpt.cpp
+  GenericDependenceGraphTests.cpp
   DDGTests.cpp
   PostDominanceFrontierTests.cpp
   CDGTests.cpp)
