@@ -6,6 +6,7 @@
 #define DEPENDENCE_HPP
 
 #include "boost/operators.hpp"
+// using boost::orable
 
 #include <bitset>
 // using std::bitset

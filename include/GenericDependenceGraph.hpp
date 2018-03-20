@@ -13,6 +13,9 @@
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
+#include "boost/operators.hpp"
+// using boost::equality_comparable
+
 #include <vector>
 // using std::vector
 
@@ -44,7 +47,9 @@
 namespace pedigree {
 
 template <typename WrappedNodeT, typename EdgeInfoT = NoDependenceInfo>
-class GenericDependenceNode {
+class GenericDependenceNode
+    : boost::equality_comparable<
+          GenericDependenceNode<WrappedNodeT, EdgeInfoT>> {
 public:
   using NodeType = GenericDependenceNode;
   using UnderlyingTy = WrappedNodeT *;
@@ -151,9 +156,15 @@ public:
 
     return false;
   }
+
+  bool operator==(const GenericDependenceNode &Other) const {
+    return !compare(Other);
+  }
 };
 
-template <typename NodeT> class GenericDependenceGraph {
+template <typename NodeT>
+class GenericDependenceGraph
+    : boost::equality_comparable<GenericDependenceGraph<NodeT>> {
 public:
   using NodeType = NodeT;
 
@@ -250,6 +261,10 @@ public:
     }
 
     return false;
+  }
+
+  bool operator==(const GenericDependenceGraph &Other) const {
+    return !compare(Other);
   }
 };
 
