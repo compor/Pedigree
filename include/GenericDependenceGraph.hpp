@@ -46,13 +46,14 @@
 
 namespace pedigree {
 
-template <typename WrappedNodeT, typename EdgeInfoT = NoDependenceInfo>
+template <typename UnderlyingNodeT, typename EdgeInfoT = NoDependenceInfo>
 class GenericDependenceNode
     : boost::equality_comparable<
-          GenericDependenceNode<WrappedNodeT, EdgeInfoT>> {
+          GenericDependenceNode<UnderlyingNodeT, EdgeInfoT>> {
 public:
   using NodeType = GenericDependenceNode;
-  using UnderlyingType = WrappedNodeT *;
+  using UnderlyingType = UnderlyingNodeT *;
+  using ConstUnderlyingType = const UnderlyingNodeT *;
   using EdgeInfoType = EdgeInfoT;
 
 private:
@@ -73,8 +74,8 @@ public:
   using iterator = typename EdgeStorageType::iterator;
   using const_iterator = typename EdgeStorageType::const_iterator;
 
-  explicit GenericDependenceNode(UnderlyingType Unit)
-      : Underlying(Unit), DependeeCount(0) {}
+  explicit GenericDependenceNode(UnderlyingType Under)
+      : Underlying(Under), DependeeCount(0) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
@@ -145,7 +146,7 @@ public:
     if (this->numEdges() != Other.numEdges())
       return true;
 
-    llvm::SmallPtrSet<const WrappedNodeT *, 8> otherChildren;
+    llvm::SmallPtrSet<ConstUnderlyingType, 8> otherChildren;
     for (const auto &e : Other)
       otherChildren.insert(e.first->getUnderlying());
 
@@ -201,10 +202,10 @@ public:
     return *this;
   }
 
-  decltype(auto) getOrInsertNode(UnderlyingType Unit) {
-    auto &node = NodeMap[Unit];
+  decltype(auto) getOrInsertNode(UnderlyingType Under) {
+    auto &node = NodeMap[Under];
     if (!node)
-      node = std::make_unique<NodeType>(Unit);
+      node = std::make_unique<NodeType>(Under);
 
     return node.get();
   }
