@@ -21,8 +21,8 @@ struct function_unit_tag {};
 
 //
 
-template <typename UnitT> struct unit_traits {
-  using unit_category = typename UnitT::unit_category;
+template <typename UnderlyingT> struct unit_traits {
+  using unit_category = typename UnderlyingT::unit_category;
 };
 
 template <> struct unit_traits<llvm::Instruction> {
