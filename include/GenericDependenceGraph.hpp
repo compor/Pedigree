@@ -73,7 +73,7 @@ public:
   using iterator = typename EdgeStorageTy::iterator;
   using const_iterator = typename EdgeStorageTy::const_iterator;
 
-  GenericDependenceNode(UnderlyingTy Unit)
+  explicit GenericDependenceNode(UnderlyingTy Unit)
       : m_Underlying(Unit), m_DependeeCount(0) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
@@ -190,7 +190,7 @@ public:
   GenericDependenceGraph(const GenericDependenceGraph &) = delete;
   GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
 
-  GenericDependenceGraph(const GenericDependenceGraph &&Other)
+  explicit GenericDependenceGraph(const GenericDependenceGraph &&Other)
       : m_NodeMap(std::move(Other.m_NodeMap)) {
     Other.m_NodeMap.clear();
   }
