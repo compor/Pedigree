@@ -46,14 +46,13 @@
 
 namespace pedigree {
 
-template <typename UnderlyingNodeT, typename EdgeInfoT = NoDependenceInfo>
+template <typename T, typename EdgeInfoT = NoDependenceInfo>
 class GenericDependenceNode
-    : boost::equality_comparable<
-          GenericDependenceNode<UnderlyingNodeT, EdgeInfoT>> {
+    : boost::equality_comparable<GenericDependenceNode<T, EdgeInfoT>> {
 public:
   using NodeType = GenericDependenceNode;
-  using UnderlyingType = UnderlyingNodeT *;
-  using ConstUnderlyingType = const UnderlyingNodeT *;
+  using UnderlyingType = T *;
+  using ConstUnderlyingType = const T *;
   using EdgeInfoType = EdgeInfoT;
 
 private:
@@ -99,7 +98,7 @@ public:
     return *this;
   };
 
-  UnderlyingType getUnderlying() const { return Underlying; }
+  UnderlyingType get() const { return Underlying; }
 
   void addDependentNode(GenericDependenceNode *Node, const EdgeInfoType &Info) {
     Edges.emplace_back(Node, Info);
@@ -148,10 +147,10 @@ public:
 
     llvm::SmallPtrSet<ConstUnderlyingType, 8> otherChildren;
     for (const auto &e : Other)
-      otherChildren.insert(e.first->getUnderlying());
+      otherChildren.insert(e.first->get());
 
     for (const auto &e : *this)
-      if (otherChildren.count(e.first->getUnderlying()) == 0)
+      if (otherChildren.count(e.first->get()) == 0)
         return true;
 
     return false;

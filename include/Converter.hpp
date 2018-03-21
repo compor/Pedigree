@@ -43,7 +43,7 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
     auto src = To.getOrInsertNode(UCTraits::convert(e.first));
 
     for (auto &k : *(e.second)) {
-      auto converted = UCTraits::convert(k.first->getUnderlying());
+      auto converted = UCTraits::convert(k.first->get());
       auto dst = To.getOrInsertNode(converted);
       src->addDependentNode(dst, {});
     }

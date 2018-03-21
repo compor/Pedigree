@@ -70,14 +70,14 @@ struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
                                           const GraphType *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
-    Node->getUnderlying()->print(os);
+    Node->get()->print(os);
 
     return os.str();
   }
 
   static std::string getSimpleNodeLabel(const NodeType *Node,
                                         const GraphType *Graph) {
-    auto name = Node->getUnderlying()->getName();
+    auto name = Node->get()->getName();
 
     return name.str();
   }
