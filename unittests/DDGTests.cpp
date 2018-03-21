@@ -30,8 +30,8 @@ struct DDGTestData {
   DDGTestData() = delete;
 
   std::string assemblyFile;
-  DDG::VerticesSizeTy numVertices;
-  DDG::EdgesSizeTy numEdges;
+  DDG::VerticesSizeType numVertices;
+  DDG::EdgesSizeType numEdges;
 };
 
 std::ostream &operator<<(std::ostream &os, const DDGTestData &td) {

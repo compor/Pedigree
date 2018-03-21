@@ -52,77 +52,76 @@ class GenericDependenceNode
           GenericDependenceNode<WrappedNodeT, EdgeInfoT>> {
 public:
   using NodeType = GenericDependenceNode;
-  using UnderlyingTy = WrappedNodeT *;
-  using EdgeInfoTy = EdgeInfoT;
+  using UnderlyingType = WrappedNodeT *;
+  using EdgeInfoType = EdgeInfoT;
 
 private:
-  using DependenceRecordTy = std::pair<GenericDependenceNode *, EdgeInfoTy>;
-  using EdgeStorageTy = std::vector<DependenceRecordTy>;
+  using DependenceRecordType = std::pair<GenericDependenceNode *, EdgeInfoType>;
+  using EdgeStorageType = std::vector<DependenceRecordType>;
 
-  inline void incrementDependeeCount() { ++m_DependeeCount; }
-  inline void decrementDependeeCount() { --m_DependeeCount; }
+  inline void incrementDependeeCount() { ++DependeeCount; }
+  inline void decrementDependeeCount() { --DependeeCount; }
 
-  EdgeStorageTy m_Edges;
-  UnderlyingTy m_Underlying;
-  unsigned m_DependeeCount;
+  EdgeStorageType Edges;
+  UnderlyingType Underlying;
+  unsigned DependeeCount;
 
 public:
-  using value_type = typename EdgeStorageTy::value_type;
-  using EdgesSizeTy = typename EdgeStorageTy::size_type;
+  using value_type = typename EdgeStorageType::value_type;
+  using EdgesSizeType = typename EdgeStorageType::size_type;
 
-  using iterator = typename EdgeStorageTy::iterator;
-  using const_iterator = typename EdgeStorageTy::const_iterator;
+  using iterator = typename EdgeStorageType::iterator;
+  using const_iterator = typename EdgeStorageType::const_iterator;
 
-  explicit GenericDependenceNode(UnderlyingTy Unit)
-      : m_Underlying(Unit), m_DependeeCount(0) {}
+  explicit GenericDependenceNode(UnderlyingType Unit)
+      : Underlying(Unit), DependeeCount(0) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
   GenericDependenceNode(GenericDependenceNode &&Other)
-      : m_Edges(std::move(Other.m_Edges)),
-        m_Underlying(std::move(Other.m_Underlying)),
-        m_DependeeCount(std::move(Other.m_DependeeCount)) {
-    Other.m_Edges.clear();
-    Other.m_Underlying = {};
-    Other.m_DependeeCount = {};
+      : Edges(std::move(Other.Edges)), Underlying(std::move(Other.Underlying)),
+        DependeeCount(std::move(Other.DependeeCount)) {
+    Other.Edges.clear();
+    Other.Underlying = {};
+    Other.DependeeCount = {};
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) {
-    m_Edges = std::move(Other.m_Edges);
-    m_Underlying = std::move(Other.m_Underlying);
-    m_DependeeCount = std::move(Other.m_DependeeCount);
+    Edges = std::move(Other.Edges);
+    Underlying = std::move(Other.Underlying);
+    DependeeCount = std::move(Other.DependeeCount);
 
-    Other.m_Edges.clear();
-    Other.m_Underlying = {};
-    Other.m_DependeeCount = {};
+    Other.Edges.clear();
+    Other.Underlying = {};
+    Other.DependeeCount = {};
     return *this;
   };
 
-  UnderlyingTy getUnderlying() const { return m_Underlying; }
+  UnderlyingType getUnderlying() const { return Underlying; }
 
-  void addDependentNode(GenericDependenceNode *Node, const EdgeInfoTy &Info) {
-    m_Edges.emplace_back(Node, Info);
+  void addDependentNode(GenericDependenceNode *Node, const EdgeInfoType &Info) {
+    Edges.emplace_back(Node, Info);
     Node->incrementDependeeCount();
   }
 
-  const EdgeInfoTy &getEdgeInfo(NodeType *Node) const {
+  const EdgeInfoType &getEdgeInfo(NodeType *Node) const {
     auto found =
-        std::find_if(m_Edges.begin(), m_Edges.end(),
+        std::find_if(Edges.begin(), Edges.end(),
                      [&Node](const auto &e) { return Node == e.first; });
 
-    assert(found != m_Edges.end() && "Edge could not be found!");
+    assert(found != Edges.end() && "Edge could not be found!");
 
     return (*found).second;
   }
 
-  EdgesSizeTy numEdges() const { return m_Edges.size(); }
+  EdgesSizeType numEdges() const { return Edges.size(); }
   decltype(auto) size() const { return numEdges(); }
 
-  inline decltype(auto) begin() { return m_Edges.begin(); }
-  inline decltype(auto) end() { return m_Edges.end(); }
-  inline decltype(auto) begin() const { return m_Edges.begin(); }
-  inline decltype(auto) end() const { return m_Edges.end(); }
+  inline decltype(auto) begin() { return Edges.begin(); }
+  inline decltype(auto) end() { return Edges.end(); }
+  inline decltype(auto) begin() const { return Edges.begin(); }
+  inline decltype(auto) end() const { return Edges.end(); }
 
   static GenericDependenceNode *nodes_iterator_map(value_type &P) {
     assert(P.first && "Pointer to graph node is null!");
@@ -133,14 +132,14 @@ public:
       iterator, std::function<GenericDependenceNode *(value_type &)>>;
 
   inline decltype(auto) nodes_begin() {
-    return nodes_iterator(m_Edges.begin(), nodes_iterator_map);
+    return nodes_iterator(Edges.begin(), nodes_iterator_map);
   }
 
   inline decltype(auto) nodes_end() {
-    return nodes_iterator(m_Edges.end(), nodes_iterator_map);
+    return nodes_iterator(Edges.end(), nodes_iterator_map);
   }
 
-  inline unsigned getDependeeCount() const { return m_DependeeCount; }
+  inline unsigned getDependeeCount() const { return DependeeCount; }
 
   bool compare(const GenericDependenceNode &Other) const {
     if (this->numEdges() != Other.numEdges())
@@ -169,61 +168,61 @@ public:
   using NodeType = NodeT;
 
 private:
-  using UnderlyingTy = typename NodeType::UnderlyingTy;
-  using NodeMapTy = std::map<UnderlyingTy, std::unique_ptr<NodeType>>;
+  using UnderlyingType = typename NodeType::UnderlyingType;
+  using NodeMapType = std::map<UnderlyingType, std::unique_ptr<NodeType>>;
 
-  NodeMapTy m_NodeMap;
+  NodeMapType NodeMap;
 
 public:
-  using VerticesSizeTy = typename NodeMapTy::size_type;
-  using EdgesSizeTy = typename NodeType::EdgesSizeTy;
+  using VerticesSizeType = typename NodeMapType::size_type;
+  using EdgesSizeType = typename NodeType::EdgesSizeType;
   // TODO hide the exposure of internal implemenation using smart pointer
   // TODO potentially use a std::reference_wrapper?
   // this is important because map-like containers expose the semantic
   // immutability of their keys as const key_type in their value_type
-  using value_type = typename NodeMapTy::value_type;
+  using value_type = typename NodeMapType::value_type;
 
-  using iterator = typename NodeMapTy::iterator;
-  using const_iterator = typename NodeMapTy::const_iterator;
+  using iterator = typename NodeMapType::iterator;
+  using const_iterator = typename NodeMapType::const_iterator;
 
   GenericDependenceGraph() = default;
   GenericDependenceGraph(const GenericDependenceGraph &) = delete;
   GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
 
   explicit GenericDependenceGraph(const GenericDependenceGraph &&Other)
-      : m_NodeMap(std::move(Other.m_NodeMap)) {
-    Other.m_NodeMap.clear();
+      : NodeMap(std::move(Other.NodeMap)) {
+    Other.NodeMap.clear();
   }
 
   GenericDependenceGraph &operator=(const GenericDependenceGraph &&Other) {
-    m_NodeMap = std::move(Other.m_NodeMap);
-    Other.m_NodeMap.clear();
+    NodeMap = std::move(Other.NodeMap);
+    Other.NodeMap.clear();
 
     return *this;
   }
 
-  decltype(auto) getOrInsertNode(UnderlyingTy Unit) {
-    auto &node = m_NodeMap[Unit];
+  decltype(auto) getOrInsertNode(UnderlyingType Unit) {
+    auto &node = NodeMap[Unit];
     if (!node)
       node = std::make_unique<NodeType>(Unit);
 
     return node.get();
   }
 
-  VerticesSizeTy numVertices() const { return m_NodeMap.size(); }
+  VerticesSizeType numVertices() const { return NodeMap.size(); }
   decltype(auto) size() const { return numVertices(); }
 
-  EdgesSizeTy numEdges() const {
-    EdgesSizeTy n{};
-    std::for_each(std::begin(m_NodeMap), std::end(m_NodeMap),
+  EdgesSizeType numEdges() const {
+    EdgesSizeType n{};
+    std::for_each(std::begin(NodeMap), std::end(NodeMap),
                   [&n](const auto &e) { n += e.second.get()->numEdges(); });
     return n;
   }
 
-  inline decltype(auto) begin() { return m_NodeMap.begin(); }
-  inline decltype(auto) end() { return m_NodeMap.end(); }
-  inline decltype(auto) begin() const { return m_NodeMap.begin(); }
-  inline decltype(auto) end() const { return m_NodeMap.end(); }
+  inline decltype(auto) begin() { return NodeMap.begin(); }
+  inline decltype(auto) end() { return NodeMap.end(); }
+  inline decltype(auto) begin() const { return NodeMap.begin(); }
+  inline decltype(auto) end() const { return NodeMap.end(); }
 
   static NodeType *nodes_iterator_map(value_type &P) {
     assert(P.second.get() && "Pointer to graph node is null!");
@@ -234,11 +233,11 @@ public:
       llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
 
   inline decltype(auto) nodes_begin() {
-    return nodes_iterator(m_NodeMap.begin(), nodes_iterator_map);
+    return nodes_iterator(NodeMap.begin(), nodes_iterator_map);
   }
 
   inline decltype(auto) nodes_end() {
-    return nodes_iterator(m_NodeMap.end(), nodes_iterator_map);
+    return nodes_iterator(NodeMap.end(), nodes_iterator_map);
   }
 
   const NodeType *getEntryNode() const { return begin()->second.get(); }
@@ -249,8 +248,8 @@ public:
       return true;
 
     for (const auto &e : *this) {
-      auto found = Other.m_NodeMap.find(e.first);
-      if (found == Other.m_NodeMap.end())
+      auto found = Other.NodeMap.find(e.first);
+      if (found == Other.NodeMap.end())
         return true;
 
       const auto &curNode = e.second;

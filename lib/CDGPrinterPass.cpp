@@ -53,21 +53,21 @@ namespace llvm {
 
 template <>
 struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
-  using GraphTy = pedigree::CDG;
+  using GraphType = pedigree::CDG;
   using GT = GraphTraits<pedigree::CDG *>;
   using NodeType = GT::NodeType;
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
-  static std::string getGraphName(const GraphTy *) { return "CDG"; }
+  static std::string getGraphName(const GraphType *) { return "CDG"; }
 
-  std::string getNodeLabel(const NodeType *Node, const GraphTy *Graph) {
+  std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
     return isSimple() || CDGDOTSimple ? getSimpleNodeLabel(Node, Graph)
                                       : getCompleteNodeLabel(Node, Graph);
   }
 
   static std::string getCompleteNodeLabel(const NodeType *Node,
-                                          const GraphTy *Graph) {
+                                          const GraphType *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
     Node->getUnderlying()->print(os);
@@ -76,14 +76,14 @@ struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
   }
 
   static std::string getSimpleNodeLabel(const NodeType *Node,
-                                        const GraphTy *Graph) {
+                                        const GraphType *Graph) {
     auto name = Node->getUnderlying()->getName();
 
     return name.str();
   }
 
   static std::string getNodeAttributes(const NodeType *Node,
-                                       const GraphTy *Graph) {
+                                       const GraphType *Graph) {
     std::string attr;
 
     if (Graph->getEntryNode() == Node)
@@ -94,8 +94,8 @@ struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
 
   static std::string getEdgeAttributes(const NodeType *Node,
                                        GT::ChildIteratorType EI,
-                                       const GraphTy *Graph) {
-    using DIT = pedigree::DependenceInfoTraits<NodeType::EdgeInfoTy>;
+                                       const GraphType *Graph) {
+    using DIT = pedigree::DependenceInfoTraits<NodeType::EdgeInfoType>;
     auto attr = DIT::toDOTAttributes(Node->getEdgeInfo(*EI));
 
     return CDGDOTEdgeAttributes.empty() ? attr

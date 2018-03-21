@@ -53,21 +53,21 @@ namespace llvm {
 
 template <>
 struct DOTGraphTraits<pedigree::MDG *> : public DefaultDOTGraphTraits {
-  using GraphTy = pedigree::MDG;
+  using GraphType = pedigree::MDG;
   using GT = GraphTraits<pedigree::MDG *>;
   using NodeType = GT::NodeType;
 
   DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
 
-  static std::string getGraphName(const GraphTy *) { return "MDG"; }
+  static std::string getGraphName(const GraphType *) { return "MDG"; }
 
-  std::string getNodeLabel(const NodeType *Node, const GraphTy *Graph) {
+  std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
     return isSimple() || MDGDOTSimple ? getSimpleNodeLabel(Node, Graph)
                                       : getCompleteNodeLabel(Node, Graph);
   }
 
   static std::string getCompleteNodeLabel(const NodeType *Node,
-                                          const GraphTy *Graph) {
+                                          const GraphType *Graph) {
     std::string s;
     llvm::raw_string_ostream os(s);
     Node->getUnderlying()->print(os);
@@ -76,7 +76,7 @@ struct DOTGraphTraits<pedigree::MDG *> : public DefaultDOTGraphTraits {
   }
 
   static std::string getSimpleNodeLabel(const NodeType *Node,
-                                        const GraphTy *Graph) {
+                                        const GraphType *Graph) {
     auto name = Node->getUnderlying()->getName();
 
     if (name.empty())
@@ -86,7 +86,7 @@ struct DOTGraphTraits<pedigree::MDG *> : public DefaultDOTGraphTraits {
   }
 
   static std::string getNodeAttributes(const NodeType *Node,
-                                       const GraphTy *Graph) {
+                                       const GraphType *Graph) {
     std::string attr;
 
     if (Graph->getEntryNode() == Node)
@@ -97,8 +97,8 @@ struct DOTGraphTraits<pedigree::MDG *> : public DefaultDOTGraphTraits {
 
   static std::string getEdgeAttributes(const NodeType *Node,
                                        GT::ChildIteratorType EI,
-                                       const GraphTy *Graph) {
-    using DIT = pedigree::DependenceInfoTraits<NodeType::EdgeInfoTy>;
+                                       const GraphType *Graph) {
+    using DIT = pedigree::DependenceInfoTraits<NodeType::EdgeInfoType>;
     auto attr = DIT::toDOTAttributes(Node->getEdgeInfo(*EI));
 
     return MDGDOTEdgeAttributes.empty() ? attr

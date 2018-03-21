@@ -30,8 +30,8 @@ struct CDGTestData {
   CDGTestData() = delete;
 
   std::string assemblyFile;
-  CDG::VerticesSizeTy numVertices;
-  CDG::EdgesSizeTy numEdges;
+  CDG::VerticesSizeType numVertices;
+  CDG::EdgesSizeType numEdges;
 };
 
 std::ostream &operator<<(std::ostream &os, const CDGTestData &td) {
