@@ -61,6 +61,13 @@ struct is_unit_adaptable<basicblock_unit_tag, instruction_unit_tag> {
   static constexpr bool value = true;
 };
 
+//
+
+template <typename FromUnderlyingT, typename ToUnderlyingT>
+struct unit_conversion {
+  static ToUnderlyingT convert(FromUnderlyingT From) { return From.convert(); }
+};
+
 } // namespace pedigree end
 
 #endif // header
