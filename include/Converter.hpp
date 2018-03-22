@@ -12,8 +12,9 @@
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
-#include "llvm/IR/Instruction.h"
-// using llvm::Instruction
+namespace llvm {
+  class Instruction;
+}
 
 namespace pedigree {
 
