@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_CONVERTER_HPP
-#define PEDIGREE_CONVERTER_HPP
+#ifndef PEDIGREE_GRAPHADAPTOR_HPP
+#define PEDIGREE_GRAPHADAPTOR_HPP
 
 #include "Config.hpp"
 

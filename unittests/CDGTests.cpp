@@ -10,7 +10,7 @@
 
 #include "Analysis/CDGBuilder.hpp"
 
-#include "Converter.hpp"
+#include "Support/GraphAdaptor.hpp"
 
 #include "Support/Utils/UnitAdaptors.hpp"
 
