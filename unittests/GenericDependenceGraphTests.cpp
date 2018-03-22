@@ -4,7 +4,7 @@
 
 #include "TestCommon.hpp"
 
-#include "GenericDependenceGraph.hpp"
+#include "Support/GenericDependenceGraph.hpp"
 
 #include "gtest/gtest.h"
 // using testing::Test

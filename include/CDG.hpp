@@ -7,7 +7,7 @@
 
 #include "Dependence.hpp"
 
-#include "GenericDependenceGraph.hpp"
+#include "Support/GenericDependenceGraph.hpp"
 
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
