@@ -2,12 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_CDGPASS_HPP
-#define PEDIGREE_CDGPASS_HPP
+#ifndef PEDIGREE_MDGPASS_HPP
+#define PEDIGREE_MDGPASS_HPP
 
 #include "Config.hpp"
 
-#include "CDG.hpp"
+#include "Analysis/MDG.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::FunctionPass
@@ -24,17 +24,17 @@ class AnalysisUsage;
 
 namespace pedigree {
 
-struct CDGPass : public llvm::FunctionPass {
+struct MDGPass : public llvm::FunctionPass {
   static char ID;
-  std::unique_ptr<CDG> m_Graph;
+  std::unique_ptr<MDG> m_Graph;
 
-  CDGPass() : llvm::FunctionPass(ID) {}
+  MDGPass() : llvm::FunctionPass(ID) {}
 
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;
 
-  const CDG &getGraph() const { return *m_Graph; }
-  CDG &getGraph() { return *m_Graph; }
+  const MDG &getGraph() const { return *m_Graph; }
+  MDG &getGraph() { return *m_Graph; }
 };
 
 } // namespace pedigree end

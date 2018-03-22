@@ -6,9 +6,11 @@
 
 #include "TestCommon.hpp"
 
-#include "CDG.hpp"
+#include "Analysis/CDG.hpp"
 
-#include "CDGBuilder.hpp"
+#include "Analysis/CDGBuilder.hpp"
+
+#include "Converter.hpp"
 
 #include "gtest/gtest.h"
 // using testing::Test

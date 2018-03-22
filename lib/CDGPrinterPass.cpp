@@ -6,7 +6,7 @@
 
 #include "Utils.hpp"
 
-#include "CDGPass.hpp"
+#include "Analysis/Passes/CDGPass.hpp"
 
 #include "llvm/Analysis/DOTGraphTraitsPass.h"
 // using llvm::DOTGraphTraitsPrinter

@@ -6,9 +6,9 @@
 
 #include "TestCommon.hpp"
 
-#include "DDG.hpp"
+#include "Analysis/DDG.hpp"
 
-#include "DDGBuilder.hpp"
+#include "Analysis/DDGBuilder.hpp"
 
 #include "gtest/gtest.h"
 // using testing::Test

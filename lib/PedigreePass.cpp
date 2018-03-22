@@ -4,7 +4,7 @@
 
 #include "Utils.hpp"
 
-#include "PedigreePass.hpp"
+#include "Analysis/Passes/PedigreePass.hpp"
 
 #include "llvm/IR/Type.h"
 // using llvm::Type

@@ -6,7 +6,7 @@
 
 #include "TestCommon.hpp"
 
-#include "PostDominanceFrontier.hpp"
+#include "Analysis/PostDominanceFrontier.hpp"
 
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock

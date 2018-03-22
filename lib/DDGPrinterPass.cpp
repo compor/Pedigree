@@ -4,7 +4,7 @@
 
 #include "Utils.hpp"
 
-#include "DDGPass.hpp"
+#include "Analysis/Passes/DDGPass.hpp"
 
 #include "llvm/Analysis/DOTGraphTraitsPass.h"
 // using llvm::DOTGraphTraitsPrinter

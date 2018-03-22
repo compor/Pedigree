@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "DDG.hpp"
+#include "Analysis/DDG.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::FunctionPass

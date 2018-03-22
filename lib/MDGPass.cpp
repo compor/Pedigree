@@ -8,11 +8,11 @@
 
 #include "Pedigree.hpp"
 
-#include "MDGPass.hpp"
+#include "Analysis/Passes/MDGPass.hpp"
 
-#include "MDALocalMDGBuilder.hpp"
+#include "Analysis/MDALocalMDGBuilder.hpp"
 
-#include "DAMDGBuilder.hpp"
+#include "Analysis/DAMDGBuilder.hpp"
 
 #include "llvm/Config/llvm-config.h"
 

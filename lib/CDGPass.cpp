@@ -4,9 +4,9 @@
 
 #include "Utils.hpp"
 
-#include "CDGPass.hpp"
+#include "Analysis/Passes/CDGPass.hpp"
 
-#include "CDGBuilder.hpp"
+#include "Analysis/CDGBuilder.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass

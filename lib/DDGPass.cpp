@@ -4,9 +4,9 @@
 
 #include "Utils.hpp"
 
-#include "DDGPass.hpp"
+#include "Analysis/Passes/DDGPass.hpp"
 
-#include "DDGBuilder.hpp"
+#include "Analysis/DDGBuilder.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass

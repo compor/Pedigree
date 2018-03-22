@@ -7,13 +7,13 @@
 
 #include "Config.hpp"
 
-#include "traits/Unit.hpp"
+#include "Support/Traits/Unit.hpp"
 
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
 namespace llvm {
-  class Instruction;
+class Instruction;
 }
 
 namespace pedigree {
