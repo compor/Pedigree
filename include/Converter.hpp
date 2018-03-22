@@ -19,19 +19,18 @@ class Instruction;
 namespace pedigree {
 
 // TODO move to a place for handy utilities
-template <> struct unit_conversion<llvm::BasicBlock *, llvm::Instruction *> {
-  static llvm::Instruction *convert(const llvm::BasicBlock *From) {
+template <> struct unit_adaptor<llvm::BasicBlock *, llvm::Instruction *> {
+  static llvm::Instruction *adapt(const llvm::BasicBlock *From) {
     auto *from = const_cast<llvm::BasicBlock *>(From);
     return from->getTerminator();
   }
 };
 
-template <
-    typename FromNodeT, typename ToNodeT,
-    typename UCTraits = unit_conversion<typename FromNodeT::UnderlyingType,
-                                        typename ToNodeT::UnderlyingType>>
-void Convert(const GenericDependenceGraph<FromNodeT> &From,
-             GenericDependenceGraph<ToNodeT> &To) {
+template <typename FromNodeT, typename ToNodeT,
+          typename UATraits = unit_adaptor<typename FromNodeT::UnderlyingType,
+                                           typename ToNodeT::UnderlyingType>>
+void Adapt(const GenericDependenceGraph<FromNodeT> &From,
+           GenericDependenceGraph<ToNodeT> &To) {
   using FromUnderlyingT = typename FromNodeT::UnderlyingType;
   using ToUnderlyingT = typename ToNodeT::UnderlyingType;
 
@@ -41,11 +40,11 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
                 "Graph node undelying units are not adaptable!");
 
   for (auto &e : From) {
-    auto src = To.getOrInsertNode(UCTraits::convert(e.first));
+    auto src = To.getOrInsertNode(UATraits::adapt(e.first));
 
     for (auto &k : *(e.second)) {
-      auto converted = UCTraits::convert(k.first->get());
-      auto dst = To.getOrInsertNode(converted);
+      auto adapted = UATraits::adapt(k.first->get());
+      auto dst = To.getOrInsertNode(adapted);
       src->addDependentNode(dst, {});
     }
   }

@@ -63,9 +63,9 @@ struct is_unit_adaptable<basicblock_unit_tag, instruction_unit_tag> {
 
 //
 
-template <typename FromUnderlyingT, typename ToUnderlyingT>
-struct unit_conversion {
-  static ToUnderlyingT convert(FromUnderlyingT From) { return From.convert(); }
+template <typename FromT, typename ToT>
+struct unit_adaptor {
+  static ToT adapt(FromT From) { return From.adapt(); }
 };
 
 } // namespace pedigree end
