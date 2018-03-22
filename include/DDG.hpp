@@ -5,19 +5,12 @@
 #ifndef PEDIGREE_DDG_HPP
 #define PEDIGREE_DDG_HPP
 
-#include "Dependence.hpp"
+#include "Config.hpp"
 
 #include "Support/GenericDependenceGraph.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
-
-#include "llvm/ADT/STLExtras.h"
-// using llvm::mapped_iterator
-
-#include <iterator>
-// using std::begin
-// using std::end
 
 namespace pedigree {
 
@@ -25,6 +18,7 @@ using DataDependenceNode =
     GenericDependenceNode<llvm::Instruction, BasicDependenceInfo>;
 
 using DDG = GenericDependenceGraph<DataDependenceNode>;
+
 
 } // namespace pedigree end
 

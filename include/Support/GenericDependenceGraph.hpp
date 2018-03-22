@@ -5,7 +5,7 @@
 #ifndef PEDIGREE_GENERICDEPENDENCEGRAPH_HPP
 #define PEDIGREE_GENERICDEPENDENCEGRAPH_HPP
 
-#include "Dependence.hpp"
+#include "Config.hpp"
 
 #include "GenericDependenceNode.hpp"
 

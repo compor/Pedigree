@@ -14,11 +14,12 @@
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
-#include "llvm/IR/Function.h"
-// using llvm::Function
-
 #include "llvm/Analysis/PostDominators.h"
 // using llvm::PostDominatorTree
+
+namespace llvm {
+class Function;
+} // namespace llvm end
 
 namespace pedigree {
 

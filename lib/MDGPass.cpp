@@ -2,6 +2,8 @@
 //
 //
 
+#include "Config.hpp"
+
 #include "Utils.hpp"
 
 #include "Pedigree.hpp"
@@ -27,9 +29,6 @@
 
 #include "llvm/Analysis/AliasAnalysis.h"
 // using llvm::AliasAnalysis
-
-#include "llvm/IR/Function.h"
-// using llvm::Function
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
@@ -59,6 +58,10 @@
 // using assert
 
 #define DEBUG_TYPE "pedigree-mdg"
+
+namespace llvm {
+class Function;
+} // namespace llvm end
 
 // plugin registration for opt
 

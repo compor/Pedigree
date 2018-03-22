@@ -2,6 +2,8 @@
 //
 //
 
+#include "Config.hpp"
+
 #include "Utils.hpp"
 
 #include "CDGPass.hpp"

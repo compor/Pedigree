@@ -5,19 +5,12 @@
 #ifndef PEDIGREE_CDG_HPP
 #define PEDIGREE_CDG_HPP
 
-#include "Dependence.hpp"
+#include "Config.hpp"
 
 #include "Support/GenericDependenceGraph.hpp"
 
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
-
-#include "llvm/ADT/STLExtras.h"
-// using llvm::mapped_iterator
-
-#include <iterator>
-// using std::begin
-// using std::end
 
 namespace pedigree {
 

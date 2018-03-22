@@ -8,9 +8,6 @@
 
 #include "CDGBuilder.hpp"
 
-#include "llvm/IR/Function.h"
-// using llvm::Function
-
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -36,6 +33,10 @@
 // using llvm::dbgs
 
 #define DEBUG_TYPE "pedigree-cdg"
+
+namespace llvm {
+class Function;
+} // namespace llvm end
 
 // plugin registration for opt
 
