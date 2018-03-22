@@ -12,6 +12,8 @@
 
 #include "Converter.hpp"
 
+#include "Support/Utils/UnitAdaptors.hpp"
+
 #include "gtest/gtest.h"
 // using testing::Test
 
@@ -64,6 +66,29 @@ TEST_P(CDGConstructionTest, CDGConstruction) {
 
   EXPECT_EQ(td.numVertices, cdg.numVertices());
   EXPECT_EQ(td.numEdges, cdg.numEdges());
+}
+
+TEST_P(CDGConstructionTest, CDGAdaptation) {
+  auto td = GetParam();
+
+  parseAssemblyFile(td.assemblyFile);
+  auto *curFunc = m_Module->getFunction("foo");
+  ASSERT_FALSE(nullptr == curFunc);
+
+  CDG cdg;
+  CDGBuilder cdgBuilder{cdg};
+
+  cdgBuilder.build(*curFunc);
+
+  using ControlDependenceNode2 =
+      GenericDependenceNode<llvm::Instruction, BasicDependenceInfo>;
+  using CDG2 = GenericDependenceGraph<ControlDependenceNode2>;
+
+  CDG2 cdg2;
+  Adapt(cdg, cdg2, BlockToInstructionUnitAdaptor{});
+
+  EXPECT_EQ(td.numVertices, cdg2.numVertices());
+  EXPECT_EQ(td.numEdges, cdg2.numEdges());
 }
 
 std::array<CDGTestData, 5> testData1 = {{{"whalebook_fig81.ll", 6, 3},
