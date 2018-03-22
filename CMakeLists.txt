@@ -132,7 +132,7 @@ find_package(Boost REQUIRED)
 #
 
 set(LIB_SOURCES
-  lib/Analysis/Passes/PedigreePass.cpp
+  lib/Analysis/Passes/PDGPass.cpp
   lib/Analysis/Passes/DDGPass.cpp
   lib/Analysis/Passes/DDGPrinterPass.cpp
   lib/Analysis/Passes/CDGPass.cpp
