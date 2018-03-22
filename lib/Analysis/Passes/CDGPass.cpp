@@ -8,6 +8,10 @@
 
 #include "Analysis/CDGBuilder.hpp"
 
+#include "Support/GraphAdaptor.hpp"
+
+#include "Support/Utils/UnitAdaptors.hpp"
+
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -69,6 +73,11 @@ static llvm::cl::OptionCategory
     PedigreeCDGPassCategory("Pedigree CDG Pass",
                             "Options for Pedigree CDG pass");
 
+static llvm::cl::opt<bool> PedigreeCDGAdaptToInstruction(
+    "pedigree-cdg-instruction",
+    llvm::cl::desc("adapt cdg to block terminator instructions"),
+    llvm::cl::init(false), llvm::cl::cat(PedigreeCDGPassCategory));
+
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-cdg-debug", llvm::cl::desc("debug pedigree cdg pass"),
@@ -100,6 +109,11 @@ bool CDGPass::runOnFunction(llvm::Function &CurFunc) {
   m_Graph = std::make_unique<CDG>();
   CDGBuilder builder{*m_Graph};
   builder.build(CurFunc);
+
+  if (PedigreeCDGAdaptToInstruction) {
+    m_InstGraph = std::make_unique<InstCDG>();
+    Adapt(*m_Graph, *m_InstGraph, BlockToInstructionUnitAdaptor{});
+  }
 
   return false;
 }

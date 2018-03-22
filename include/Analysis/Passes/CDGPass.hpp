@@ -27,6 +27,7 @@ namespace pedigree {
 struct CDGPass : public llvm::FunctionPass {
   static char ID;
   std::unique_ptr<CDG> m_Graph;
+  std::unique_ptr<InstCDG> m_InstGraph;
 
   CDGPass() : llvm::FunctionPass(ID) {}
 
@@ -35,6 +36,9 @@ struct CDGPass : public llvm::FunctionPass {
 
   const CDG &getGraph() const { return *m_Graph; }
   CDG &getGraph() { return *m_Graph; }
+
+  const InstCDG &getInstGraph() const { return *m_InstGraph; }
+  InstCDG &getInstGraph() { return *m_InstGraph; }
 };
 
 } // namespace pedigree end
