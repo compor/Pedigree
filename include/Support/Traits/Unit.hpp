@@ -61,13 +61,6 @@ struct is_unit_adaptable<basicblock_unit_tag, instruction_unit_tag> {
   static constexpr bool value = true;
 };
 
-//
-
-template <typename FromT, typename ToT>
-struct unit_adaptor {
-  static ToT adapt(FromT From) { return From.adapt(); }
-};
-
 } // namespace pedigree end
 
 #endif // header
