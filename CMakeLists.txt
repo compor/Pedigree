@@ -132,13 +132,13 @@ find_package(Boost REQUIRED)
 #
 
 set(LIB_SOURCES
-  lib/PedigreePass.cpp
-  lib/DDGPass.cpp
-  lib/DDGPrinterPass.cpp
-  lib/CDGPass.cpp
-  lib/CDGPrinterPass.cpp
-  lib/MDGPass.cpp
-  lib/MDGPrinterPass.cpp)
+  lib/Analysis/Passes/PedigreePass.cpp
+  lib/Analysis/Passes/DDGPass.cpp
+  lib/Analysis/Passes/DDGPrinterPass.cpp
+  lib/Analysis/Passes/CDGPass.cpp
+  lib/Analysis/Passes/CDGPrinterPass.cpp
+  lib/Analysis/Passes/MDGPass.cpp
+  lib/Analysis/Passes/MDGPrinterPass.cpp)
 
 set(LIB_NAME "LLVM${PRJ_NAME}Pass")
 set(OBJ_LIB_NAME "${LIB_NAME}_obj")
