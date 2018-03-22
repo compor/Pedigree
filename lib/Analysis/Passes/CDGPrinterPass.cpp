@@ -51,15 +51,19 @@ static llvm::cl::list<std::string> CDGDOTFunctionWhitelist(
     "pedigree-cdg-dot-func-wl", llvm::cl::Hidden,
     llvm::cl::desc("generate CDG DOT graph only for these functions"));
 
-namespace llvm {
+namespace pedigree {
 
-template <>
-struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
-  using GraphType = pedigree::CDG;
-  using GT = GraphTraits<pedigree::CDG *>;
-  using NodeType = GT::NodeType;
+template <typename GraphT> struct LLVMDOTDependenceGraphTraitsBase {};
 
-  DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
+template <typename GraphT>
+struct LLVMDOTDependenceGraphTraitsBase<GraphT *>
+    : public llvm::DefaultDOTGraphTraits {
+  using GraphType = GraphT;
+  using GT = llvm::GraphTraits<GraphType *>;
+  using NodeType = typename GT::NodeType;
+
+  LLVMDOTDependenceGraphTraitsBase(bool isSimple)
+      : llvm::DefaultDOTGraphTraits(isSimple) {}
 
   static std::string getGraphName(const GraphType *) { return "CDG"; }
 
@@ -95,9 +99,9 @@ struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
   }
 
   static std::string getEdgeAttributes(const NodeType *Node,
-                                       GT::ChildIteratorType EI,
+                                       typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
-    using DIT = pedigree::DependenceInfoTraits<NodeType::EdgeInfoType>;
+    using DIT = pedigree::DependenceInfoTraits<typename NodeType::EdgeInfoType>;
     auto attr = DIT::toDOTAttributes(Node->getEdgeInfo(*EI));
 
     return CDGDOTEdgeAttributes.empty() ? attr
@@ -107,6 +111,17 @@ struct DOTGraphTraits<pedigree::CDG *> : public DefaultDOTGraphTraits {
   bool isNodeHidden(const NodeType *Node) {
     return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
   }
+};
+
+} // namespace pedigree end
+
+namespace llvm {
+
+template <>
+struct DOTGraphTraits<pedigree::CDG *>
+    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::CDG *> {
+  DOTGraphTraits(bool isSimple = false)
+      : LLVMDOTDependenceGraphTraitsBase(isSimple) {}
 };
 
 struct AnalysisDependenceGraphPassTraits {
