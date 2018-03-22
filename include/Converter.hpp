@@ -12,18 +12,7 @@
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
-namespace llvm {
-class Instruction;
-}
-
 namespace pedigree {
-
-struct BlockToInstructionUnitAdaptor {
-  llvm::Instruction *operator()(const llvm::BasicBlock *From) {
-    auto *from = const_cast<llvm::BasicBlock *>(From);
-    return from->getTerminator();
-  }
-};
 
 template <typename FromNodeT, typename ToNodeT, typename AdaptOperation>
 void Adapt(const GenericDependenceGraph<FromNodeT> &From,
