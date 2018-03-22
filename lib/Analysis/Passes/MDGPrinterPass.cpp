@@ -8,8 +8,7 @@
 
 #include "Analysis/Passes/MDGPass.hpp"
 
-#include "llvm/Analysis/DOTGraphTraitsPass.h"
-// using llvm::DOTGraphTraitsPrinter
+#include "Support/Traits/LLVMDOTGraphTraitsHelper.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
@@ -21,8 +20,8 @@
 // using llvm::PassManagerBuilder
 // using llvm::RegisterStandardPasses
 
-#include "llvm/Support/DOTGraphTraits.h"
-// using llvm::DOTGraphTraits
+#include "llvm/Analysis/DOTGraphTraitsPass.h"
+// using llvm::DOTGraphTraitsPrinter
 
 #include "llvm/Support/CommandLine.h"
 // using llvm::cl::opt
@@ -54,12 +53,11 @@ static llvm::cl::list<std::string> MDGDOTFunctionWhitelist(
 namespace llvm {
 
 template <>
-struct DOTGraphTraits<pedigree::MDG *> : public DefaultDOTGraphTraits {
-  using GraphType = pedigree::MDG;
-  using GT = GraphTraits<pedigree::MDG *>;
-  using NodeType = GT::NodeType;
+struct DOTGraphTraits<pedigree::MDG *>
+    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::MDG *> {
+  using Base = pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::MDG *>;
 
-  DOTGraphTraits(bool isSimple = false) : DefaultDOTGraphTraits(isSimple) {}
+  DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
 
   static std::string getGraphName(const GraphType *) { return "MDG"; }
 
@@ -68,47 +66,12 @@ struct DOTGraphTraits<pedigree::MDG *> : public DefaultDOTGraphTraits {
                                       : getCompleteNodeLabel(Node, Graph);
   }
 
-  static std::string getCompleteNodeLabel(const NodeType *Node,
-                                          const GraphType *Graph) {
-    std::string s;
-    llvm::raw_string_ostream os(s);
-    Node->get()->print(os);
-
-    return os.str();
-  }
-
-  static std::string getSimpleNodeLabel(const NodeType *Node,
-                                        const GraphType *Graph) {
-    auto name = Node->get()->getName();
-
-    if (name.empty())
-      return Node->get()->getOpcodeName();
-    else
-      return name.str();
-  }
-
-  static std::string getNodeAttributes(const NodeType *Node,
-                                       const GraphType *Graph) {
-    std::string attr;
-
-    if (Graph->getEntryNode() == Node)
-      attr = "color=grey,style=filled";
-
-    return attr;
-  }
-
   static std::string getEdgeAttributes(const NodeType *Node,
-                                       GT::ChildIteratorType EI,
+                                       typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
-    using DIT = pedigree::DependenceInfoTraits<NodeType::EdgeInfoType>;
-    auto attr = DIT::toDOTAttributes(Node->getEdgeInfo(*EI));
-
-    return MDGDOTEdgeAttributes.empty() ? attr
-                                        : MDGDOTEdgeAttributes.getValue();
-  }
-
-  bool isNodeHidden(const NodeType *Node) {
-    return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
+    return MDGDOTEdgeAttributes.empty()
+               ? Base::getEdgeAttributes(Node, EI, Graph)
+               : MDGDOTEdgeAttributes.getValue();
   }
 };
 

@@ -8,8 +8,7 @@
 
 #include "Analysis/Passes/CDGPass.hpp"
 
-#include "llvm/Analysis/DOTGraphTraitsPass.h"
-// using llvm::DOTGraphTraitsPrinter
+#include "Support/Traits/LLVMDOTGraphTraitsHelper.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
@@ -21,8 +20,8 @@
 // using llvm::PassManagerBuilder
 // using llvm::RegisterStandardPasses
 
-#include "llvm/Support/DOTGraphTraits.h"
-// using llvm::DOTGraphTraits
+#include "llvm/Analysis/DOTGraphTraitsPass.h"
+// using llvm::DOTGraphTraitsPrinter
 
 #include "llvm/Support/CommandLine.h"
 // using llvm::cl::opt
@@ -51,19 +50,14 @@ static llvm::cl::list<std::string> CDGDOTFunctionWhitelist(
     "pedigree-cdg-dot-func-wl", llvm::cl::Hidden,
     llvm::cl::desc("generate CDG DOT graph only for these functions"));
 
-namespace pedigree {
+namespace llvm {
 
-template <typename GraphT> struct LLVMDOTDependenceGraphTraitsBase {};
+template <>
+struct DOTGraphTraits<pedigree::CDG *>
+    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::CDG *> {
+  using Base = pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::CDG *>;
 
-template <typename GraphT>
-struct LLVMDOTDependenceGraphTraitsBase<GraphT *>
-    : public llvm::DefaultDOTGraphTraits {
-  using GraphType = GraphT;
-  using GT = llvm::GraphTraits<GraphType *>;
-  using NodeType = typename GT::NodeType;
-
-  LLVMDOTDependenceGraphTraitsBase(bool isSimple)
-      : llvm::DefaultDOTGraphTraits(isSimple) {}
+  DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
 
   static std::string getGraphName(const GraphType *) { return "CDG"; }
 
@@ -72,56 +66,13 @@ struct LLVMDOTDependenceGraphTraitsBase<GraphT *>
                                       : getCompleteNodeLabel(Node, Graph);
   }
 
-  static std::string getCompleteNodeLabel(const NodeType *Node,
-                                          const GraphType *Graph) {
-    std::string s;
-    llvm::raw_string_ostream os(s);
-    Node->get()->print(os);
-
-    return os.str();
-  }
-
-  static std::string getSimpleNodeLabel(const NodeType *Node,
-                                        const GraphType *Graph) {
-    auto name = Node->get()->getName();
-
-    return name.str();
-  }
-
-  static std::string getNodeAttributes(const NodeType *Node,
-                                       const GraphType *Graph) {
-    std::string attr;
-
-    if (Graph->getEntryNode() == Node)
-      attr = "color=grey,style=filled";
-
-    return attr;
-  }
-
   static std::string getEdgeAttributes(const NodeType *Node,
                                        typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
-    using DIT = pedigree::DependenceInfoTraits<typename NodeType::EdgeInfoType>;
-    auto attr = DIT::toDOTAttributes(Node->getEdgeInfo(*EI));
-
-    return CDGDOTEdgeAttributes.empty() ? attr
-                                        : CDGDOTEdgeAttributes.getValue();
+    return CDGDOTEdgeAttributes.empty()
+               ? Base::getEdgeAttributes(Node, EI, Graph)
+               : CDGDOTEdgeAttributes.getValue();
   }
-
-  bool isNodeHidden(const NodeType *Node) {
-    return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
-  }
-};
-
-} // namespace pedigree end
-
-namespace llvm {
-
-template <>
-struct DOTGraphTraits<pedigree::CDG *>
-    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::CDG *> {
-  DOTGraphTraits(bool isSimple = false)
-      : LLVMDOTDependenceGraphTraitsBase(isSimple) {}
 };
 
 struct AnalysisDependenceGraphPassTraits {
