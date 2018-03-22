@@ -12,12 +12,22 @@
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
+#include "llvm/IR/Instruction.h"
+// using llvm::Instruction
+
 namespace pedigree {
 
 using ControlDependenceNode =
     GenericDependenceNode<llvm::BasicBlock, BasicDependenceInfo>;
 
 using CDG = GenericDependenceGraph<ControlDependenceNode>;
+
+//
+
+using InstControlDependenceNode =
+    GenericDependenceNode<llvm::Instruction, BasicDependenceInfo>;
+
+using InstCDG = GenericDependenceGraph<InstControlDependenceNode>;
 
 } // namespace pedigree end
 
@@ -36,6 +46,17 @@ struct GraphTraits<pedigree::ControlDependenceNode *>
 template <>
 struct GraphTraits<pedigree::CDG *>
     : public pedigree::LLVMDependenceGraphTraitsBase<pedigree::CDG *> {};
+
+//
+
+template <>
+struct GraphTraits<pedigree::InstControlDependenceNode *>
+    : public pedigree::LLVMDependenceNodeTraitsBase<
+          pedigree::InstControlDependenceNode *> {};
+
+template <>
+struct GraphTraits<pedigree::InstCDG *>
+    : public pedigree::LLVMDependenceGraphTraitsBase<pedigree::InstCDG *> {};
 
 } // namespace llvm end
 

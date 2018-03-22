@@ -14,6 +14,12 @@
 
 #include "Support/Utils/UnitAdaptors.hpp"
 
+#include "llvm/IR/BasicBlock.h"
+// using llvm::BasicBlock
+
+#include "llvm/IR/Instruction.h"
+// using llvm::Instruction
+
 #include "gtest/gtest.h"
 // using testing::Test
 
@@ -80,11 +86,7 @@ TEST_P(CDGConstructionTest, CDGAdaptation) {
 
   cdgBuilder.build(*curFunc);
 
-  using ControlDependenceNode2 =
-      GenericDependenceNode<llvm::Instruction, BasicDependenceInfo>;
-  using CDG2 = GenericDependenceGraph<ControlDependenceNode2>;
-
-  CDG2 cdg2;
+  InstCDG cdg2;
   Adapt(cdg, cdg2, BlockToInstructionUnitAdaptor{});
 
   EXPECT_EQ(td.numVertices, cdg2.numVertices());
