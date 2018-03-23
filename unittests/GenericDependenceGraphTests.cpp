@@ -4,6 +4,8 @@
 
 #include "TestCommon.hpp"
 
+#include "Support/GenericDependenceNode.hpp"
+
 #include "Support/GenericDependenceGraph.hpp"
 
 #include "gtest/gtest.h"

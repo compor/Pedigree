@@ -113,8 +113,8 @@ public:
   decltype(auto) size() const { return numEdges(); }
 
   inline decltype(auto) begin() { return Edges.begin(); }
-  inline decltype(auto) end() { return Edges.end(); }
   inline decltype(auto) begin() const { return Edges.begin(); }
+  inline decltype(auto) end() { return Edges.end(); }
   inline decltype(auto) end() const { return Edges.end(); }
 
   static GenericDependenceNode *nodes_iterator_map(value_type &P) {
@@ -125,12 +125,23 @@ public:
   using nodes_iterator = llvm::mapped_iterator<
       iterator, std::function<GenericDependenceNode *(value_type &)>>;
 
+  using const_nodes_iterator = llvm::mapped_iterator<
+      const_iterator, std::function<GenericDependenceNode *(value_type &)>>;
+
   inline decltype(auto) nodes_begin() {
     return nodes_iterator(Edges.begin(), nodes_iterator_map);
   }
 
+  inline decltype(auto) nodes_begin() const {
+    return const_nodes_iterator(Edges.begin(), nodes_iterator_map);
+  }
+
   inline decltype(auto) nodes_end() {
     return nodes_iterator(Edges.end(), nodes_iterator_map);
+  }
+
+  inline decltype(auto) nodes_end() const {
+    return const_nodes_iterator(Edges.end(), nodes_iterator_map);
   }
 
   inline unsigned getDependeeCount() const { return DependeeCount; }
@@ -178,6 +189,22 @@ struct LLVMDependenceNodeTraitsBase<DependenceNodeT *> {
   static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
 
   using nodes_iterator = typename NodeType::nodes_iterator;
+  static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
+  static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
+};
+
+template <typename DependenceNodeT>
+struct LLVMDependenceNodeTraitsBase<const DependenceNodeT *> {
+  using NodeType = const DependenceNodeT;
+
+  static NodeType *getEntryNode(NodeType *G) { return G; }
+  static unsigned size(NodeType *G) { return G->size(); }
+
+  using ChildIteratorType = typename NodeType::const_nodes_iterator;
+  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
+  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
+
+  using nodes_iterator = typename NodeType::const_nodes_iterator;
   static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
 };

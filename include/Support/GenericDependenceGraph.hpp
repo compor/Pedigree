@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "GenericDependenceNode.hpp"
+#include "Dependence.hpp"
 
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
@@ -98,8 +98,8 @@ public:
   }
 
   inline decltype(auto) begin() { return NodeMap.begin(); }
-  inline decltype(auto) end() { return NodeMap.end(); }
   inline decltype(auto) begin() const { return NodeMap.begin(); }
+  inline decltype(auto) end() { return NodeMap.end(); }
   inline decltype(auto) end() const { return NodeMap.end(); }
 
   static NodeType *nodes_iterator_map(value_type &P) {
@@ -110,16 +110,28 @@ public:
   using nodes_iterator =
       llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
 
+  using const_nodes_iterator =
+      llvm::mapped_iterator<const_iterator,
+                            std::function<NodeType *(value_type &)>>;
+
   inline decltype(auto) nodes_begin() {
     return nodes_iterator(NodeMap.begin(), nodes_iterator_map);
+  }
+
+  inline decltype(auto) nodes_begin() const {
+    return const_nodes_iterator(NodeMap.begin(), nodes_iterator_map);
   }
 
   inline decltype(auto) nodes_end() {
     return nodes_iterator(NodeMap.end(), nodes_iterator_map);
   }
 
-  const NodeType *getEntryNode() const { return begin()->second.get(); }
+  inline decltype(auto) nodes_end() const {
+    return const_nodes_iterator(NodeMap.end(), nodes_iterator_map);
+  }
+
   NodeType *getEntryNode() { return begin()->second.get(); }
+  const NodeType *getEntryNode() const { return begin()->second.get(); }
 
   bool compare(const GenericDependenceGraph &Other) const {
     if (numVertices() != Other.numVertices() || numEdges() != Other.numEdges())
@@ -169,6 +181,24 @@ template <typename GraphT> struct LLVMDependenceGraphTraitsBase<GraphT *> {
   using nodes_iterator = typename GraphT::nodes_iterator;
   static decltype(auto) nodes_begin(GraphT *G) { return G->nodes_begin(); }
   static decltype(auto) nodes_end(GraphT *G) { return G->nodes_end(); }
+};
+
+template <typename GraphT>
+struct LLVMDependenceGraphTraitsBase<const GraphT *> {
+  using NodeType = const typename GraphT::NodeType;
+
+  static const NodeType *getEntryNode(NodeType *G) { return G->getEntryNode(); }
+  static unsigned size(NodeType *G) { return G->size(); }
+
+  using ChildIteratorType = typename NodeType::const_nodes_iterator;
+  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
+  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
+
+  using nodes_iterator = typename GraphT::const_nodes_iterator;
+  static decltype(auto) nodes_begin(const GraphT *G) {
+    return G->nodes_begin();
+  }
+  static decltype(auto) nodes_end(const GraphT *G) { return G->nodes_end(); }
 };
 
 } // namespace pedigree end
