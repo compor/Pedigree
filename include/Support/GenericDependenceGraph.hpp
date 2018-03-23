@@ -67,12 +67,12 @@ public:
   GenericDependenceGraph(const GenericDependenceGraph &) = delete;
   GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
 
-  explicit GenericDependenceGraph(const GenericDependenceGraph &&Other)
+  explicit GenericDependenceGraph(GenericDependenceGraph &&Other)
       : NodeMap(std::move(Other.NodeMap)) {
     Other.NodeMap.clear();
   }
 
-  GenericDependenceGraph &operator=(const GenericDependenceGraph &&Other) {
+  GenericDependenceGraph &operator=(GenericDependenceGraph &&Other) {
     NodeMap = std::move(Other.NodeMap);
     Other.NodeMap.clear();
 
