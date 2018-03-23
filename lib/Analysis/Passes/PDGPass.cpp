@@ -115,7 +115,7 @@ void PDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool PDGPass::runOnFunction(llvm::Function &CurFunc) {
-  m_Graph = std::make_unique<PDG>();
+  Graph = std::make_unique<PDG>();
   auto &g = getAnalysis<DDGPass>().getGraph();
 
   return false;

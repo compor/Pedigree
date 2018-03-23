@@ -164,15 +164,15 @@ void MDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 bool MDGPass::runOnFunction(llvm::Function &CurFunc) {
   checkCmdLineOptions();
 
-  m_Graph = std::make_unique<MDG>();
+  Graph = std::make_unique<MDG>();
 
   if (AnalysisBackendType::DA == AnalysisBackendOption) {
     auto &da = getAnalysis<llvm::DependenceAnalysis>();
-    DAMDGBuilder builder{*m_Graph, da};
+    DAMDGBuilder builder{*Graph, da};
     builder.build(CurFunc);
   } else {
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
-    MDALocalMDGBuilder builder{*m_Graph, mda, AnalysisBackendScopeOption};
+    MDALocalMDGBuilder builder{*Graph, mda, AnalysisBackendScopeOption};
     builder.build(CurFunc);
   }
 

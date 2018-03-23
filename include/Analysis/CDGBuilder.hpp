@@ -24,10 +24,10 @@ class Function;
 namespace pedigree {
 
 class CDGBuilder {
-  CDG &m_Graph;
+  CDG &Graph;
 
 public:
-  CDGBuilder(CDG &Graph) : m_Graph(Graph) {}
+  CDGBuilder(CDG &Graph) : Graph(Graph) {}
 
   void build(const llvm::Function &CurFunc) {
     llvm::PostDominatorTree curPDT;
@@ -40,9 +40,9 @@ public:
     info.setOrigin(DependenceOrigin::control);
 
     for (auto &f : pdf) {
-      auto dst = m_Graph.getOrInsertNode(f.first);
+      auto dst = Graph.getOrInsertNode(f.first);
       for (auto &e : f.second) {
-        auto src = m_Graph.getOrInsertNode(e);
+        auto src = Graph.getOrInsertNode(e);
         src->addDependentNode(dst, info);
       }
     }

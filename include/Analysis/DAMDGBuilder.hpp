@@ -27,7 +27,7 @@ namespace pedigree {
 // in the graph unless they have an edge
 
 class DAMDGBuilder : public llvm::InstVisitor<DAMDGBuilder> {
-  MDG &m_Graph;
+  MDG &Graph;
   llvm::DependenceAnalysis &m_DA;
   std::vector<llvm::Instruction *> m_MemInstructions;
 
@@ -37,7 +37,7 @@ class DAMDGBuilder : public llvm::InstVisitor<DAMDGBuilder> {
 
 public:
   DAMDGBuilder(MDG &Graph, const llvm::DependenceAnalysis &DA)
-      : m_Graph(Graph), m_DA(const_cast<llvm::DependenceAnalysis &>(DA)) {}
+      : Graph(Graph), m_DA(const_cast<llvm::DependenceAnalysis &>(DA)) {}
 
   template <typename T> void build(T &Unit) {
     visit(Unit);
@@ -50,11 +50,11 @@ public:
     for (auto ii = std::begin(m_MemInstructions),
               ie = std::end(m_MemInstructions);
          ii != ie; ++ii) {
-      auto src = m_Graph.getOrInsertNode(*ii);
+      auto src = Graph.getOrInsertNode(*ii);
 
       for (auto jj = ii; jj != ie; ++jj)
         if (auto D = m_DA.depends(*ii, *jj, true)) {
-          auto dst = m_Graph.getOrInsertNode(*jj);
+          auto dst = Graph.getOrInsertNode(*jj);
           src->addDependentNode(dst, info);
         }
     }

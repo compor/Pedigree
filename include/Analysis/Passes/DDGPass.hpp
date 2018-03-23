@@ -26,15 +26,15 @@ namespace pedigree {
 
 struct DDGPass : public llvm::FunctionPass {
   static char ID;
-  std::unique_ptr<DDG> m_Graph;
+  std::unique_ptr<DDG> Graph;
 
   DDGPass() : llvm::FunctionPass(ID) {}
 
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;
 
-  const DDG &getGraph() const { return *m_Graph; }
-  DDG &getGraph() { return *m_Graph; }
+  const DDG &getGraph() const { return *Graph; }
+  DDG &getGraph() { return *Graph; }
 };
 
 } // namespace pedigree end

@@ -35,7 +35,7 @@ class MDALocalMDGBuilder : public llvm::InstVisitor<MDALocalMDGBuilder> {
 public:
   MDALocalMDGBuilder(MDG &Graph, const llvm::MemoryDependenceAnalysis &MDA,
                      AnalysisScope scope = AnalysisScope::Block)
-      : m_Graph(Graph),
+      : Graph(Graph),
         m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
         m_Scope(scope) {}
 
@@ -47,7 +47,7 @@ public:
   }
 
 private:
-  MDG &m_Graph;
+  MDG &Graph;
   llvm::MemoryDependenceAnalysis &m_MDA;
   AnalysisScope m_Scope;
 
@@ -75,7 +75,7 @@ private:
 
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
     auto query = m_MDA.getDependency(&CurInstruction);
-    auto dst = m_Graph.getOrInsertNode(&CurInstruction);
+    auto dst = Graph.getOrInsertNode(&CurInstruction);
     llvm::SmallVector<llvm::Instruction *, 8> dependees;
 
     if (query.isNonLocal()) {
@@ -96,7 +96,7 @@ private:
     // info.setHazard();
 
     for (const auto &e : dependees) {
-      auto src = m_Graph.getOrInsertNode(e);
+      auto src = Graph.getOrInsertNode(e);
       src->addDependentNode(dst, info);
     }
   }

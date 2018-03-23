@@ -106,13 +106,13 @@ void CDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool CDGPass::runOnFunction(llvm::Function &CurFunc) {
-  m_Graph = std::make_unique<CDG>();
-  CDGBuilder builder{*m_Graph};
+  Graph = std::make_unique<CDG>();
+  CDGBuilder builder{*Graph};
   builder.build(CurFunc);
 
   if (PedigreeCDGAdaptToInstruction) {
     m_InstGraph = std::make_unique<InstCDG>();
-    Adapt(*m_Graph, *m_InstGraph, BlockToInstructionUnitAdaptor{});
+    Adapt(*Graph, *m_InstGraph, BlockToInstructionUnitAdaptor{});
   }
 
   return false;
