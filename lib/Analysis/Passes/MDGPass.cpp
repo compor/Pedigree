@@ -138,13 +138,14 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 #endif // PEDIGREE_DEBUG
 
 static void checkCmdLineOptions() {
-  assert(AnalysisBackendType::DA == AnalysisBackendOption &&
-         pedigree::AnalysisScope::Function != AnalysisBackendScopeOption && "");
+  assert(AnalysisBackendType::DA != AnalysisBackendOption &&
+         pedigree::AnalysisScope::Function != AnalysisBackendScopeOption &&
+         "Analysis scope is not supported by analysis backend!");
 
 #if LLVM_VERSION_MAJOR >= 4 && LLVM_VERSION_MINOR >= 0
   ;
 #else
-  assert(AnalysisBackendType::MemorySSA == AnalysisBackendOption &&
+  assert(AnalysisBackendType::MemorySSA != AnalysisBackendOption &&
          "MemorySSA is not part of this LLVM version!");
 #endif
 }
