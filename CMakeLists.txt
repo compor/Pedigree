@@ -18,6 +18,8 @@ add_cleanall_target()
 
 option(PEDIGREE_SKIP_TESTS "Skip configuring the project tests" ON)
 option(PEDIGREE_DEBUG "Enable project custom debug output facilities" OFF)
+option(PEDIGREE_EXTERN_TEMPLATES_ENABLE "Enable use of C++11 extern termplates"
+  OFF)
 
 message(STATUS "project debug: ${PEDIGREE_DEBUG}")
 
@@ -132,13 +134,14 @@ find_package(Boost REQUIRED)
 #
 
 set(LIB_SOURCES
-  lib/Analysis/Passes/PDGPass.cpp
+  lib/Analysis/DependenceGraphs.cpp
   lib/Analysis/Passes/DDGPass.cpp
   lib/Analysis/Passes/DDGPrinterPass.cpp
   lib/Analysis/Passes/CDGPass.cpp
   lib/Analysis/Passes/CDGPrinterPass.cpp
   lib/Analysis/Passes/MDGPass.cpp
-  lib/Analysis/Passes/MDGPrinterPass.cpp)
+  lib/Analysis/Passes/MDGPrinterPass.cpp
+  lib/Analysis/Passes/PDGPass.cpp)
 
 set(LIB_NAME "LLVM${PRJ_NAME}Pass")
 set(OBJ_LIB_NAME "${LIB_NAME}_obj")
@@ -158,6 +161,11 @@ target_compile_definitions(${OBJ_LIB_NAME}
 set(PRJ_DEBUG_VALUE 0)
 if(PEDIGREE_DEBUG)
   set(PRJ_DEBUG_VALUE 1)
+endif()
+
+set(${PRJ_NAME_UPPER}_TEMPLATE_EXTERN "")
+if(PEDIGREE_EXTERN_TEMPLATES_ENABLE)
+  set(${PRJ_NAME_UPPER}_TEMPLATE_EXTERN "extern")
 endif()
 
 target_include_directories(${OBJ_LIB_NAME} PUBLIC ${LLVM_INCLUDE_DIRS})
