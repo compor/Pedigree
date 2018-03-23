@@ -8,6 +8,12 @@
 
 #include "Analysis/Passes/PDGPass.hpp"
 
+#include "Analysis/Passes/DDGPass.hpp"
+
+#include "Analysis/Passes/CDGPass.hpp"
+
+#include "Analysis/Passes/MDGPass.hpp"
+
 #include "Analysis/PDGBuilder.hpp"
 
 #include "llvm/IR/Type.h"
@@ -102,13 +108,15 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 namespace pedigree {
 
 void PDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+  AU.addRequired<DDGPass>();
+  AU.addRequired<CDGPass>();
+  AU.addRequired<MDGPass>();
   AU.setPreservesAll();
 }
 
 bool PDGPass::runOnFunction(llvm::Function &CurFunc) {
   m_Graph = std::make_unique<PDG>();
-  PDGBuilder builder{*m_Graph};
-  builder.build();
+  auto &g = getAnalysis<DDGPass>().getGraph();
 
   return false;
 }

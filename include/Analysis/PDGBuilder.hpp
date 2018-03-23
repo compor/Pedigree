@@ -9,16 +9,18 @@
 
 #include "PDG.hpp"
 
+#include "DDG.hpp"
+
+#include "CDG.hpp"
+
+#include "MDG.hpp"
+
 namespace pedigree {
 
-class PDGBuilder {
-  PDG &m_Graph;
+struct PDGBuilder {
+  PDGBuilder() {}
 
-public:
-  PDGBuilder(PDG &Graph) : m_Graph(Graph) {}
-
-  // TODO fix builders interface
-  void build() { BasicDependenceInfo info{}; }
+  void build(PDG &Graph) {}
 };
 
 } // namespace pedigree end
