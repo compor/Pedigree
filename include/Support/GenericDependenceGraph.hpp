@@ -107,19 +107,23 @@ public:
     return P.second.get();
   }
 
+  static const NodeType *nodes_const_iterator_map(const value_type &P) {
+    assert(P.second.get() && "Pointer to graph node is null!");
+    return P.second.get();
+  }
+
   using nodes_iterator =
       llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
 
-  using const_nodes_iterator =
-      llvm::mapped_iterator<const_iterator,
-                            std::function<NodeType *(value_type &)>>;
+  using const_nodes_iterator = llvm::mapped_iterator<
+      const_iterator, std::function<const NodeType *(const value_type &)>>;
 
   inline decltype(auto) nodes_begin() {
     return nodes_iterator(NodeMap.begin(), nodes_iterator_map);
   }
 
   inline decltype(auto) nodes_begin() const {
-    return const_nodes_iterator(NodeMap.begin(), nodes_iterator_map);
+    return const_nodes_iterator(NodeMap.begin(), nodes_const_iterator_map);
   }
 
   inline decltype(auto) nodes_end() {
@@ -127,7 +131,7 @@ public:
   }
 
   inline decltype(auto) nodes_end() const {
-    return const_nodes_iterator(NodeMap.end(), nodes_iterator_map);
+    return const_nodes_iterator(NodeMap.end(), nodes_const_iterator_map);
   }
 
   NodeType *getEntryNode() { return begin()->second.get(); }

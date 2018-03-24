@@ -118,18 +118,25 @@ public:
     return P.first;
   }
 
+  static const GenericDependenceNode *
+  nodes_const_iterator_map(const value_type &P) {
+    assert(P.first && "Pointer to graph node is null!");
+    return P.first;
+  }
+
   using nodes_iterator = llvm::mapped_iterator<
       iterator, std::function<GenericDependenceNode *(value_type &)>>;
 
   using const_nodes_iterator = llvm::mapped_iterator<
-      const_iterator, std::function<GenericDependenceNode *(value_type &)>>;
+      const_iterator,
+      std::function<const GenericDependenceNode *(const value_type &)>>;
 
   inline decltype(auto) nodes_begin() {
     return nodes_iterator(Edges.begin(), nodes_iterator_map);
   }
 
   inline decltype(auto) nodes_begin() const {
-    return const_nodes_iterator(Edges.begin(), nodes_iterator_map);
+    return const_nodes_iterator(Edges.begin(), nodes_const_iterator_map);
   }
 
   inline decltype(auto) nodes_end() {
@@ -137,7 +144,7 @@ public:
   }
 
   inline decltype(auto) nodes_end() const {
-    return const_nodes_iterator(Edges.end(), nodes_iterator_map);
+    return const_nodes_iterator(Edges.end(), nodes_const_iterator_map);
   }
 
   inline unsigned getDependeeCount() const { return DependeeCount; }
