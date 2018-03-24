@@ -15,6 +15,9 @@
 
 #include "MDG.hpp"
 
+#include "llvm/ADT/iterator_range.h"
+// using llvm::make_range
+
 namespace pedigree {
 
 class PDGBuilder {
@@ -27,11 +30,15 @@ public:
       : cdg(c), ddg(d), mdg(m) {}
 
   void build(PDG &G) const {
-    for (auto &e : ddg) {
-      auto src = G.getOrInsertNode(e.first);
+    using PDGTraits = llvm::GraphTraits<PDG *>;
 
-      for (auto &k : *e.second) {
-        auto dst = G.getOrInsertNode(k.first->get());
+    for (const auto &e : llvm::make_range(PDGTraits::nodes_begin(&G),
+                                          PDGTraits::nodes_end(&G))) {
+      auto src = G.getOrInsertNode(e->get());
+
+      for (const auto &k : llvm::make_range(PDGTraits::child_begin(e),
+                                            PDGTraits::child_end(e))) {
+        auto dst = G.getOrInsertNode(k->get());
         src->addDependentNode(dst, {});
       }
     }
