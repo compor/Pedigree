@@ -2,12 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_DDGBUILDER_HPP
-#define PEDIGREE_DDGBUILDER_HPP
+#ifndef PEDIGREE_DDGraphBUILDER_HPP
+#define PEDIGREE_DDGraphBUILDER_HPP
 
 #include "Config.hpp"
 
-#include "DDG.hpp"
+#include "DDGraph.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
@@ -17,11 +17,11 @@
 
 namespace pedigree {
 
-class DDGBuilder : public llvm::InstVisitor<DDGBuilder> {
-  DDG &Graph;
+class DDGraphBuilder : public llvm::InstVisitor<DDGraphBuilder> {
+  DDGraph &Graph;
 
 public:
-  DDGBuilder(DDG &Graph) : Graph(Graph) {}
+  DDGraphBuilder(DDGraph &Graph) : Graph(Graph) {}
 
   template <typename T> void build(T &Unit) { visit(Unit); }
 

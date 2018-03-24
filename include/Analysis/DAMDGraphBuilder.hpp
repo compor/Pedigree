@@ -2,12 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_DAMDGBUILDER_HPP
-#define PEDIGREE_DAMDGBUILDER_HPP
+#ifndef PEDIGREE_DAMDGraphBUILDER_HPP
+#define PEDIGREE_DAMDGraphBUILDER_HPP
 
 #include "Config.hpp"
 
-#include "MDG.hpp"
+#include "MDGraph.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
@@ -26,8 +26,8 @@ namespace pedigree {
 // TODO maybe we should consider providing an option for not including nodes
 // in the graph unless they have an edge
 
-class DAMDGBuilder : public llvm::InstVisitor<DAMDGBuilder> {
-  MDG &Graph;
+class DAMDGraphBuilder : public llvm::InstVisitor<DAMDGraphBuilder> {
+  MDGraph &Graph;
   llvm::DependenceAnalysis &m_DA;
   std::vector<llvm::Instruction *> m_MemInstructions;
 
@@ -36,7 +36,7 @@ class DAMDGBuilder : public llvm::InstVisitor<DAMDGBuilder> {
   }
 
 public:
-  DAMDGBuilder(MDG &Graph, const llvm::DependenceAnalysis &DA)
+  DAMDGraphBuilder(MDGraph &Graph, const llvm::DependenceAnalysis &DA)
       : Graph(Graph), m_DA(const_cast<llvm::DependenceAnalysis &>(DA)) {}
 
   template <typename T> void build(T &Unit) {

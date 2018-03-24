@@ -8,11 +8,11 @@
 
 #include "Pedigree.hpp"
 
-#include "Analysis/Passes/MDGPass.hpp"
+#include "Analysis/Passes/MDGraphPass.hpp"
 
-#include "Analysis/MDALocalMDGBuilder.hpp"
+#include "Analysis/MDALocalMDGraphBuilder.hpp"
 
-#include "Analysis/DAMDGBuilder.hpp"
+#include "Analysis/DAMDGraphBuilder.hpp"
 
 #include "llvm/Config/llvm-config.h"
 
@@ -65,8 +65,8 @@ class Function;
 
 // plugin registration for opt
 
-char pedigree::MDGPass::ID = 0;
-static llvm::RegisterPass<pedigree::MDGPass>
+char pedigree::MDGraphPass::ID = 0;
+static llvm::RegisterPass<pedigree::MDGraphPass>
     X("pedigree-mdg", PRJ_CMDLINE_DESC("pedigree mdg pass"), false, false);
 
 // plugin registration for clang
@@ -77,22 +77,22 @@ static llvm::RegisterPass<pedigree::MDGPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPedigreeMDGPass(const llvm::PassManagerBuilder &Builder,
+static void registerPedigreeMDGraphPass(const llvm::PassManagerBuilder &Builder,
                                     llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::MDGPass());
+  PM.add(new pedigree::MDGraphPass());
 
   return;
 }
 
 static llvm::RegisterStandardPasses
-    RegisterPedigreeMDGPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                            registerPedigreeMDGPass);
+    RegisterPedigreeMDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
+                            registerPedigreeMDGraphPass);
 
 //
 
 static llvm::cl::OptionCategory
-    PedigreeMDGPassCategory("Pedigree MDG Pass",
-                            "Options for Pedigree MDG pass");
+    PedigreeMDGraphPassCategory("Pedigree MDGraph Pass",
+                            "Options for Pedigree MDGraph pass");
 
 enum class AnalysisBackendType : uint8_t { MDA, DA, MemorySSA };
 
@@ -105,7 +105,7 @@ static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
                      clEnumValN(AnalysisBackendType::MemorySSA, "memssa", ""),
                      nullptr),
     llvm::cl::init(AnalysisBackendType::MDA),
-    llvm::cl::cat(PedigreeMDGPassCategory));
+    llvm::cl::cat(PedigreeMDGraphPassCategory));
 
 static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
     "pedigree-mdg-backend-scope", llvm::cl::desc("analysis backend scope"),
@@ -116,13 +116,13 @@ static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
                    "interprocedural"),
         nullptr),
     llvm::cl::init(pedigree::AnalysisScope::Block),
-    llvm::cl::cat(PedigreeMDGPassCategory));
+    llvm::cl::cat(PedigreeMDGraphPassCategory));
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-mdg-debug", llvm::cl::desc("debug pedigree mdg pass"),
           llvm::cl::location(pedigree::utility::passDebugFlag),
-          llvm::cl::cat(PedigreeMDGPassCategory));
+          llvm::cl::cat(PedigreeMDGraphPassCategory));
 
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-mdg-debug-level",
@@ -134,7 +134,7 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
         clEnumValN(LogLevel::warning, "warning", "warning conditions"),
         clEnumValN(LogLevel::error, "error", "error conditions"),
         clEnumValN(LogLevel::debug, "debug", "debug messages"), nullptr),
-    llvm::cl::cat(PedigreeMDGPassCategory));
+    llvm::cl::cat(PedigreeMDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 
 static void checkCmdLineOptions() {
@@ -154,25 +154,25 @@ static void checkCmdLineOptions() {
 
 namespace pedigree {
 
-void MDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+void MDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.addRequiredTransitive<llvm::AliasAnalysis>();
   AU.addRequiredTransitive<llvm::MemoryDependenceAnalysis>();
   AU.addRequiredTransitive<llvm::DependenceAnalysis>();
   AU.setPreservesAll();
 }
 
-bool MDGPass::runOnFunction(llvm::Function &CurFunc) {
+bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   checkCmdLineOptions();
 
-  Graph = std::make_unique<MDG>();
+  Graph = std::make_unique<MDGraph>();
 
   if (AnalysisBackendType::DA == AnalysisBackendOption) {
     auto &da = getAnalysis<llvm::DependenceAnalysis>();
-    DAMDGBuilder builder{*Graph, da};
+    DAMDGraphBuilder builder{*Graph, da};
     builder.build(CurFunc);
   } else {
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
-    MDALocalMDGBuilder builder{*Graph, mda, AnalysisBackendScopeOption};
+    MDALocalMDGraphBuilder builder{*Graph, mda, AnalysisBackendScopeOption};
     builder.build(CurFunc);
   }
 

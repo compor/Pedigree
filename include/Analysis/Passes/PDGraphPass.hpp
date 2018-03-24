@@ -2,12 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_PDGPASS_HPP
-#define PEDIGREE_PDGPASS_HPP
+#ifndef PEDIGREE_PDGraphPASS_HPP
+#define PEDIGREE_PDGraphPASS_HPP
 
 #include "Config.hpp"
 
-#include "Analysis/PDG.hpp"
+#include "Analysis/PDGraph.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::FunctionPass
@@ -24,17 +24,17 @@ class AnalysisUsage;
 
 namespace pedigree {
 
-struct PDGPass : public llvm::FunctionPass {
+struct PDGraphPass : public llvm::FunctionPass {
   static char ID;
-  std::unique_ptr<PDG> Graph;
+  std::unique_ptr<PDGraph> Graph;
 
-  PDGPass() : llvm::FunctionPass(ID) {}
+  PDGraphPass() : llvm::FunctionPass(ID) {}
 
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;
 
-  const PDG &getGraph() const { return *Graph; }
-  PDG &getGraph() { return *Graph; }
+  const PDGraph &getGraph() const { return *Graph; }
+  PDGraph &getGraph() { return *Graph; }
 };
 
 } // namespace pedigree end

@@ -6,15 +6,15 @@
 
 #include "Utils.hpp"
 
-#include "Analysis/Passes/PDGPass.hpp"
+#include "Analysis/Passes/PDGraphPass.hpp"
 
-#include "Analysis/Passes/DDGPass.hpp"
+#include "Analysis/Passes/DDGraphPass.hpp"
 
-#include "Analysis/Passes/CDGPass.hpp"
+#include "Analysis/Passes/CDGraphPass.hpp"
 
-#include "Analysis/Passes/MDGPass.hpp"
+#include "Analysis/Passes/MDGraphPass.hpp"
 
-#include "Analysis/PDGBuilder.hpp"
+#include "Analysis/PDGraphBuilder.hpp"
 
 #include "llvm/IR/Type.h"
 // using llvm::Type
@@ -56,8 +56,8 @@
 
 // plugin registration for opt
 
-char pedigree::PDGPass::ID = 0;
-static llvm::RegisterPass<pedigree::PDGPass>
+char pedigree::PDGraphPass::ID = 0;
+static llvm::RegisterPass<pedigree::PDGraphPass>
     X("pedigree-pdg", PRJ_CMDLINE_DESC("pedigree pdg pass"), false, false);
 
 // plugin registration for clang
@@ -68,27 +68,27 @@ static llvm::RegisterPass<pedigree::PDGPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPDGPass(const llvm::PassManagerBuilder &Builder,
+static void registerPDGraphPass(const llvm::PassManagerBuilder &Builder,
                             llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::PDGPass());
+  PM.add(new pedigree::PDGraphPass());
 
   return;
 }
 
 static llvm::RegisterStandardPasses
-    RegisterPDGPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                    registerPDGPass);
+    RegisterPDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
+                    registerPDGraphPass);
 
 //
 
 static llvm::cl::OptionCategory
-    PDGPassCategory("Pedigree PDG Pass", "Options for Pedigree PDG pass");
+    PDGraphPassCategory("Pedigree PDGraph Pass", "Options for Pedigree PDGraph pass");
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-debug", llvm::cl::desc("debug pedigree pdg pass"),
           llvm::cl::location(pedigree::utility::passDebugFlag),
-          llvm::cl::cat(PDGPassCategory));
+          llvm::cl::cat(PDGraphPassCategory));
 
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-pdg-debug-level",
@@ -100,26 +100,26 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
         clEnumValN(LogLevel::warning, "warning", "warning conditions"),
         clEnumValN(LogLevel::error, "error", "error conditions"),
         clEnumValN(LogLevel::debug, "debug", "debug messages"), nullptr),
-    llvm::cl::cat(PDGPassCategory));
+    llvm::cl::cat(PDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 
 //
 
 namespace pedigree {
 
-void PDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
-  AU.addRequired<DDGPass>();
-  AU.addRequired<CDGPass>();
-  AU.addRequired<MDGPass>();
+void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+  AU.addRequired<DDGraphPass>();
+  AU.addRequired<CDGraphPass>();
+  AU.addRequired<MDGraphPass>();
   AU.setPreservesAll();
 }
 
-bool PDGPass::runOnFunction(llvm::Function &CurFunc) {
-  auto &ddg = getAnalysis<DDGPass>().getGraph();
-  auto &cdg = getAnalysis<CDGPass>().getGraph();
-  auto &mdg = getAnalysis<MDGPass>().getGraph();
+bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
+  auto &ddg = getAnalysis<DDGraphPass>().getGraph();
+  auto &cdg = getAnalysis<CDGraphPass>().getGraph();
+  auto &mdg = getAnalysis<MDGraphPass>().getGraph();
 
-  auto pdg = std::make_unique<PDG>();
+  auto pdg = std::make_unique<PDGraph>();
 
   return false;
 }

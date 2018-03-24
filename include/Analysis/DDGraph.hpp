@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_DDG_HPP
-#define PEDIGREE_DDG_HPP
+#ifndef PEDIGREE_DDGraph_HPP
+#define PEDIGREE_DDGraph_HPP
 
 #include "Config.hpp"
 
@@ -12,7 +12,7 @@
 namespace pedigree {
 
 using DataDependenceNode = InstructionDependenceNode;
-using DDG = InstructionDependenceGraph;
+using DDGraph = InstructionDependenceGraph;
 
 } // namespace pedigree end
 

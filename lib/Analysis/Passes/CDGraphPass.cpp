@@ -4,9 +4,13 @@
 
 #include "Utils.hpp"
 
-#include "Analysis/Passes/DDGPass.hpp"
+#include "Analysis/Passes/CDGraphPass.hpp"
 
-#include "Analysis/DDGBuilder.hpp"
+#include "Analysis/CDGraphBuilder.hpp"
+
+#include "Support/GraphAdaptor.hpp"
+
+#include "Support/Utils/UnitAdaptors.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
@@ -32,7 +36,7 @@
 // using DEBUG macro
 // using llvm::dbgs
 
-#define DEBUG_TYPE "pedigree-ddg"
+#define DEBUG_TYPE "pedigree-cdg"
 
 namespace llvm {
 class Function;
@@ -40,9 +44,9 @@ class Function;
 
 // plugin registration for opt
 
-char pedigree::DDGPass::ID = 0;
-static llvm::RegisterPass<pedigree::DDGPass>
-    X("pedigree-ddg", PRJ_CMDLINE_DESC("pedigree ddg pass"), false, false);
+char pedigree::CDGraphPass::ID = 0;
+static llvm::RegisterPass<pedigree::CDGraphPass>
+    X("pedigree-cdg", PRJ_CMDLINE_DESC("pedigree cdg pass"), false, false);
 
 // plugin registration for clang
 
@@ -52,32 +56,37 @@ static llvm::RegisterPass<pedigree::DDGPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPedigreeDDGPass(const llvm::PassManagerBuilder &Builder,
+static void registerPedigreeCDGraphPass(const llvm::PassManagerBuilder &Builder,
                                     llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::DDGPass());
+  PM.add(new pedigree::CDGraphPass());
 
   return;
 }
 
 static llvm::RegisterStandardPasses
-    RegisterPedigreeDDGPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                            registerPedigreeDDGPass);
+    RegisterPedigreeCDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
+                            registerPedigreeCDGraphPass);
 
 //
 
 static llvm::cl::OptionCategory
-    PedigreeDDGPassCategory("Pedigree DDG Pass",
-                            "Options for Pedigree DDG pass");
+    PedigreeCDGraphPassCategory("Pedigree CDGraph Pass",
+                            "Options for Pedigree CDGraph pass");
+
+static llvm::cl::opt<bool> PedigreeCDGraphAdaptToInstruction(
+    "pedigree-cdg-instruction",
+    llvm::cl::desc("adapt cdg to block terminator instructions"),
+    llvm::cl::init(false), llvm::cl::cat(PedigreeCDGraphPassCategory));
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
-    Debug("pedigree-ddg-debug", llvm::cl::desc("debug pedigree ddg pass"),
+    Debug("pedigree-cdg-debug", llvm::cl::desc("debug pedigree cdg pass"),
           llvm::cl::location(pedigree::utility::passDebugFlag),
-          llvm::cl::cat(PedigreeDDGPassCategory));
+          llvm::cl::cat(PedigreeCDGraphPassCategory));
 
 static llvm::cl::opt<LogLevel, true> DebugLevel(
-    "pedigree-ddg-debug-level",
-    llvm::cl::desc("debug level for pedigree ddg pass"),
+    "pedigree-cdg-debug-level",
+    llvm::cl::desc("debug level for pedigree cdg pass"),
     llvm::cl::location(pedigree::utility::passLogLevel),
     llvm::cl::values(
         clEnumValN(LogLevel::info, "info", "informational messages"),
@@ -85,21 +94,26 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
         clEnumValN(LogLevel::warning, "warning", "warning conditions"),
         clEnumValN(LogLevel::error, "error", "error conditions"),
         clEnumValN(LogLevel::debug, "debug", "debug messages"), nullptr),
-    llvm::cl::cat(PedigreeDDGPassCategory));
+    llvm::cl::cat(PedigreeCDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 
 //
 
 namespace pedigree {
 
-void DDGPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+void CDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool DDGPass::runOnFunction(llvm::Function &CurFunc) {
-  Graph = std::make_unique<DDG>();
-  DDGBuilder builder{*Graph};
+bool CDGraphPass::runOnFunction(llvm::Function &CurFunc) {
+  Graph = std::make_unique<CDGraph>();
+  CDGraphBuilder builder{*Graph};
   builder.build(CurFunc);
+
+  if (PedigreeCDGraphAdaptToInstruction) {
+    m_InstGraph = std::make_unique<InstCDGraph>();
+    Adapt(*Graph, *m_InstGraph, BlockToInstructionUnitAdaptor{});
+  }
 
   return false;
 }

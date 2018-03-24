@@ -30,9 +30,9 @@ set(PRJ_TEST_NAME Test${PRJ_NAME})
 set(TEST_SOURCES
   TestPedigreeOpt.cpp
   GenericDependenceGraphTests.cpp
-  DDGTests.cpp
+  DDGraphTests.cpp
   PostDominanceFrontierTests.cpp
-  CDGTests.cpp)
+  CDGraphTests.cpp)
 
 add_executable(${PRJ_TEST_NAME} ${TEST_SOURCES})
 

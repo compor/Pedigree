@@ -2,12 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_CDGPASS_HPP
-#define PEDIGREE_CDGPASS_HPP
+#ifndef PEDIGREE_CDGraphPASS_HPP
+#define PEDIGREE_CDGraphPASS_HPP
 
 #include "Config.hpp"
 
-#include "Analysis/CDG.hpp"
+#include "Analysis/CDGraph.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::FunctionPass
@@ -24,21 +24,21 @@ class AnalysisUsage;
 
 namespace pedigree {
 
-struct CDGPass : public llvm::FunctionPass {
+struct CDGraphPass : public llvm::FunctionPass {
   static char ID;
-  std::unique_ptr<CDG> Graph;
-  std::unique_ptr<InstCDG> m_InstGraph;
+  std::unique_ptr<CDGraph> Graph;
+  std::unique_ptr<InstCDGraph> m_InstGraph;
 
-  CDGPass() : llvm::FunctionPass(ID) {}
+  CDGraphPass() : llvm::FunctionPass(ID) {}
 
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;
 
-  const CDG &getGraph() const { return *Graph; }
-  CDG &getGraph() { return *Graph; }
+  const CDGraph &getGraph() const { return *Graph; }
+  CDGraph &getGraph() { return *Graph; }
 
-  const InstCDG &getInstGraph() const { return *m_InstGraph; }
-  InstCDG &getInstGraph() { return *m_InstGraph; }
+  const InstCDGraph &getInstGraph() const { return *m_InstGraph; }
+  InstCDGraph &getInstGraph() { return *m_InstGraph; }
 };
 
 } // namespace pedigree end

@@ -2,12 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_CDGBUILDER_HPP
-#define PEDIGREE_CDGBUILDER_HPP
+#ifndef PEDIGREE_CDGraphBUILDER_HPP
+#define PEDIGREE_CDGraphBUILDER_HPP
 
 #include "Config.hpp"
 
-#include "CDG.hpp"
+#include "CDGraph.hpp"
 
 #include "PostDominanceFrontier.hpp"
 
@@ -23,11 +23,11 @@ class Function;
 
 namespace pedigree {
 
-class CDGBuilder {
-  CDG &Graph;
+class CDGraphBuilder {
+  CDGraph &Graph;
 
 public:
-  CDGBuilder(CDG &Graph) : Graph(Graph) {}
+  CDGraphBuilder(CDGraph &Graph) : Graph(Graph) {}
 
   void build(const llvm::Function &CurFunc) {
     llvm::PostDominatorTree curPDT;

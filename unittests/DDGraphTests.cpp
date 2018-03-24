@@ -6,9 +6,9 @@
 
 #include "TestCommon.hpp"
 
-#include "Analysis/DDG.hpp"
+#include "Analysis/DDGraph.hpp"
 
-#include "Analysis/DDGBuilder.hpp"
+#include "Analysis/DDGraphBuilder.hpp"
 
 #include "gtest/gtest.h"
 // using testing::Test
@@ -26,15 +26,15 @@ namespace pedigree {
 namespace testing {
 namespace {
 
-struct DDGTestData {
-  DDGTestData() = delete;
+struct DDGraphTestData {
+  DDGraphTestData() = delete;
 
   std::string assemblyFile;
-  DDG::VerticesSizeType numVertices;
-  DDG::EdgesSizeType numEdges;
+  DDGraph::VerticesSizeType numVertices;
+  DDGraph::EdgesSizeType numEdges;
 };
 
-std::ostream &operator<<(std::ostream &os, const DDGTestData &td) {
+std::ostream &operator<<(std::ostream &os, const DDGraphTestData &td) {
   auto delim = ' ';
   return os << delim << "assembly file: " << td.assemblyFile << delim
             << "vertices num: " << td.numVertices << delim
@@ -43,20 +43,20 @@ std::ostream &operator<<(std::ostream &os, const DDGTestData &td) {
 
 //
 
-class DDGConstructionTest : public TestIRAssemblyParser,
-                            public ::testing::TestWithParam<DDGTestData> {};
+class DDGraphConstructionTest : public TestIRAssemblyParser,
+                            public ::testing::TestWithParam<DDGraphTestData> {};
 
 //
 
-TEST_P(DDGConstructionTest, DDGConstruction) {
+TEST_P(DDGraphConstructionTest, DDGraphConstruction) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  DDG ddg;
-  DDGBuilder ddgBuilder{ddg};
+  DDGraph ddg;
+  DDGraphBuilder ddgBuilder{ddg};
 
   ddgBuilder.visit(*curFunc);
 
@@ -64,11 +64,11 @@ TEST_P(DDGConstructionTest, DDGConstruction) {
   EXPECT_EQ(td.numEdges, ddg.numEdges());
 }
 
-std::array<DDGTestData, 3> testData1 = {"whalebook_fig81.ll",  13, 9,
+std::array<DDGraphTestData, 3> testData1 = {"whalebook_fig81.ll",  13, 9,
                                         "whalebook_fig85.ll",  10, 3,
                                         "whalebook_fig821.ll", 16, 10};
 
-INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGConstructionTest,
+INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGraphConstructionTest,
                         ::testing::ValuesIn(testData1));
 
 } // unnamed namespace end

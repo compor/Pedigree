@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_CDG_HPP
-#define PEDIGREE_CDG_HPP
+#ifndef PEDIGREE_CDGraph_HPP
+#define PEDIGREE_CDGraph_HPP
 
 #include "Config.hpp"
 
@@ -12,10 +12,10 @@
 namespace pedigree {
 
 using ControlDependenceNode = BasicBlockDependenceNode;
-using CDG = BasicBlockDependenceGraph;
+using CDGraph = BasicBlockDependenceGraph;
 
 using InstControlDependenceNode = InstructionDependenceNode;
-using InstCDG = InstructionDependenceGraph;
+using InstCDGraph = InstructionDependenceGraph;
 
 } // namespace pedigree end
 

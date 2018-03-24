@@ -6,7 +6,7 @@
 
 #include "Utils.hpp"
 
-#include "Analysis/Passes/MDGPass.hpp"
+#include "Analysis/Passes/CDGraphPass.hpp"
 
 #include "Support/Traits/LLVMDOTGraphTraitsHelper.hpp"
 
@@ -39,44 +39,44 @@
 // using std::string
 
 static llvm::cl::opt<std::string>
-    MDGDOTEdgeAttributes("pedigree-mdg-dot-edge-attrs", llvm::cl::Hidden,
-                         llvm::cl::desc("MDG DOT edge attributes"));
+    CDGraphDOTEdgeAttributes("pedigree-cdg-dot-edge-attrs", llvm::cl::Hidden,
+                         llvm::cl::desc("CDGraph DOT edge attributes"));
 
 static llvm::cl::opt<bool>
-    MDGDOTSimple("pedigree-mdg-dot-simple", llvm::cl::Hidden,
-                 llvm::cl::desc("generate simple MDG DOT graph"));
+    CDGraphDOTSimple("pedigree-cdg-dot-simple", llvm::cl::Hidden,
+                 llvm::cl::desc("generate simple CDGraph DOT graph"));
 
-static llvm::cl::list<std::string> MDGDOTFunctionWhitelist(
-    "pedigree-mdg-dot-func-wl", llvm::cl::Hidden,
-    llvm::cl::desc("generate MDG DOT graph only for these functions"));
+static llvm::cl::list<std::string> CDGraphDOTFunctionWhitelist(
+    "pedigree-cdg-dot-func-wl", llvm::cl::Hidden,
+    llvm::cl::desc("generate CDGraph DOT graph only for these functions"));
 
 namespace llvm {
 
 template <>
-struct DOTGraphTraits<pedigree::MDG *>
-    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::MDG *> {
-  using Base = pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::MDG *>;
+struct DOTGraphTraits<pedigree::CDGraph *>
+    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::CDGraph *> {
+  using Base = pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::CDGraph *>;
 
   DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
 
-  static std::string getGraphName(const GraphType *) { return "MDG"; }
+  static std::string getGraphName(const GraphType *) { return "CDGraph"; }
 
   std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
-    return isSimple() || MDGDOTSimple ? getSimpleNodeLabel(Node, Graph)
+    return isSimple() || CDGraphDOTSimple ? getSimpleNodeLabel(Node, Graph)
                                       : getCompleteNodeLabel(Node, Graph);
   }
 
   static std::string getEdgeAttributes(const NodeType *Node,
                                        typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
-    return MDGDOTEdgeAttributes.empty()
+    return CDGraphDOTEdgeAttributes.empty()
                ? Base::getEdgeAttributes(Node, EI, Graph)
-               : MDGDOTEdgeAttributes.getValue();
+               : CDGraphDOTEdgeAttributes.getValue();
   }
 };
 
 struct AnalysisDependenceGraphPassTraits {
-  static pedigree::MDG *getGraph(pedigree::MDGPass *P) {
+  static pedigree::CDGraph *getGraph(pedigree::CDGraphPass *P) {
     return &P->getGraph();
   }
 };
@@ -85,23 +85,23 @@ struct AnalysisDependenceGraphPassTraits {
 
 namespace pedigree {
 
-struct MDGPrinterPass
+struct CDGraphPrinterPass
     : public llvm::DOTGraphTraitsPrinter<
-          MDGPass, false, MDG *, llvm::AnalysisDependenceGraphPassTraits> {
+          CDGraphPass, false, CDGraph *, llvm::AnalysisDependenceGraphPassTraits> {
   using Base =
-      llvm::DOTGraphTraitsPrinter<MDGPass, false, MDG *,
+      llvm::DOTGraphTraitsPrinter<CDGraphPass, false, CDGraph *,
                                   llvm::AnalysisDependenceGraphPassTraits>;
   static char ID;
 
-  MDGPrinterPass() : Base("mdg", ID) {}
+  CDGraphPrinterPass() : Base("cdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
-    auto found = std::find(std::begin(MDGDOTFunctionWhitelist),
-                           std::end(MDGDOTFunctionWhitelist),
+    auto found = std::find(std::begin(CDGraphDOTFunctionWhitelist),
+                           std::end(CDGraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
 
-    if (MDGDOTFunctionWhitelist.empty() ||
-        std::end(MDGDOTFunctionWhitelist) != found)
+    if (CDGraphDOTFunctionWhitelist.empty() ||
+        std::end(CDGraphDOTFunctionWhitelist) != found)
       return Base::runOnFunction(CurFunction);
     else
       return false;
@@ -110,9 +110,9 @@ struct MDGPrinterPass
 
 } // namespace pedigree end
 
-char pedigree::MDGPrinterPass::ID = 0;
-static llvm::RegisterPass<pedigree::MDGPrinterPass>
-    X("pedigree-mdg-dot", PRJ_CMDLINE_DESC("pedigree mdg DOT pass"), false,
+char pedigree::CDGraphPrinterPass::ID = 0;
+static llvm::RegisterPass<pedigree::CDGraphPrinterPass>
+    X("pedigree-cdg-dot", PRJ_CMDLINE_DESC("pedigree cdg DOT pass"), false,
       false);
 
 // plugin registration for clang
@@ -124,13 +124,13 @@ static llvm::RegisterPass<pedigree::MDGPrinterPass>
 // RegisterStandardPasses class
 
 static void
-registerPedigreeMDGPrinterPass(const llvm::PassManagerBuilder &Builder,
+registerPedigreeCDGraphPrinterPass(const llvm::PassManagerBuilder &Builder,
                                llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::MDGPrinterPass());
+  PM.add(new pedigree::CDGraphPrinterPass());
 
   return;
 }
 
 static llvm::RegisterStandardPasses
-    RegisterPedigreeMDGPrinterPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                                   registerPedigreeMDGPrinterPass);
+    RegisterPedigreeCDGraphPrinterPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
+                                   registerPedigreeCDGraphPrinterPass);

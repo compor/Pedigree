@@ -2,12 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_MDALOCALMDGBUILDER_HPP
-#define PEDIGREE_MDALOCALMDGBUILDER_HPP
+#ifndef PEDIGREE_MDALOCALMDGraphBUILDER_HPP
+#define PEDIGREE_MDALOCALMDGraphBUILDER_HPP
 
 #include "Config.hpp"
 
-#include "MDG.hpp"
+#include "MDGraph.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
@@ -31,9 +31,9 @@ namespace pedigree {
 // TODO maybe we should consider providing an option for not including nodes
 // in the graph unless they have an edge
 
-class MDALocalMDGBuilder : public llvm::InstVisitor<MDALocalMDGBuilder> {
+class MDALocalMDGraphBuilder : public llvm::InstVisitor<MDALocalMDGraphBuilder> {
 public:
-  MDALocalMDGBuilder(MDG &Graph, const llvm::MemoryDependenceAnalysis &MDA,
+  MDALocalMDGraphBuilder(MDGraph &Graph, const llvm::MemoryDependenceAnalysis &MDA,
                      AnalysisScope scope = AnalysisScope::Block)
       : Graph(Graph),
         m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
@@ -47,7 +47,7 @@ public:
   }
 
 private:
-  MDG &Graph;
+  MDGraph &Graph;
   llvm::MemoryDependenceAnalysis &m_MDA;
   AnalysisScope m_Scope;
 
