@@ -34,10 +34,6 @@
 #include <functional>
 // using std::function
 
-#include <iterator>
-// using std::begin
-// using std::end
-
 namespace pedigree {
 
 template <typename T, typename EdgeInfoT = NoDependenceInfo>

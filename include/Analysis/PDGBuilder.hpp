@@ -17,10 +17,25 @@
 
 namespace pedigree {
 
-struct PDGBuilder {
-  PDGBuilder() {}
+class PDGBuilder {
+  const CDG &cdg;
+  const DDG &ddg;
+  const MDG &mdg;
 
-  void build(PDG &Graph) {}
+public:
+  PDGBuilder(const CDG &c, const DDG &d, const MDG &m)
+      : cdg(c), ddg(d), mdg(m) {}
+
+  void build(PDG &G) const {
+    for (auto &e : ddg) {
+      auto src = G.getOrInsertNode(e.first);
+
+      for (auto &k : *e.second) {
+        auto dst = G.getOrInsertNode(k.first->get());
+        src->addDependentNode(dst, {});
+      }
+    }
+  }
 };
 
 } // namespace pedigree end
