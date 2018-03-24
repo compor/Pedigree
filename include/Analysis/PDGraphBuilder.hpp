@@ -7,6 +7,8 @@
 
 #include "Config.hpp"
 
+#include "DependenceGraphs.hpp"
+
 #include "PDGraph.hpp"
 
 #include "DDGraph.hpp"
@@ -18,30 +20,42 @@
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
 
+#include <cassert>
+// using assert
+
 namespace pedigree {
 
 class PDGraphBuilder {
-  const CDGraph &cdg;
-  const DDGraph &ddg;
-  const MDGraph &mdg;
+  const CDGraph &CDG;
+  const DDGraph &DDG;
+  const MDGraph &MDG;
 
-public:
-  PDGraphBuilder(const CDGraph &c, const DDGraph &d, const MDGraph &m)
-      : cdg(c), ddg(d), mdg(m) {}
+  void build(const InstructionDependenceGraph *FromGraph,
+             InstructionDependenceGraph *ToGraph) const {
+    assert(FromGraph && "Graph pointer is empty!");
+    assert(ToGraph && "Graph pointer is empty!");
 
-  void build(PDGraph &G) const {
-    using PDGraphTraits = llvm::GraphTraits<PDGraph *>;
+    using GT = llvm::GraphTraits<decltype(FromGraph)>;
 
-    for (const auto &e : llvm::make_range(PDGraphTraits::nodes_begin(&G),
-                                          PDGraphTraits::nodes_end(&G))) {
-      auto src = G.getOrInsertNode(e->get());
+    for (const auto &node : llvm::make_range(GT::nodes_begin(FromGraph),
+                                             GT::nodes_end(FromGraph))) {
+      auto src = ToGraph->getOrInsertNode(node->get());
 
-      for (const auto &k : llvm::make_range(PDGraphTraits::child_begin(e),
-                                            PDGraphTraits::child_end(e))) {
-        auto dst = G.getOrInsertNode(k->get());
+      for (const auto &child :
+           llvm::make_range(GT::child_begin(node), GT::child_end(node))) {
+        auto dst = ToGraph->getOrInsertNode(child->get());
         src->addDependentNode(dst, {});
       }
     }
+  }
+
+public:
+  PDGraphBuilder(const CDGraph &Cdg, const DDGraph &Ddg, const MDGraph &Mdg)
+      : CDG(Cdg), DDG(Ddg), MDG(Mdg) {}
+
+  void build(PDGraph &PDG) const {
+    build(&DDG, &PDG);
+    build(&MDG, &PDG);
   }
 };
 
