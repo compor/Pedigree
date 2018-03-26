@@ -17,6 +17,10 @@
 
 #include "MDGraph.hpp"
 
+#include "Support/GraphAdaptor.hpp"
+
+#include "Support/Utils/UnitAdaptors.hpp"
+
 #include <cassert>
 // using assert
 
@@ -49,6 +53,10 @@ public:
       : CDG(Cdg), DDG(Ddg), MDG(Mdg) {}
 
   void build(PDGraph &PDG) const {
+    InstructionDependenceGraph instCDG;
+    Adapt(CDG, instCDG, BlockToInstructionUnitAdaptor{});
+
+    build(&instCDG, &PDG);
     build(&DDG, &PDG);
     build(&MDG, &PDG);
   }
