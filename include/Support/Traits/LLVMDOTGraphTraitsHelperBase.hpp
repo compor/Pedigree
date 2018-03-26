@@ -14,18 +14,29 @@
 #include <string>
 // using std::string
 
+#include <type_traits>
+// using std::is_same
+// using std::is_pointer
+// using std::false_type
+
 namespace pedigree {
 
-template <typename GraphT> struct LLVMDOTDependenceGraphTraitsBase {};
+template <typename GraphT> struct LLVMDOTDependenceGraphTraitsHelperBase {
+  static_assert(
+      std::is_same<typename std::is_pointer<GraphT>::type,
+                   std::false_type::type>::value,
+      "Traits class needs to be partially specialized for pointer types!");
+};
 
 template <typename GraphT>
-struct LLVMDOTDependenceGraphTraitsBase<GraphT *>
+struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
     : public llvm::DefaultDOTGraphTraits {
   using GraphType = GraphT;
   using GT = llvm::GraphTraits<GraphType *>;
   using NodeType = typename GT::NodeType;
+  using Base = llvm::DefaultDOTGraphTraits;
 
-  LLVMDOTDependenceGraphTraitsBase(bool isSimple)
+  LLVMDOTDependenceGraphTraitsHelperBase(bool isSimple)
       : llvm::DefaultDOTGraphTraits(isSimple) {}
 
   static std::string getGraphName(const GraphType *) {
@@ -58,15 +69,21 @@ struct LLVMDOTDependenceGraphTraitsBase<GraphT *>
     return attr;
   }
 
+  bool isNodeHidden(const NodeType *Node) {
+    return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
+  }
+
+  std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
+    return isSimple() ? getSimpleNodeLabel(Node, Graph)
+                      : getCompleteNodeLabel(Node, Graph);
+  }
+
   static std::string getEdgeAttributes(const NodeType *Node,
                                        typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
     using DIT = pedigree::DependenceInfoTraits<typename NodeType::EdgeInfoType>;
-    return DIT::toDOTAttributes(Node->getEdgeInfo(*EI));
-  }
-
-  bool isNodeHidden(const NodeType *Node) {
-    return isSimple() && !Node->numEdges() && !Node->getDependeeCount();
+    return DIT::toDOTAttributes(Node->getEdgeInfo(*EI)) +
+           Base::getEdgeAttributes(Node, EI, Graph);
   }
 };
 

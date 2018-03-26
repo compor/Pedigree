@@ -13,6 +13,8 @@
 
 #include "Support/Traits/LLVMGraphTraitsHelperBase.hpp"
 
+#include "Support/Traits/LLVMDOTGraphTraitsHelperBase.hpp"
+
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
@@ -103,6 +105,18 @@ struct GraphTraits<const pedigree::InstructionDependenceGraph *>
           const pedigree::InstructionDependenceGraph *> {};
 
 //
+
+template <>
+struct DOTGraphTraits<pedigree::InstructionDependenceGraph *>
+    : public pedigree::LLVMDOTDependenceGraphTraitsHelperBase<
+          pedigree::InstructionDependenceGraph *> {
+  using Base = pedigree::LLVMDOTDependenceGraphTraitsHelperBase<
+      pedigree::InstructionDependenceGraph *>;
+
+  DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
+};
+
+//
 // traits for llvm::BasicBlock aliases
 
 template <>
@@ -124,6 +138,18 @@ template <>
 struct GraphTraits<const pedigree::BasicBlockDependenceGraph *>
     : public pedigree::LLVMDependenceGraphTraitsHelperBase<
           const pedigree::BasicBlockDependenceGraph *> {};
+
+//
+
+template <>
+struct DOTGraphTraits<pedigree::BasicBlockDependenceGraph *>
+    : public pedigree::LLVMDOTDependenceGraphTraitsHelperBase<
+          pedigree::BasicBlockDependenceGraph *> {
+  using Base = pedigree::LLVMDOTDependenceGraphTraitsHelperBase<
+      pedigree::BasicBlockDependenceGraph *>;
+
+  DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
+};
 
 } // namespace llvm end
 

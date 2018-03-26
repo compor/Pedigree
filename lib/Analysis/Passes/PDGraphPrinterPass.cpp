@@ -8,8 +8,6 @@
 
 #include "Analysis/Passes/PDGraphPass.hpp"
 
-#include "Support/Traits/LLVMDOTGraphTraitsHelper.hpp"
-
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -51,27 +49,6 @@ static llvm::cl::list<std::string> PDGraphDOTFunctionWhitelist(
     llvm::cl::desc("generate PDGraph DOT graph only for these functions"));
 
 namespace llvm {
-
-template <>
-struct DOTGraphTraits<pedigree::PDGraph *>
-    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::PDGraph *> {
-  using Base = pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::PDGraph *>;
-
-  DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
-
-  std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
-    return isSimple() || PDGraphDOTSimple ? getSimpleNodeLabel(Node, Graph)
-                                          : getCompleteNodeLabel(Node, Graph);
-  }
-
-  static std::string getEdgeAttributes(const NodeType *Node,
-                                       typename GT::ChildIteratorType EI,
-                                       const GraphType *Graph) {
-    return PDGraphDOTEdgeAttributes.empty()
-               ? Base::getEdgeAttributes(Node, EI, Graph)
-               : PDGraphDOTEdgeAttributes.getValue();
-  }
-};
 
 struct AnalysisDependenceGraphPassTraits {
   static pedigree::PDGraph *getGraph(pedigree::PDGraphPass *P) {

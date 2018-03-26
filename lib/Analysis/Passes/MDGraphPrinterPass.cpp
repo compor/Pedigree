@@ -8,8 +8,6 @@
 
 #include "Analysis/Passes/MDGraphPass.hpp"
 
-#include "Support/Traits/LLVMDOTGraphTraitsHelper.hpp"
-
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -40,38 +38,17 @@
 
 static llvm::cl::opt<std::string>
     MDGraphDOTEdgeAttributes("pedigree-mdg-dot-edge-attrs", llvm::cl::Hidden,
-                         llvm::cl::desc("MDGraph DOT edge attributes"));
+                             llvm::cl::desc("MDGraph DOT edge attributes"));
 
 static llvm::cl::opt<bool>
     MDGraphDOTSimple("pedigree-mdg-dot-simple", llvm::cl::Hidden,
-                 llvm::cl::desc("generate simple MDGraph DOT graph"));
+                     llvm::cl::desc("generate simple MDGraph DOT graph"));
 
 static llvm::cl::list<std::string> MDGraphDOTFunctionWhitelist(
     "pedigree-mdg-dot-func-wl", llvm::cl::Hidden,
     llvm::cl::desc("generate MDGraph DOT graph only for these functions"));
 
 namespace llvm {
-
-template <>
-struct DOTGraphTraits<pedigree::MDGraph *>
-    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::MDGraph *> {
-  using Base = pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::MDGraph *>;
-
-  DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
-
-  std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
-    return isSimple() || MDGraphDOTSimple ? getSimpleNodeLabel(Node, Graph)
-                                      : getCompleteNodeLabel(Node, Graph);
-  }
-
-  static std::string getEdgeAttributes(const NodeType *Node,
-                                       typename GT::ChildIteratorType EI,
-                                       const GraphType *Graph) {
-    return MDGraphDOTEdgeAttributes.empty()
-               ? Base::getEdgeAttributes(Node, EI, Graph)
-               : MDGraphDOTEdgeAttributes.getValue();
-  }
-};
 
 struct AnalysisDependenceGraphPassTraits {
   static pedigree::MDGraph *getGraph(pedigree::MDGraphPass *P) {
@@ -83,9 +60,9 @@ struct AnalysisDependenceGraphPassTraits {
 
 namespace pedigree {
 
-struct MDGraphPrinterPass
-    : public llvm::DOTGraphTraitsPrinter<
-          MDGraphPass, false, MDGraph *, llvm::AnalysisDependenceGraphPassTraits> {
+struct MDGraphPrinterPass : public llvm::DOTGraphTraitsPrinter<
+                                MDGraphPass, false, MDGraph *,
+                                llvm::AnalysisDependenceGraphPassTraits> {
   using Base =
       llvm::DOTGraphTraitsPrinter<MDGraphPass, false, MDGraph *,
                                   llvm::AnalysisDependenceGraphPassTraits>;
@@ -123,12 +100,12 @@ static llvm::RegisterPass<pedigree::MDGraphPrinterPass>
 
 static void
 registerPedigreeMDGraphPrinterPass(const llvm::PassManagerBuilder &Builder,
-                               llvm::legacy::PassManagerBase &PM) {
+                                   llvm::legacy::PassManagerBase &PM) {
   PM.add(new pedigree::MDGraphPrinterPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses
-    RegisterPedigreeMDGraphPrinterPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                                   registerPedigreeMDGraphPrinterPass);
+static llvm::RegisterStandardPasses RegisterPedigreeMDGraphPrinterPass(
+    llvm::PassManagerBuilder::EP_EarlyAsPossible,
+    registerPedigreeMDGraphPrinterPass);

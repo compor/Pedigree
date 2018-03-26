@@ -8,8 +8,6 @@
 
 #include "Analysis/Passes/CDGraphPass.hpp"
 
-#include "Support/Traits/LLVMDOTGraphTraitsHelper.hpp"
-
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -40,11 +38,11 @@
 
 static llvm::cl::opt<std::string>
     CDGraphDOTEdgeAttributes("pedigree-cdg-dot-edge-attrs", llvm::cl::Hidden,
-                         llvm::cl::desc("CDGraph DOT edge attributes"));
+                             llvm::cl::desc("CDGraph DOT edge attributes"));
 
 static llvm::cl::opt<bool>
     CDGraphDOTSimple("pedigree-cdg-dot-simple", llvm::cl::Hidden,
-                 llvm::cl::desc("generate simple CDGraph DOT graph"));
+                     llvm::cl::desc("generate simple CDGraph DOT graph"));
 
 static llvm::cl::list<std::string> CDGraphDOTFunctionWhitelist(
     "pedigree-cdg-dot-func-wl", llvm::cl::Hidden,
@@ -52,29 +50,9 @@ static llvm::cl::list<std::string> CDGraphDOTFunctionWhitelist(
 
 namespace llvm {
 
-template <>
-struct DOTGraphTraits<pedigree::CDGraph *>
-    : public pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::CDGraph *> {
-  using Base = pedigree::LLVMDOTDependenceGraphTraitsBase<pedigree::CDGraph *>;
-
-  DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
-
-  std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
-    return isSimple() || CDGraphDOTSimple ? getSimpleNodeLabel(Node, Graph)
-                                      : getCompleteNodeLabel(Node, Graph);
-  }
-
-  static std::string getEdgeAttributes(const NodeType *Node,
-                                       typename GT::ChildIteratorType EI,
-                                       const GraphType *Graph) {
-    return CDGraphDOTEdgeAttributes.empty()
-               ? Base::getEdgeAttributes(Node, EI, Graph)
-               : CDGraphDOTEdgeAttributes.getValue();
-  }
-};
-
 struct AnalysisDependenceGraphPassTraits {
-  static pedigree::CDGraph *getGraph(pedigree::CDGraphPass *P) {
+  static pedigree::BasicBlockDependenceGraph *
+  getGraph(pedigree::CDGraphPass *P) {
     return &P->getGraph();
   }
 };
@@ -83,9 +61,9 @@ struct AnalysisDependenceGraphPassTraits {
 
 namespace pedigree {
 
-struct CDGraphPrinterPass
-    : public llvm::DOTGraphTraitsPrinter<
-          CDGraphPass, false, CDGraph *, llvm::AnalysisDependenceGraphPassTraits> {
+struct CDGraphPrinterPass : public llvm::DOTGraphTraitsPrinter<
+                                CDGraphPass, false, CDGraph *,
+                                llvm::AnalysisDependenceGraphPassTraits> {
   using Base =
       llvm::DOTGraphTraitsPrinter<CDGraphPass, false, CDGraph *,
                                   llvm::AnalysisDependenceGraphPassTraits>;
@@ -123,12 +101,12 @@ static llvm::RegisterPass<pedigree::CDGraphPrinterPass>
 
 static void
 registerPedigreeCDGraphPrinterPass(const llvm::PassManagerBuilder &Builder,
-                               llvm::legacy::PassManagerBase &PM) {
+                                   llvm::legacy::PassManagerBase &PM) {
   PM.add(new pedigree::CDGraphPrinterPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses
-    RegisterPedigreeCDGraphPrinterPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                                   registerPedigreeCDGraphPrinterPass);
+static llvm::RegisterStandardPasses RegisterPedigreeCDGraphPrinterPass(
+    llvm::PassManagerBuilder::EP_EarlyAsPossible,
+    registerPedigreeCDGraphPrinterPass);
