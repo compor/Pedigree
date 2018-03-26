@@ -49,8 +49,8 @@ class PDGraphBuilder {
   }
 
 public:
-  PDGraphBuilder(const CDGraph &Cdg, const DDGraph &Ddg, const MDGraph &Mdg)
-      : CDG(Cdg), DDG(Ddg), MDG(Mdg) {}
+  PDGraphBuilder(const CDGraph &CDG, const DDGraph &DDG, const MDGraph &MDG)
+      : CDG(CDG), DDG(DDG), MDG(MDG) {}
 
   void build(PDGraph &PDG) const {
     InstructionDependenceGraph instCDG;

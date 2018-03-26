@@ -69,7 +69,7 @@ static llvm::RegisterPass<pedigree::PDGraphPass>
 // RegisterStandardPasses class
 
 static void registerPDGraphPass(const llvm::PassManagerBuilder &Builder,
-                            llvm::legacy::PassManagerBase &PM) {
+                                llvm::legacy::PassManagerBase &PM) {
   PM.add(new pedigree::PDGraphPass());
 
   return;
@@ -77,12 +77,13 @@ static void registerPDGraphPass(const llvm::PassManagerBuilder &Builder,
 
 static llvm::RegisterStandardPasses
     RegisterPDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                    registerPDGraphPass);
+                        registerPDGraphPass);
 
 //
 
 static llvm::cl::OptionCategory
-    PDGraphPassCategory("Pedigree PDGraph Pass", "Options for Pedigree PDGraph pass");
+    PDGraphPassCategory("Pedigree PDGraph Pass",
+                        "Options for Pedigree PDGraph pass");
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
@@ -115,11 +116,12 @@ void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
-  auto &ddg = getAnalysis<DDGraphPass>().getGraph();
-  auto &cdg = getAnalysis<CDGraphPass>().getGraph();
-  auto &mdg = getAnalysis<MDGraphPass>().getGraph();
+  auto &DDG = getAnalysis<DDGraphPass>().getGraph();
+  auto &CDG = getAnalysis<CDGraphPass>().getGraph();
+  auto &MDG = getAnalysis<MDGraphPass>().getGraph();
 
-  auto pdg = std::make_unique<PDGraph>();
+  PDGraphBuilder builder{CDG, DDG, MDG};
+  builder.build(*Graph);
 
   return false;
 }
