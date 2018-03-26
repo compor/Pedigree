@@ -46,7 +46,7 @@ public:
   using EdgeInfoType = EdgeInfoT;
 
 private:
-  using DependenceRecordType = std::pair<GenericDependenceNode *, EdgeInfoType>;
+  using DependenceRecordType = std::pair<NodeType *, EdgeInfoType>;
   using EdgeStorageType = std::vector<DependenceRecordType>;
 
   inline void incrementDependeeCount() { ++DependeeCount; }
@@ -90,7 +90,7 @@ public:
 
   UnderlyingType get() const { return Underlying; }
 
-  void addDependentNode(GenericDependenceNode *Node, const EdgeInfoType &Info) {
+  void addDependentNode(NodeType *Node, const EdgeInfoType &Info) {
     Edges.emplace_back(Node, Info);
     Node->incrementDependeeCount();
   }
@@ -113,23 +113,21 @@ public:
   inline decltype(auto) end() { return Edges.end(); }
   inline decltype(auto) end() const { return Edges.end(); }
 
-  static GenericDependenceNode *nodes_iterator_map(value_type &P) {
+  static NodeType *nodes_iterator_map(value_type &P) {
     assert(P.first && "Pointer to graph node is null!");
     return P.first;
   }
 
-  static const GenericDependenceNode *
-  nodes_const_iterator_map(const value_type &P) {
+  static const NodeType *nodes_const_iterator_map(const value_type &P) {
     assert(P.first && "Pointer to graph node is null!");
     return P.first;
   }
 
-  using nodes_iterator = llvm::mapped_iterator<
-      iterator, std::function<GenericDependenceNode *(value_type &)>>;
+  using nodes_iterator =
+      llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
 
   using const_nodes_iterator = llvm::mapped_iterator<
-      const_iterator,
-      std::function<const GenericDependenceNode *(const value_type &)>>;
+      const_iterator, std::function<const NodeType *(const value_type &)>>;
 
   inline decltype(auto) nodes_begin() {
     return nodes_iterator(Edges.begin(), nodes_iterator_map);
