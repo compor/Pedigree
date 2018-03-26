@@ -59,7 +59,7 @@ struct DOTGraphTraits<pedigree::DDGraph *>
 
   DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
 
-  static std::string getGraphName(const GraphType *) { return "DDGraph"; }
+  static std::string getGraphName(const GraphType *) { return "LOL DDGraph"; }
 
   std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
     return isSimple() || DDGraphDOTSimple ? getSimpleNodeLabel(Node, Graph)

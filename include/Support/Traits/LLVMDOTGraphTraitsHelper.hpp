@@ -28,6 +28,10 @@ struct LLVMDOTDependenceGraphTraitsBase<GraphT *>
   LLVMDOTDependenceGraphTraitsBase(bool isSimple)
       : llvm::DefaultDOTGraphTraits(isSimple) {}
 
+  static std::string getGraphName(const GraphType *) {
+    return "Dependence Graph";
+  }
+
   static std::string getCompleteNodeLabel(const NodeType *Node,
                                           const GraphType *Graph) {
     std::string s;

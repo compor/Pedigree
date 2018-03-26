@@ -59,8 +59,6 @@ struct DOTGraphTraits<pedigree::CDGraph *>
 
   DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
 
-  static std::string getGraphName(const GraphType *) { return "CDGraph"; }
-
   std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {
     return isSimple() || CDGraphDOTSimple ? getSimpleNodeLabel(Node, Graph)
                                       : getCompleteNodeLabel(Node, Graph);
