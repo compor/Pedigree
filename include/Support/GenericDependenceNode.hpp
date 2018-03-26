@@ -29,11 +29,6 @@
 #include <utility>
 // using std::pair
 
-#include <type_traits>
-// using std::is_same
-// using std::is_pointer
-// using std::false_type
-
 #include <functional>
 // using std::function
 
@@ -192,69 +187,6 @@ public:
   bool operator==(const GenericDependenceNode &Other) const {
     return !compare(Other);
   }
-};
-
-// graph traits specializations
-
-// generic base for easing the task of creating graph traits for graph nodes
-
-template <typename DependenceNodeT> struct LLVMDependenceNodeTraitsBase {
-  static_assert(
-      std::is_same<typename std::is_pointer<DependenceNodeT>::type,
-                   std::false_type::type>::value,
-      "Traits class needs to be partially specialized for pointer types!");
-};
-
-template <typename DependenceNodeT>
-struct LLVMDependenceNodeTraitsBase<DependenceNodeT *> {
-  using NodeType = DependenceNodeT;
-
-  static NodeType *getEntryNode(NodeType *G) { return G; }
-  static unsigned size(NodeType *G) { return G->size(); }
-
-  using ChildIteratorType = typename NodeType::nodes_iterator;
-  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
-
-  static decltype(auto) children(NodeType *G) { return G->nodes(); }
-
-  using nodes_iterator = typename NodeType::nodes_iterator;
-  static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
-
-  static decltype(auto) nodes(NodeType *G) { return G->nodes(); }
-
-  using edges_iterator = typename NodeType::edges_iterator;
-  static decltype(auto) edges_begin(NodeType *G) { return G->edges_begin(); }
-  static decltype(auto) edges_end(NodeType *G) { return G->edges_end(); }
-
-  static decltype(auto) edges(NodeType *G) { return G->edges(); }
-};
-
-template <typename DependenceNodeT>
-struct LLVMDependenceNodeTraitsBase<const DependenceNodeT *> {
-  using NodeType = const DependenceNodeT;
-
-  static NodeType *getEntryNode(NodeType *G) { return G; }
-  static unsigned size(NodeType *G) { return G->size(); }
-
-  using ChildIteratorType = typename NodeType::const_nodes_iterator;
-  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
-
-  static decltype(auto) children(NodeType *G) { return G->nodes(); }
-
-  using nodes_iterator = typename NodeType::const_nodes_iterator;
-  static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
-
-  static decltype(auto) nodes(NodeType *G) { return G->nodes(); }
-
-  using edges_iterator = typename NodeType::const_edges_iterator;
-  static decltype(auto) edges_begin(NodeType *G) { return G->edges_begin(); }
-  static decltype(auto) edges_end(NodeType *G) { return G->edges_end(); }
-
-  static decltype(auto) edges(NodeType *G) { return G->edges(); }
 };
 
 } // namespace pedigree end

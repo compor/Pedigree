@@ -11,6 +11,8 @@
 
 #include "Support/GenericDependenceGraph.hpp"
 
+#include "Support/Traits/LLVMGraphTraitsHelperBase.hpp"
+
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
@@ -82,22 +84,22 @@ namespace llvm {
 
 template <>
 struct GraphTraits<pedigree::InstructionDependenceNode *>
-    : public pedigree::LLVMDependenceNodeTraitsBase<
+    : public pedigree::LLVMDependenceNodeTraitsHelperBase<
           pedigree::InstructionDependenceNode *> {};
 
 template <>
 struct GraphTraits<const pedigree::InstructionDependenceNode *>
-    : public pedigree::LLVMDependenceNodeTraitsBase<
+    : public pedigree::LLVMDependenceNodeTraitsHelperBase<
           const pedigree::InstructionDependenceNode *> {};
 
 template <>
 struct GraphTraits<pedigree::InstructionDependenceGraph *>
-    : public pedigree::LLVMDependenceGraphTraitsBase<
+    : public pedigree::LLVMDependenceGraphTraitsHelperBase<
           pedigree::InstructionDependenceGraph *> {};
 
 template <>
 struct GraphTraits<const pedigree::InstructionDependenceGraph *>
-    : public pedigree::LLVMDependenceGraphTraitsBase<
+    : public pedigree::LLVMDependenceGraphTraitsHelperBase<
           const pedigree::InstructionDependenceGraph *> {};
 
 //
@@ -105,22 +107,22 @@ struct GraphTraits<const pedigree::InstructionDependenceGraph *>
 
 template <>
 struct GraphTraits<pedigree::BasicBlockDependenceNode *>
-    : public pedigree::LLVMDependenceNodeTraitsBase<
+    : public pedigree::LLVMDependenceNodeTraitsHelperBase<
           pedigree::BasicBlockDependenceNode *> {};
 
 template <>
 struct GraphTraits<const pedigree::BasicBlockDependenceNode *>
-    : public pedigree::LLVMDependenceNodeTraitsBase<
+    : public pedigree::LLVMDependenceNodeTraitsHelperBase<
           const pedigree::BasicBlockDependenceNode *> {};
 
 template <>
 struct GraphTraits<pedigree::BasicBlockDependenceGraph *>
-    : public pedigree::LLVMDependenceGraphTraitsBase<
+    : public pedigree::LLVMDependenceGraphTraitsHelperBase<
           pedigree::BasicBlockDependenceGraph *> {};
 
 template <>
 struct GraphTraits<const pedigree::BasicBlockDependenceGraph *>
-    : public pedigree::LLVMDependenceGraphTraitsBase<
+    : public pedigree::LLVMDependenceGraphTraitsHelperBase<
           const pedigree::BasicBlockDependenceGraph *> {};
 
 } // namespace llvm end

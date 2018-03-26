@@ -28,11 +28,6 @@
 #include <algorithm>
 // using std::for_each
 
-#include <type_traits>
-// using std::is_same
-// using std::is_pointer
-// using std::false_type
-
 #include <functional>
 // using std::function
 
@@ -170,58 +165,6 @@ public:
   bool operator==(const GenericDependenceGraph &Other) const {
     return !compare(Other);
   }
-};
-
-// graph traits specializations
-
-// generic base for easing the task of creating graph traits for graph nodes
-
-template <typename GraphT> struct LLVMDependenceGraphTraitsBase {
-  static_assert(
-      std::is_same<typename std::is_pointer<GraphT>::type,
-                   std::false_type::type>::value,
-      "Traits class needs to be partially specialized for pointer types!");
-};
-
-template <typename GraphT> struct LLVMDependenceGraphTraitsBase<GraphT *> {
-  using NodeType = typename GraphT::NodeType;
-
-  static NodeType *getEntryNode(NodeType *G) { return G->getEntryNode(); }
-  static unsigned size(NodeType *G) { return G->size(); }
-
-  using ChildIteratorType = typename NodeType::nodes_iterator;
-  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
-
-  static decltype(auto) children(NodeType *G) { return G->nodes(); }
-
-  using nodes_iterator = typename GraphT::nodes_iterator;
-  static decltype(auto) nodes_begin(GraphT *G) { return G->nodes_begin(); }
-  static decltype(auto) nodes_end(GraphT *G) { return G->nodes_end(); }
-
-  static decltype(auto) nodes(GraphT *G) { return G->nodes(); }
-};
-
-template <typename GraphT>
-struct LLVMDependenceGraphTraitsBase<const GraphT *> {
-  using NodeType = const typename GraphT::NodeType;
-
-  static const NodeType *getEntryNode(NodeType *G) { return G->getEntryNode(); }
-  static unsigned size(NodeType *G) { return G->size(); }
-
-  using ChildIteratorType = typename NodeType::const_nodes_iterator;
-  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
-
-  static decltype(auto) children(NodeType *G) { return G->nodes(); }
-
-  using nodes_iterator = typename GraphT::const_nodes_iterator;
-  static decltype(auto) nodes_begin(const GraphT *G) {
-    return G->nodes_begin();
-  }
-  static decltype(auto) nodes_end(const GraphT *G) { return G->nodes_end(); }
-
-  static decltype(auto) nodes(const GraphT *G) { return G->nodes(); }
 };
 
 } // namespace pedigree end
