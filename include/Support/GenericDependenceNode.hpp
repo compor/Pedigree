@@ -13,6 +13,9 @@
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
+#include "llvm/ADT/iterator_range.h"
+// using llvm::make_range
+
 #include "boost/operators.hpp"
 // using boost::equality_comparable
 
@@ -145,6 +148,14 @@ public:
     return const_nodes_iterator(Edges.end(), nodes_const_iterator_map);
   }
 
+  inline decltype(auto) nodes() {
+    return llvm::make_range(nodes_begin(), nodes_end());
+  }
+
+  inline decltype(auto) nodes() const {
+    return llvm::make_range(nodes_begin(), nodes_end());
+  }
+
   inline unsigned getDependeeCount() const { return DependeeCount; }
 
   bool compare(const GenericDependenceNode &Other) const {
@@ -189,9 +200,13 @@ struct LLVMDependenceNodeTraitsBase<DependenceNodeT *> {
   static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
 
+  static decltype(auto) children(NodeType *G) { return G->nodes(); }
+
   using nodes_iterator = typename NodeType::nodes_iterator;
   static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
+
+  static decltype(auto) nodes(NodeType *G) { return G->nodes(); }
 };
 
 template <typename DependenceNodeT>
@@ -205,9 +220,13 @@ struct LLVMDependenceNodeTraitsBase<const DependenceNodeT *> {
   static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
 
+  static decltype(auto) children(NodeType *G) { return G->nodes(); }
+
   using nodes_iterator = typename NodeType::const_nodes_iterator;
   static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
+
+  static decltype(auto) nodes(NodeType *G) { return G->nodes(); }
 };
 
 } // namespace pedigree end

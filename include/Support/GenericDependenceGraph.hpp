@@ -12,6 +12,9 @@
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
+#include "llvm/ADT/iterator_range.h"
+// using llvm::make_range
+
 #include "boost/operators.hpp"
 // using boost::equality_comparable
 
@@ -134,6 +137,14 @@ public:
     return const_nodes_iterator(NodeMap.end(), nodes_const_iterator_map);
   }
 
+  inline decltype(auto) nodes() {
+    return llvm::make_range(nodes_begin(), nodes_end());
+  }
+
+  inline decltype(auto) nodes() const {
+    return llvm::make_range(nodes_begin(), nodes_end());
+  }
+
   NodeType *getEntryNode() { return begin()->second.get(); }
   const NodeType *getEntryNode() const { return begin()->second.get(); }
 
@@ -182,9 +193,13 @@ template <typename GraphT> struct LLVMDependenceGraphTraitsBase<GraphT *> {
   static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
 
+  static decltype(auto) children(NodeType *G) { return G->nodes(); }
+
   using nodes_iterator = typename GraphT::nodes_iterator;
   static decltype(auto) nodes_begin(GraphT *G) { return G->nodes_begin(); }
   static decltype(auto) nodes_end(GraphT *G) { return G->nodes_end(); }
+
+  static decltype(auto) nodes(GraphT *G) { return G->nodes(); }
 };
 
 template <typename GraphT>
@@ -198,11 +213,15 @@ struct LLVMDependenceGraphTraitsBase<const GraphT *> {
   static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
   static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
 
+  static decltype(auto) children(NodeType *G) { return G->nodes(); }
+
   using nodes_iterator = typename GraphT::const_nodes_iterator;
   static decltype(auto) nodes_begin(const GraphT *G) {
     return G->nodes_begin();
   }
   static decltype(auto) nodes_end(const GraphT *G) { return G->nodes_end(); }
+
+  static decltype(auto) nodes(const GraphT *G) { return G->nodes(); }
 };
 
 } // namespace pedigree end

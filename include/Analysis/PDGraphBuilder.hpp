@@ -17,9 +17,6 @@
 
 #include "MDGraph.hpp"
 
-#include "llvm/ADT/iterator_range.h"
-// using llvm::make_range
-
 #include <cassert>
 // using assert
 
@@ -37,12 +34,10 @@ class PDGraphBuilder {
 
     using GT = llvm::GraphTraits<decltype(FromGraph)>;
 
-    for (const auto &node : llvm::make_range(GT::nodes_begin(FromGraph),
-                                             GT::nodes_end(FromGraph))) {
+    for (const auto &node : GT::nodes(FromGraph)) {
       auto src = ToGraph->getOrInsertNode(node->get());
 
-      for (const auto &child :
-           llvm::make_range(GT::child_begin(node), GT::child_end(node))) {
+      for (const auto &child : GT::children(node)) {
         auto dst = ToGraph->getOrInsertNode(child->get());
         src->addDependentNode(dst, {});
       }
