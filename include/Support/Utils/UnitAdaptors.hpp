@@ -10,6 +10,9 @@
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
+#include "llvm/IR/InstrTypes.h"
+// using llvm::TerminatorInst
+
 namespace llvm {
 class Instruction;
 }
