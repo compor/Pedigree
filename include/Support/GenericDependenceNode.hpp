@@ -66,6 +66,15 @@ public:
   using iterator = typename EdgeStorageType::iterator;
   using const_iterator = typename EdgeStorageType::const_iterator;
 
+  using edges_iterator = iterator;
+  using const_edges_iterator = const_iterator;
+
+  using nodes_iterator =
+      llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
+
+  using const_nodes_iterator = llvm::mapped_iterator<
+      const_iterator, std::function<const NodeType *(const value_type &)>>;
+
   explicit GenericDependenceNode(UnderlyingType Under)
       : Underlying(Under), DependeeCount(0) {}
 
@@ -116,6 +125,19 @@ public:
   inline decltype(auto) end() { return Edges.end(); }
   inline decltype(auto) end() const { return Edges.end(); }
 
+  inline decltype(auto) edges_begin() { return begin(); }
+  inline decltype(auto) edges_begin() const { return begin(); }
+  inline decltype(auto) edges_end() { return end(); }
+  inline decltype(auto) edges_end() const { return end(); }
+
+  inline decltype(auto) edges() {
+    return llvm::make_range(edges_begin(), edges_end());
+  }
+
+  inline decltype(auto) edges() const {
+    return llvm::make_range(edges_begin(), edges_end());
+  }
+
   static NodeType *nodes_iterator_map(value_type &P) {
     assert(P.first && "Pointer to graph node is null!");
     return P.first;
@@ -125,12 +147,6 @@ public:
     assert(P.first && "Pointer to graph node is null!");
     return P.first;
   }
-
-  using nodes_iterator =
-      llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
-
-  using const_nodes_iterator = llvm::mapped_iterator<
-      const_iterator, std::function<const NodeType *(const value_type &)>>;
 
   inline decltype(auto) nodes_begin() {
     return nodes_iterator(Edges.begin(), nodes_iterator_map);
@@ -207,6 +223,12 @@ struct LLVMDependenceNodeTraitsBase<DependenceNodeT *> {
   static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
 
   static decltype(auto) nodes(NodeType *G) { return G->nodes(); }
+
+  using edges_iterator = typename NodeType::edges_iterator;
+  static decltype(auto) edges_begin(NodeType *G) { return G->edges_begin(); }
+  static decltype(auto) edges_end(NodeType *G) { return G->edges_end(); }
+
+  static decltype(auto) edges(NodeType *G) { return G->edges(); }
 };
 
 template <typename DependenceNodeT>
@@ -227,6 +249,12 @@ struct LLVMDependenceNodeTraitsBase<const DependenceNodeT *> {
   static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
 
   static decltype(auto) nodes(NodeType *G) { return G->nodes(); }
+
+  using edges_iterator = typename NodeType::const_edges_iterator;
+  static decltype(auto) edges_begin(NodeType *G) { return G->edges_begin(); }
+  static decltype(auto) edges_end(NodeType *G) { return G->edges_end(); }
+
+  static decltype(auto) edges(NodeType *G) { return G->edges(); }
 };
 
 } // namespace pedigree end
