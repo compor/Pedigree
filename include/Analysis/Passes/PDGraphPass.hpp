@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_PDGraphPASS_HPP
-#define PEDIGREE_PDGraphPASS_HPP
+#ifndef PEDIGREE_PDGRAPHPASS_HPP
+#define PEDIGREE_PDGRAPHPASS_HPP
 
 #include "Config.hpp"
 

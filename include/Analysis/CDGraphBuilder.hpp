@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_CDGraphBUILDER_HPP
-#define PEDIGREE_CDGraphBUILDER_HPP
+#ifndef PEDIGREE_CDGRAPHBUILDER_HPP
+#define PEDIGREE_CDGRAPHBUILDER_HPP
 
 #include "Config.hpp"
 

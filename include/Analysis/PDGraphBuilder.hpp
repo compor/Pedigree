@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_PDGraphBUILDER_HPP
-#define PEDIGREE_PDGraphBUILDER_HPP
+#ifndef PEDIGREE_PDGRAPHBUILDER_HPP
+#define PEDIGREE_PDGRAPHBUILDER_HPP
 
 #include "Config.hpp"
 
