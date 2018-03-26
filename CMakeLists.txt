@@ -141,7 +141,8 @@ set(LIB_SOURCES
   lib/Analysis/Passes/CDGraphPrinterPass.cpp
   lib/Analysis/Passes/MDGraphPass.cpp
   lib/Analysis/Passes/MDGraphPrinterPass.cpp
-  lib/Analysis/Passes/PDGraphPass.cpp)
+  lib/Analysis/Passes/PDGraphPass.cpp
+  lib/Analysis/Passes/PDGraphPrinterPass.cpp)
 
 set(LIB_NAME "LLVM${PRJ_NAME}Pass")
 set(OBJ_LIB_NAME "${LIB_NAME}_obj")
