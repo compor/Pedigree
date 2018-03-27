@@ -8,6 +8,8 @@
 
 #include "Analysis/Passes/CDGraphPass.hpp"
 
+#include "Support/Traits/LLVMAnalysisGraphTraits.hpp"
+
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -44,25 +46,17 @@ static llvm::cl::list<std::string> CDGraphDOTFunctionWhitelist(
     "pedigree-cdg-dot-func-wl", llvm::cl::Hidden,
     llvm::cl::desc("generate CDGraph DOT graph only for these functions"));
 
-namespace llvm {
-
-struct AnalysisDependenceGraphPassTraits {
-  static pedigree::BasicBlockDependenceGraph *
-  getGraph(pedigree::CDGraphPass *P) {
-    return &P->getGraph();
-  }
-};
-
-} // namespace llvm end
-
 namespace pedigree {
 
-struct CDGraphPrinterPass : public llvm::DOTGraphTraitsPrinter<
-                                CDGraphPass, false, CDGraph *,
-                                llvm::AnalysisDependenceGraphPassTraits> {
-  using Base =
-      llvm::DOTGraphTraitsPrinter<CDGraphPass, false, CDGraph *,
-                                  llvm::AnalysisDependenceGraphPassTraits>;
+struct CDGraphPrinterPass
+    : public llvm::DOTGraphTraitsPrinter<
+          CDGraphPass, false, CDGraph *,
+          LLVMAnalysisDependenceGraphPassTraitsHelperBase<CDGraphPass,
+                                                          CDGraph>> {
+  using Base = llvm::DOTGraphTraitsPrinter<
+      CDGraphPass, false, CDGraph *,
+      LLVMAnalysisDependenceGraphPassTraitsHelperBase<CDGraphPass, CDGraph>>;
+
   static char ID;
 
   CDGraphPrinterPass() : Base("cdg", ID) {}

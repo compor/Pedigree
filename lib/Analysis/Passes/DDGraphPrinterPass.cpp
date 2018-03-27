@@ -8,6 +8,8 @@
 
 #include "Analysis/Passes/DDGraphPass.hpp"
 
+#include "Support/Traits/LLVMAnalysisGraphTraits.hpp"
+
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -44,24 +46,17 @@ static llvm::cl::list<std::string> DDGraphDOTFunctionWhitelist(
     "pedigree-ddg-dot-func-wl", llvm::cl::Hidden,
     llvm::cl::desc("generate DDGraph DOT graph only for these functions"));
 
-namespace llvm {
-
-struct AnalysisDependenceGraphPassTraits {
-  static pedigree::DDGraph *getGraph(pedigree::DDGraphPass *P) {
-    return &P->getGraph();
-  }
-};
-
-} // namespace llvm end
-
 namespace pedigree {
 
-struct DDGraphPrinterPass : public llvm::DOTGraphTraitsPrinter<
-                                DDGraphPass, false, pedigree::DDGraph *,
-                                llvm::AnalysisDependenceGraphPassTraits> {
-  using Base =
-      llvm::DOTGraphTraitsPrinter<DDGraphPass, false, pedigree::DDGraph *,
-                                  llvm::AnalysisDependenceGraphPassTraits>;
+struct DDGraphPrinterPass
+    : public llvm::DOTGraphTraitsPrinter<
+          DDGraphPass, false, DDGraph *,
+          LLVMAnalysisDependenceGraphPassTraitsHelperBase<DDGraphPass,
+                                                          DDGraph>> {
+  using Base = llvm::DOTGraphTraitsPrinter<
+      DDGraphPass, false, DDGraph *,
+      LLVMAnalysisDependenceGraphPassTraitsHelperBase<DDGraphPass, DDGraph>>;
+
   static char ID;
 
   DDGraphPrinterPass() : Base("ddg", ID) {}
