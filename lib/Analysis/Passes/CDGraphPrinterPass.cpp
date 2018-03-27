@@ -36,10 +36,6 @@
 #include <string>
 // using std::string
 
-static llvm::cl::opt<std::string>
-    CDGraphDOTEdgeAttributes("pedigree-cdg-dot-edge-attrs", llvm::cl::Hidden,
-                             llvm::cl::desc("CDGraph DOT edge attributes"));
-
 static llvm::cl::opt<bool>
     CDGraphDOTSimple("pedigree-cdg-dot-simple", llvm::cl::Hidden,
                      llvm::cl::desc("generate simple CDGraph DOT graph"));

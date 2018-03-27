@@ -36,10 +36,6 @@
 #include <string>
 // using std::string
 
-static llvm::cl::opt<std::string>
-    PDGraphDOTEdgeAttributes("pedigree-pdg-dot-edge-attrs", llvm::cl::Hidden,
-                             llvm::cl::desc("PDGraph DOT edge attributes"));
-
 static llvm::cl::opt<bool>
     PDGraphDOTSimple("pedigree-pdg-dot-simple", llvm::cl::Hidden,
                      llvm::cl::desc("generate simple PDGraph DOT graph"));

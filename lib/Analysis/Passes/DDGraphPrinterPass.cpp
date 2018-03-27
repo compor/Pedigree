@@ -36,10 +36,6 @@
 #include <string>
 // using std::string
 
-static llvm::cl::opt<std::string>
-    DDGraphDOTEdgeAttributes("pedigree-ddg-dot-edge-attrs", llvm::cl::Hidden,
-                             llvm::cl::desc("DDGraph DOT edge attributes"));
-
 static llvm::cl::opt<bool>
     DDGraphDOTSimple("pedigree-ddg-dot-simple", llvm::cl::Hidden,
                      llvm::cl::desc("generate simple DDGraph DOT graph"));
