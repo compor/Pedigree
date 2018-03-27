@@ -136,13 +136,13 @@ find_package(Boost REQUIRED)
 set(LIB_SOURCES
   lib/Analysis/DependenceGraphs.cpp
   lib/Analysis/Passes/DDGraphPass.cpp
-  lib/Analysis/Passes/DDGraphPrinterPass.cpp
   lib/Analysis/Passes/CDGraphPass.cpp
-  lib/Analysis/Passes/CDGraphPrinterPass.cpp
   lib/Analysis/Passes/MDGraphPass.cpp
-  lib/Analysis/Passes/MDGraphPrinterPass.cpp
   lib/Analysis/Passes/PDGraphPass.cpp
-  lib/Analysis/Passes/PDGraphPrinterPass.cpp)
+  lib/Analysis/Passes/Printers/Graphviz/DDGraphPrinterPass.cpp
+  lib/Analysis/Passes/Printers/Graphviz/CDGraphPrinterPass.cpp
+  lib/Analysis/Passes/Printers/Graphviz/MDGraphPrinterPass.cpp
+  lib/Analysis/Passes/Printers/Graphviz/PDGraphPrinterPass.cpp)
 
 set(LIB_NAME "LLVM${PRJ_NAME}Pass")
 set(OBJ_LIB_NAME "${LIB_NAME}_obj")
