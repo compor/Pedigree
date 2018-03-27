@@ -42,8 +42,9 @@ public:
     initNodeEdgeIterator();
   }
 
+  template <typename U, typename K>
   GenericDependenceGraphEdgeIterator(
-      const GenericDependenceGraphEdgeIterator &Other)
+      const GenericDependenceGraphEdgeIterator<U, K> &Other)
       : CurNI(Other.NI), EndNI(Other.NI), CurNEI(Other.CurNEI),
         CurEdgeDistance(Other.CurEdgeDistance) {}
 
@@ -75,7 +76,8 @@ private:
 
   reference dereference() const { return *CurNEI; }
 
-  bool equal(const GenericDependenceGraphEdgeIterator &Other) const {
+  template <typename U, typename K>
+  bool equal(const GenericDependenceGraphEdgeIterator<U, K> &Other) const {
     return CurNI == Other.CurNI && EndNI == Other.EndNI &&
            CurNEI == Other.CurNEI && CurEdgeDistance == Other.CurEdgeDistance;
   }

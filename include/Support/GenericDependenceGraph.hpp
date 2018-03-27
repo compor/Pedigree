@@ -9,6 +9,8 @@
 
 #include "Dependence.hpp"
 
+#include "GenericDependenceGraphEdgeIterator.hpp"
+
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
@@ -34,9 +36,6 @@
 #include <iterator>
 // using std::begin
 // using std::end
-
-// TODO remove
-#include "GenericDependenceGraphEdgeIterator.hpp"
 
 namespace pedigree {
 
