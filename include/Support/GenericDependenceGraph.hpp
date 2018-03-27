@@ -35,6 +35,9 @@
 // using std::begin
 // using std::end
 
+// TODO remove
+#include "GenericDependenceGraphEdgeIterator.hpp"
+
 namespace pedigree {
 
 template <typename NodeT>

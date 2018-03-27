@@ -1,0 +1,94 @@
+//
+//
+//
+
+#ifndef PEDIGREE_GENERICDEPENDENCEGRAPHEDGEITERATOR_HPP
+#define PEDIGREE_GENERICDEPENDENCEGRAPHEDGEITERATOR_HPP
+
+#include "boost/iterator/iterator_facade.hpp"
+
+#include <iterator>
+// using std::iterator_traits
+// using std::advance
+
+#include <type_traits>
+// using std::remove_cv_t
+
+namespace pedigree {
+namespace detail {
+
+template <typename NodeIteratorT, typename NodeEdgeIteratorT>
+class GenericDependenceGraphEdgeIterator
+    : public boost::iterator_facade<
+          NodeEdgeIteratorT, std::remove_cv_t<typename std::iterator_traits<
+                                 NodeEdgeIteratorT>::value_type>,
+          std::forward_iterator_tag> {
+public:
+  using base = boost::iterator_facade<
+      NodeEdgeIteratorT,
+      typename std::iterator_traits<NodeEdgeIteratorT>::value,
+      std::forward_iterator_tag>;
+
+  using difference_type = typename base::difference_type;
+  using value_type = typename base::value_type;
+  using pointer = typename base::pointer;
+  using reference = typename base::reference;
+  using iterator_category = typename base::iterator_category;
+
+  GenericDependenceGraphEdgeIterator() : CurEdgeDistance(0) {}
+
+  GenericDependenceGraphEdgeIterator(NodeIteratorT Begin, NodeIteratorT End)
+      : CurNI(Begin), EndNI(End), CurEdgeDistance(0) {
+    initNodeEdgeIterator();
+  }
+
+  GenericDependenceGraphEdgeIterator(
+      const GenericDependenceGraphEdgeIterator &Other)
+      : CurNI(Other.NI), EndNI(Other.NI), CurNEI(Other.CurNEI),
+        CurEdgeDistance(Other.CurEdgeDistance) {}
+
+private:
+  bool isNodeIterationComplete() { return CurNI == EndNI; }
+
+  void initNodeEdgeIterator() {
+    if (isNodeIterationComplete())
+      return;
+
+    CurNEI = CurNI->begin();
+    CurEdgeDistance = std::distance(CurNEI, CurNI->end());
+  }
+
+  void advanceToNextValid() {
+    while (!isNodeIterationComplete()) {
+      if (CurEdgeDistance) {
+        std::advance(CurNEI, 1);
+        --CurEdgeDistance;
+        break;
+      } else {
+        ++CurNI;
+        initNodeEdgeIterator();
+      }
+    }
+  }
+
+  friend class boost::iterator_core_access;
+
+  reference dereference() const { return *CurNEI; }
+
+  bool equal(const GenericDependenceGraphEdgeIterator &Other) const {
+    return CurNI == Other.CurNI && EndNI == Other.EndNI &&
+           CurNEI == Other.CurNEI && CurEdgeDistance == Other.CurEdgeDistance;
+  }
+
+  void increment() { advanceToNextValid(); }
+
+  NodeIteratorT CurNI;
+  NodeIteratorT EndNI;
+  NodeEdgeIteratorT CurNEI;
+  difference_type CurEdgeDistance;
+};
+
+} // namespace detail end
+} // namespace pedigree end
+
+#endif // header
