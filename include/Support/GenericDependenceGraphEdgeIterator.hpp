@@ -11,18 +11,14 @@
 // using std::iterator_traits
 // using std::advance
 
-#include <type_traits>
-// using std::remove_cv_t
-
 namespace pedigree {
 namespace detail {
 
 template <typename NodeIteratorT, typename NodeEdgeIteratorT>
 class GenericDependenceGraphEdgeIterator
-    : public boost::iterator_facade<
-          NodeEdgeIteratorT, std::remove_cv_t<typename std::iterator_traits<
-                                 NodeEdgeIteratorT>::value_type>,
-          std::forward_iterator_tag> {
+    : public boost::iterator_facade<NodeEdgeIteratorT,
+                                    typename NodeEdgeIteratorT::value_type,
+                                    std::forward_iterator_tag> {
 public:
   using base = boost::iterator_facade<
       NodeEdgeIteratorT,
