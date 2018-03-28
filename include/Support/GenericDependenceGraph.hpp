@@ -63,6 +63,18 @@ public:
   using iterator = typename NodeMapType::iterator;
   using const_iterator = typename NodeMapType::const_iterator;
 
+  using nodes_iterator =
+      llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
+
+  using const_nodes_iterator = llvm::mapped_iterator<
+      const_iterator, std::function<const NodeType *(const value_type &)>>;
+
+  using edges_iterator = detail::GenericDependenceGraphEdgeIterator<
+      nodes_iterator, typename NodeType::edges_iterator>;
+
+  using const_edges_iterator = detail::GenericDependenceGraphEdgeIterator<
+      const_nodes_iterator, typename NodeType::const_edges_iterator>;
+
   GenericDependenceGraph() = default;
   GenericDependenceGraph(const GenericDependenceGraph &) = delete;
   GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
@@ -112,12 +124,6 @@ public:
     return P.second.get();
   }
 
-  using nodes_iterator =
-      llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
-
-  using const_nodes_iterator = llvm::mapped_iterator<
-      const_iterator, std::function<const NodeType *(const value_type &)>>;
-
   inline decltype(auto) nodes_begin() {
     return nodes_iterator(NodeMap.begin(), nodes_iterator_map);
   }
@@ -140,6 +146,38 @@ public:
 
   inline decltype(auto) nodes() const {
     return llvm::make_range(nodes_begin(), nodes_end());
+  }
+
+  inline decltype(auto) edges_begin() {
+    return detail::GenericDependenceGraphEdgeIterator<
+        nodes_iterator, typename NodeType::edges_iterator>{nodes_begin(),
+                                                           nodes_end()};
+  }
+
+  inline decltype(auto) edges_end() {
+    return detail::GenericDependenceGraphEdgeIterator<
+        nodes_iterator, typename NodeType::edges_iterator>{nodes_end(),
+                                                           nodes_end()};
+  }
+
+  inline decltype(auto) edges_begin() const {
+    return detail::GenericDependenceGraphEdgeIterator<
+        const_nodes_iterator, typename NodeType::const_edges_iterator>{
+        nodes_begin(), nodes_end()};
+  }
+
+  inline decltype(auto) edges_end() const {
+    return detail::GenericDependenceGraphEdgeIterator<
+        const_nodes_iterator, typename NodeType::const_edges_iterator>{
+        nodes_end(), nodes_end()};
+  }
+
+  inline decltype(auto) edges() {
+    return llvm::make_range(edges_begin(), edges_end());
+  }
+
+  inline decltype(auto) edges() const {
+    return llvm::make_range(edges_begin(), edges_end());
   }
 
   NodeType *getEntryNode() { return begin()->second.get(); }
