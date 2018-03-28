@@ -61,14 +61,14 @@ public:
   using iterator = typename EdgeStorageType::iterator;
   using const_iterator = typename EdgeStorageType::const_iterator;
 
-  using edges_iterator = iterator;
-  using const_edges_iterator = const_iterator;
-
   using nodes_iterator =
       llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
 
   using const_nodes_iterator = llvm::mapped_iterator<
       const_iterator, std::function<const NodeType *(const value_type &)>>;
+
+  using edges_iterator = iterator;
+  using const_edges_iterator = const_iterator;
 
   explicit GenericDependenceNode(UnderlyingType Under)
       : Underlying(Under), DependeeCount(0) {}
