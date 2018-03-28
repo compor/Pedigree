@@ -19,13 +19,13 @@ namespace detail {
 
 template <typename NodeIteratorT, typename NodeEdgeIteratorT>
 class GenericDependenceGraphEdgeIterator
-    : public boost::iterator_facade<NodeEdgeIteratorT,
-                                    typename NodeEdgeIteratorT::value_type,
-                                    std::forward_iterator_tag> {
+    : public boost::iterator_facade<
+          GenericDependenceGraphEdgeIterator<NodeIteratorT, NodeEdgeIteratorT>,
+          typename NodeEdgeIteratorT::value_type, std::forward_iterator_tag> {
 public:
-  using base = boost::iterator_facade<NodeEdgeIteratorT,
-                                      typename NodeEdgeIteratorT::value_type,
-                                      std::forward_iterator_tag>;
+  using base = boost::iterator_facade<
+      GenericDependenceGraphEdgeIterator<NodeIteratorT, NodeEdgeIteratorT>,
+      typename NodeEdgeIteratorT::value_type, std::forward_iterator_tag>;
 
   using difference_type = typename base::difference_type;
   using value_type = typename base::value_type;
@@ -53,8 +53,8 @@ private:
     if (isNodeIterationComplete())
       return;
 
-    CurNEI = (*CurNI)->begin();
-    CurEdgeDistance = std::distance(CurNEI, (*CurNI)->end());
+    CurNEI = (*CurNI)->edges_begin();
+    CurEdgeDistance = std::distance(CurNEI, (*CurNI)->edges_end());
   }
 
   void advanceToNextValid() {
