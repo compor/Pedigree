@@ -14,16 +14,18 @@
 namespace pedigree {
 namespace detail {
 
+// TODO reconsider the choice of traversal tag to something more permitting
+// based on the categories of the two iterators
+
 template <typename NodeIteratorT, typename NodeEdgeIteratorT>
 class GenericDependenceGraphEdgeIterator
     : public boost::iterator_facade<NodeEdgeIteratorT,
                                     typename NodeEdgeIteratorT::value_type,
                                     std::forward_iterator_tag> {
 public:
-  using base = boost::iterator_facade<
-      NodeEdgeIteratorT,
-      typename std::iterator_traits<NodeEdgeIteratorT>::value,
-      std::forward_iterator_tag>;
+  using base = boost::iterator_facade<NodeEdgeIteratorT,
+                                      typename NodeEdgeIteratorT::value_type,
+                                      std::forward_iterator_tag>;
 
   using difference_type = typename base::difference_type;
   using value_type = typename base::value_type;
