@@ -53,8 +53,8 @@ private:
     if (isNodeIterationComplete())
       return;
 
-    CurNEI = CurNI->begin();
-    CurEdgeDistance = std::distance(CurNEI, CurNI->end());
+    CurNEI = (*CurNI)->begin();
+    CurEdgeDistance = std::distance(CurNEI, (*CurNI)->end());
   }
 
   void advanceToNextValid() {
