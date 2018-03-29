@@ -33,40 +33,50 @@ public:
   using reference = typename base::reference;
   using iterator_category = typename base::iterator_category;
 
-  GenericDependenceGraphEdgeIterator() : CurEdgeDistance(0) {}
+  GenericDependenceGraphEdgeIterator() = default;
 
   GenericDependenceGraphEdgeIterator(NodeIteratorT Begin, NodeIteratorT End)
-      : CurNI(Begin), EndNI(End), CurEdgeDistance(0) {
+      : CurNI(Begin), EndNI(End) {
     initNodeEdgeIterator();
+
+    if (isNodeEdgesIterationComplete())
+      advanceToNextValid();
   }
 
   template <typename U, typename K>
   GenericDependenceGraphEdgeIterator(
       const GenericDependenceGraphEdgeIterator<U, K> &Other)
       : CurNI(Other.NI), EndNI(Other.NI), CurNEI(Other.CurNEI),
-        CurEdgeDistance(Other.CurEdgeDistance) {}
+        EndNEI(Other.EndNEI) {}
 
 private:
-  bool isNodeIterationComplete() { return CurNI == EndNI; }
+  bool isNodesIterationComplete() { return CurNI == EndNI; }
+  bool isNodeEdgesIterationComplete() { return CurNEI == EndNEI; }
 
   void initNodeEdgeIterator() {
-    if (isNodeIterationComplete())
+    CurNEI = EndNEI = {};
+
+    if (isNodesIterationComplete())
       return;
 
     CurNEI = (*CurNI)->edges_begin();
-    CurEdgeDistance = std::distance(CurNEI, (*CurNI)->edges_end());
+    EndNEI = (*CurNI)->edges_end();
   }
 
   void advanceToNextValid() {
-    while (!isNodeIterationComplete()) {
-      if (CurEdgeDistance) {
-        std::advance(CurNEI, 1);
-        --CurEdgeDistance;
-        break;
-      } else {
-        ++CurNI;
+    const auto step = 1;
+
+    while (!isNodesIterationComplete()) {
+      if (!isNodeEdgesIterationComplete())
+        std::advance(CurNEI, step);
+
+      while (isNodeEdgesIterationComplete() && !isNodesIterationComplete()) {
+        std::advance(CurNI, step);
         initNodeEdgeIterator();
       }
+
+      if (!isNodeEdgesIterationComplete())
+        break;
     }
   }
 
@@ -77,7 +87,7 @@ private:
   template <typename U, typename K>
   bool equal(const GenericDependenceGraphEdgeIterator<U, K> &Other) const {
     return CurNI == Other.CurNI && EndNI == Other.EndNI &&
-           CurNEI == Other.CurNEI && CurEdgeDistance == Other.CurEdgeDistance;
+           CurNEI == Other.CurNEI && EndNEI == Other.EndNEI;
   }
 
   void increment() { advanceToNextValid(); }
@@ -85,7 +95,7 @@ private:
   NodeIteratorT CurNI;
   NodeIteratorT EndNI;
   NodeEdgeIteratorT CurNEI;
-  difference_type CurEdgeDistance;
+  NodeEdgeIteratorT EndNEI;
 };
 
 } // namespace detail end
