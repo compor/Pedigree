@@ -10,9 +10,9 @@
 
 #include "Analysis/CDGraphBuilder.hpp"
 
-#include "Support/GraphAdaptor.hpp"
+#include "Support/GraphConverter.hpp"
 
-#include "Support/Utils/UnitAdaptors.hpp"
+#include "Support/Utils/UnitConverters.hpp"
 
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
@@ -53,8 +53,9 @@ std::ostream &operator<<(std::ostream &os, const CDGraphTestData &td) {
 
 //
 
-class CDGraphConstructionTest : public TestIRAssemblyParser,
-                            public ::testing::TestWithParam<CDGraphTestData> {};
+class CDGraphConstructionTest
+    : public TestIRAssemblyParser,
+      public ::testing::TestWithParam<CDGraphTestData> {};
 
 //
 
@@ -74,7 +75,7 @@ TEST_P(CDGraphConstructionTest, CDGraphConstruction) {
   EXPECT_EQ(td.numEdges, cdg.numEdges());
 }
 
-TEST_P(CDGraphConstructionTest, CDGraphAdaptation) {
+TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
@@ -87,17 +88,17 @@ TEST_P(CDGraphConstructionTest, CDGraphAdaptation) {
   cdgBuilder.build(*curFunc);
 
   InstCDGraph cdg2;
-  Adapt(cdg, cdg2, BlockToInstructionUnitAdaptor{});
+  Convert(cdg, cdg2, BlockToInstructionUnitConverter{});
 
   EXPECT_EQ(td.numVertices, cdg2.numVertices());
   EXPECT_EQ(td.numEdges, cdg2.numEdges());
 }
 
 std::array<CDGraphTestData, 5> testData1 = {{{"whalebook_fig81.ll", 6, 3},
-                                         {"whalebook_fig85.ll", 5, 4},
-                                         {"whalebook_fig821.ll", 7, 4},
-                                         {"hpc4pc_book_fig37.ll", 13, 9},
-                                         {"hpc4pc_book_fig321.ll", 11, 9}}};
+                                             {"whalebook_fig85.ll", 5, 4},
+                                             {"whalebook_fig821.ll", 7, 4},
+                                             {"hpc4pc_book_fig37.ll", 13, 9},
+                                             {"hpc4pc_book_fig321.ll", 11, 9}}};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, CDGraphConstructionTest,
                         ::testing::ValuesIn(testData1));

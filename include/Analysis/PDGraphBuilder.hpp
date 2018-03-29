@@ -17,9 +17,9 @@
 
 #include "MDGraph.hpp"
 
-#include "Support/GraphAdaptor.hpp"
+#include "Support/GraphConverter.hpp"
 
-#include "Support/Utils/UnitAdaptors.hpp"
+#include "Support/Utils/UnitConverters.hpp"
 
 #include <cassert>
 // using assert
@@ -54,7 +54,7 @@ public:
 
   void build(PDGraph &PDG) const {
     InstructionDependenceGraph instCDG;
-    Adapt(CDG, instCDG, BlockToInstructionUnitAdaptor{});
+    Convert(CDG, instCDG, BlockToInstructionUnitConverter{});
 
     build(&instCDG, &PDG);
     build(&DDG, &PDG);

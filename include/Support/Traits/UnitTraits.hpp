@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_TRAITS_UNIT_HPP
-#define PEDIGREE_TRAITS_UNIT_HPP
+#ifndef PEDIGREE_UNITTRAITS_HPP
+#define PEDIGREE_UNITTRAITS_HPP
 
 #include "Config.hpp"
 
@@ -52,12 +52,12 @@ template <> struct unit_traits<llvm::Function *> {
 //
 
 template <typename FromCategoryT, typename ToCategoryT>
-struct is_unit_adaptable {
+struct is_unit_convertible {
   static constexpr bool value = false;
 };
 
 template <>
-struct is_unit_adaptable<basicblock_unit_tag, instruction_unit_tag> {
+struct is_unit_convertible<basicblock_unit_tag, instruction_unit_tag> {
   static constexpr bool value = true;
 };
 

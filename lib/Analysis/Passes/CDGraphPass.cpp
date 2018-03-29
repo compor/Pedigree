@@ -8,9 +8,9 @@
 
 #include "Analysis/CDGraphBuilder.hpp"
 
-#include "Support/GraphAdaptor.hpp"
+#include "Support/GraphConverter.hpp"
 
-#include "Support/Utils/UnitAdaptors.hpp"
+#include "Support/Utils/UnitConverters.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
@@ -57,7 +57,7 @@ static llvm::RegisterPass<pedigree::CDGraphPass>
 // RegisterStandardPasses class
 
 static void registerPedigreeCDGraphPass(const llvm::PassManagerBuilder &Builder,
-                                    llvm::legacy::PassManagerBase &PM) {
+                                        llvm::legacy::PassManagerBase &PM) {
   PM.add(new pedigree::CDGraphPass());
 
   return;
@@ -65,15 +65,15 @@ static void registerPedigreeCDGraphPass(const llvm::PassManagerBuilder &Builder,
 
 static llvm::RegisterStandardPasses
     RegisterPedigreeCDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                            registerPedigreeCDGraphPass);
+                                registerPedigreeCDGraphPass);
 
 //
 
 static llvm::cl::OptionCategory
     PedigreeCDGraphPassCategory("Pedigree CDGraph Pass",
-                            "Options for Pedigree CDGraph pass");
+                                "Options for Pedigree CDGraph pass");
 
-static llvm::cl::opt<bool> PedigreeCDGraphAdaptToInstruction(
+static llvm::cl::opt<bool> PedigreeCDGraphConvertToInstruction(
     "pedigree-cdg-instruction",
     llvm::cl::desc("adapt cdg to block terminator instructions"),
     llvm::cl::init(false), llvm::cl::cat(PedigreeCDGraphPassCategory));
@@ -110,9 +110,9 @@ bool CDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   CDGraphBuilder builder{*Graph};
   builder.build(CurFunc);
 
-  if (PedigreeCDGraphAdaptToInstruction) {
+  if (PedigreeCDGraphConvertToInstruction) {
     m_InstGraph = std::make_unique<InstCDGraph>();
-    Adapt(*Graph, *m_InstGraph, BlockToInstructionUnitAdaptor{});
+    Convert(*Graph, *m_InstGraph, BlockToInstructionUnitConverter{});
   }
 
   return false;

@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_UNITADAPTOS_HPP
-#define PEDIGREE_UNITADAPTOS_HPP
+#ifndef PEDIGREE_UNITCONVERTERS_HPP
+#define PEDIGREE_UNITCONVERTERS_HPP
 
 #include "Config.hpp"
 
@@ -19,7 +19,7 @@ class Instruction;
 
 namespace pedigree {
 
-struct BlockToInstructionUnitAdaptor {
+struct BlockToInstructionUnitConverter {
   llvm::Instruction *operator()(const llvm::BasicBlock *From) {
     auto *from = const_cast<llvm::BasicBlock *>(From);
     return from->getTerminator();
