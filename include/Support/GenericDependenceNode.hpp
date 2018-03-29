@@ -47,8 +47,8 @@ private:
   using DependenceRecordType = std::pair<NodeType *, EdgeInfoType>;
   using EdgeStorageType = std::vector<DependenceRecordType>;
 
-  inline void incrementDependeeCount() { ++DependeeCount; }
-  inline void decrementDependeeCount() { --DependeeCount; }
+  void incrementDependeeCount() { ++DependeeCount; }
+  void decrementDependeeCount() { --DependeeCount; }
 
   EdgeStorageType Edges;
   UnderlyingType Underlying;
@@ -115,21 +115,21 @@ public:
   EdgesSizeType numEdges() const { return Edges.size(); }
   decltype(auto) size() const { return numEdges(); }
 
-  inline decltype(auto) begin() { return Edges.begin(); }
-  inline decltype(auto) begin() const { return Edges.begin(); }
-  inline decltype(auto) end() { return Edges.end(); }
-  inline decltype(auto) end() const { return Edges.end(); }
+  decltype(auto) begin() { return Edges.begin(); }
+  decltype(auto) begin() const { return Edges.begin(); }
+  decltype(auto) end() { return Edges.end(); }
+  decltype(auto) end() const { return Edges.end(); }
 
-  inline decltype(auto) edges_begin() { return begin(); }
-  inline decltype(auto) edges_begin() const { return begin(); }
-  inline decltype(auto) edges_end() { return end(); }
-  inline decltype(auto) edges_end() const { return end(); }
+  decltype(auto) edges_begin() { return begin(); }
+  decltype(auto) edges_begin() const { return begin(); }
+  decltype(auto) edges_end() { return end(); }
+  decltype(auto) edges_end() const { return end(); }
 
-  inline decltype(auto) edges() {
+  decltype(auto) edges() {
     return llvm::make_range(edges_begin(), edges_end());
   }
 
-  inline decltype(auto) edges() const {
+  decltype(auto) edges() const {
     return llvm::make_range(edges_begin(), edges_end());
   }
 
@@ -143,31 +143,31 @@ public:
     return P.first;
   }
 
-  inline decltype(auto) nodes_begin() {
+  decltype(auto) nodes_begin() {
     return nodes_iterator(Edges.begin(), nodes_iterator_map);
   }
 
-  inline decltype(auto) nodes_begin() const {
+  decltype(auto) nodes_begin() const {
     return const_nodes_iterator(Edges.begin(), nodes_const_iterator_map);
   }
 
-  inline decltype(auto) nodes_end() {
+  decltype(auto) nodes_end() {
     return nodes_iterator(Edges.end(), nodes_iterator_map);
   }
 
-  inline decltype(auto) nodes_end() const {
+  decltype(auto) nodes_end() const {
     return const_nodes_iterator(Edges.end(), nodes_const_iterator_map);
   }
 
-  inline decltype(auto) nodes() {
+  decltype(auto) nodes() {
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  inline decltype(auto) nodes() const {
+  decltype(auto) nodes() const {
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  inline unsigned getDependeeCount() const { return DependeeCount; }
+  unsigned getDependeeCount() const { return DependeeCount; }
 
   bool compare(const GenericDependenceNode &Other) const {
     if (this->numEdges() != Other.numEdges())

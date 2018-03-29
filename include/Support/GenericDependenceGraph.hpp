@@ -113,10 +113,10 @@ public:
     return n;
   }
 
-  inline decltype(auto) begin() { return NodeMap.begin(); }
-  inline decltype(auto) begin() const { return NodeMap.begin(); }
-  inline decltype(auto) end() { return NodeMap.end(); }
-  inline decltype(auto) end() const { return NodeMap.end(); }
+  decltype(auto) begin() { return NodeMap.begin(); }
+  decltype(auto) begin() const { return NodeMap.begin(); }
+  decltype(auto) end() { return NodeMap.end(); }
+  decltype(auto) end() const { return NodeMap.end(); }
 
   static NodeType *nodes_iterator_map(value_type &P) {
     assert(P.second.get() && "Pointer to graph node is null!");
@@ -128,59 +128,59 @@ public:
     return P.second.get();
   }
 
-  inline decltype(auto) nodes_begin() {
+  decltype(auto) nodes_begin() {
     return nodes_iterator(NodeMap.begin(), nodes_iterator_map);
   }
 
-  inline decltype(auto) nodes_begin() const {
+  decltype(auto) nodes_begin() const {
     return const_nodes_iterator(NodeMap.begin(), nodes_const_iterator_map);
   }
 
-  inline decltype(auto) nodes_end() {
+  decltype(auto) nodes_end() {
     return nodes_iterator(NodeMap.end(), nodes_iterator_map);
   }
 
-  inline decltype(auto) nodes_end() const {
+  decltype(auto) nodes_end() const {
     return const_nodes_iterator(NodeMap.end(), nodes_const_iterator_map);
   }
 
-  inline decltype(auto) nodes() {
+  decltype(auto) nodes() {
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  inline decltype(auto) nodes() const {
+  decltype(auto) nodes() const {
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  inline decltype(auto) edges_begin() {
+  decltype(auto) edges_begin() {
     return detail::GenericDependenceGraphEdgeIterator<
         nodes_iterator, typename NodeType::edges_iterator>{nodes_begin(),
                                                            nodes_end()};
   }
 
-  inline decltype(auto) edges_end() {
+  decltype(auto) edges_end() {
     return detail::GenericDependenceGraphEdgeIterator<
         nodes_iterator, typename NodeType::edges_iterator>{nodes_end(),
                                                            nodes_end()};
   }
 
-  inline decltype(auto) edges_begin() const {
+  decltype(auto) edges_begin() const {
     return detail::GenericDependenceGraphEdgeIterator<
         const_nodes_iterator, typename NodeType::const_edges_iterator>{
         nodes_begin(), nodes_end()};
   }
 
-  inline decltype(auto) edges_end() const {
+  decltype(auto) edges_end() const {
     return detail::GenericDependenceGraphEdgeIterator<
         const_nodes_iterator, typename NodeType::const_edges_iterator>{
         nodes_end(), nodes_end()};
   }
 
-  inline decltype(auto) edges() {
+  decltype(auto) edges() {
     return llvm::make_range(edges_begin(), edges_end());
   }
 
-  inline decltype(auto) edges() const {
+  decltype(auto) edges() const {
     return llvm::make_range(edges_begin(), edges_end());
   }
 
