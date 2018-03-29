@@ -17,6 +17,9 @@
 #include <string>
 // using std::string
 
+#include <iterator>
+// using std::distance
+
 #include <iostream>
 // using std::ostream
 
@@ -71,6 +74,13 @@ TEST_F(GenericDependenceGraphTest, GraphComparison) {
   EXPECT_EQ(false, G1 == G2);
   EXPECT_EQ(false, G1.compare(G1b));
   EXPECT_EQ(true, G1 == G1b);
+}
+
+TEST_F(GenericDependenceGraphTest, IterateNodeEdges) {
+  const auto &node = *DepNodes1[0];
+  auto n = std::distance(node.edges_begin(), node.edges_end());
+
+  EXPECT_EQ(3, n);
 }
 
 } // unnamed namespace end
