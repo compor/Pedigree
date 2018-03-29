@@ -83,6 +83,12 @@ TEST_F(GenericDependenceGraphTest, IterateNodeEdges) {
   EXPECT_EQ(3, n);
 }
 
+TEST_F(GenericDependenceGraphTest, IterateGraphEdges) {
+  auto n = std::distance(G1.edges_begin(), G1.edges_end());
+
+  EXPECT_EQ(3, n);
+}
+
 } // unnamed namespace end
 } // namespace testing end
 } // namespace pedigree end
