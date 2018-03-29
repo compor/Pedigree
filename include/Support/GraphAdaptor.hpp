@@ -9,21 +9,14 @@
 
 #include "Support/Traits/Unit.hpp"
 
-#include "llvm/IR/BasicBlock.h"
-// using llvm::BasicBlock
-
 #include <memory>
 // using std::addressof
-
-#include <type_traits>
-// using std::remove_reference
-// using std::add_pointer
 
 namespace pedigree {
 
 template <typename FromNodeT, typename ToNodeT, typename AdaptOperation>
 void Adapt(const GenericDependenceGraph<FromNodeT> &From,
-           GenericDependenceGraph<ToNodeT> &To, AdaptOperation Adapt) {
+           GenericDependenceGraph<ToNodeT> &To, AdaptOperation AdaptOp) {
   using FromUnderlyingT = typename FromNodeT::UnderlyingType;
   using ToUnderlyingT = typename ToNodeT::UnderlyingType;
 
@@ -36,10 +29,10 @@ void Adapt(const GenericDependenceGraph<FromNodeT> &From,
       typename std::remove_reference_t<decltype(From)>>>;
 
   for (const auto &node : GT::nodes(std::addressof(From))) {
-    auto src = To.getOrInsertNode(Adapt(node->get()));
+    auto src = To.getOrInsertNode(AdaptOp(node->get()));
 
     for (const auto &child : GT::children(node)) {
-      auto adapted = Adapt(child->get());
+      auto adapted = AdaptOp(child->get());
       auto dst = To.getOrInsertNode(adapted);
       src->addDependentNode(dst, {});
     }
