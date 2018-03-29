@@ -8,6 +8,9 @@
 #include "llvm/Support/DOTGraphTraits.h"
 // using llvm::DOTGraphTraits
 
+#include "llvm/ADT/GraphTraits.h"
+// using llvm::GraphTraits
+
 #include "llvm/Support/raw_ostream.h"
 // using llvm::raw_string_ostream
 

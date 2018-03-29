@@ -11,8 +11,6 @@
 
 #define @PRJ_NAME_UPPER@_VERSION @PRJ_VERSION@
 
-#define @PRJ_NAME_UPPER@_TEMPLATE_EXTERN
-
 // clang-format on
 
 #endif // header

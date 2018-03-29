@@ -75,7 +75,11 @@ public:
   using const_edges_iterator = detail::GenericDependenceGraphEdgeIterator<
       const_nodes_iterator, typename NodeType::const_edges_iterator>;
 
-  GenericDependenceGraph() = default;
+  // explicitly define default methods
+  // workaround for gcc bug 57728 which is present in clang too
+  // GenericDependenceGraph() = default;
+  GenericDependenceGraph(){};
+
   GenericDependenceGraph(const GenericDependenceGraph &) = delete;
   GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
 
