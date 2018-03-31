@@ -8,6 +8,8 @@
 #include "boost/operators.hpp"
 // using boost::orable
 
+#include "flags/flags.hpp"
+
 #include <bitset>
 // using std::bitset
 
@@ -34,12 +36,6 @@
 
 namespace pedigree {
 
-struct NoDependenceInfo : private boost::orable<NoDependenceInfo> {
-  NoDependenceInfo &operator|=(const NoDependenceInfo &) { return *this; }
-};
-
-//
-
 // also known as load-store classification (see OCMA book)
 enum class DependenceHazard : std::size_t {
   // unknown = 0,
@@ -47,6 +43,18 @@ enum class DependenceHazard : std::size_t {
   anti,
   out,
 };
+
+} // namespace pedigree end
+
+ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceHazard);
+
+namespace pedigree {
+
+struct NoDependenceInfo : private boost::orable<NoDependenceInfo> {
+  NoDependenceInfo &operator|=(const NoDependenceInfo &) { return *this; }
+};
+
+//
 
 enum class DependenceOrigin : std::size_t {
   // unknown = 0,

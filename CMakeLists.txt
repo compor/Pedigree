@@ -128,6 +128,8 @@ endif()
 
 find_package(Boost REQUIRED)
 
+add_subdirectory(third_party/enum-flags)
+
 
 #
 
@@ -171,10 +173,14 @@ target_include_directories(${OBJ_LIB_NAME} PUBLIC
 target_include_directories(${OBJ_LIB_NAME} PUBLIC
   $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${PATH_PREFIX}/include>)
 
+get_target_property(ENUMFLAGS_INC_DIR enum-flags INTERFACE_INCLUDE_DIRECTORIES)
+target_include_directories(${OBJ_LIB_NAME} PUBLIC ${ENUMFLAGS_INC_DIR})
+
 #
 
 add_library(${LIB_NAME} ${PRJ_SHARED_MODE} $<TARGET_OBJECTS:${OBJ_LIB_NAME}>)
 add_library(${TEST_LIB_NAME} STATIC $<TARGET_OBJECTS:${OBJ_LIB_NAME}>)
+target_include_directories(${TEST_LIB_NAME} PUBLIC ${ENUMFLAGS_INC_DIR})
 
 # according to http://llvm.org/docs/CMake.html
 # we do not need the below library dependencies since the plugin will be loaded
