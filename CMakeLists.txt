@@ -21,6 +21,11 @@ option(PEDIGREE_DEBUG "Enable project custom debug output facilities" OFF)
 
 message(STATUS "project debug: ${PEDIGREE_DEBUG}")
 
+set(PRJ_DEBUG_VALUE 0)
+if(PEDIGREE_DEBUG)
+  set(PRJ_DEBUG_VALUE 1)
+endif()
+
 get_version(SHORT VERSION PRJ_VERSION)
 
 set(PRJ_NAME Pedigree)
@@ -148,39 +153,36 @@ set(LIB_NAME "LLVM${PRJ_NAME}Pass")
 set(OBJ_LIB_NAME "${LIB_NAME}_obj")
 set(TEST_LIB_NAME "${LIB_NAME}_test")
 
+list(APPEND PRJ_LIB_NAMES ${OBJ_LIB_NAME} ${LIB_NAME} ${TEST_LIB_NAME})
+
 add_library(${OBJ_LIB_NAME} OBJECT ${LIB_SOURCES})
-
-set_target_properties(${OBJ_LIB_NAME} PROPERTIES
-  CXX_STANDARD 14
-  CXX_STANDARD_REQUIRED ON
-  CXX_EXTENSIONS OFF)
-
-target_compile_definitions(${OBJ_LIB_NAME} PUBLIC ${LLVM_DEFINITIONS})
-target_compile_definitions(${OBJ_LIB_NAME}
-  PRIVATE VERSION_STRING=${PRJ_VERSION})
-
-set(PRJ_DEBUG_VALUE 0)
-if(PEDIGREE_DEBUG)
-  set(PRJ_DEBUG_VALUE 1)
-endif()
-
-target_include_directories(${OBJ_LIB_NAME} PUBLIC ${LLVM_INCLUDE_DIRS})
-target_include_directories(${OBJ_LIB_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
-target_include_directories(${OBJ_LIB_NAME} PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
-target_include_directories(${OBJ_LIB_NAME} PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
-target_include_directories(${OBJ_LIB_NAME} PUBLIC
-  $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${PATH_PREFIX}/include>)
-
-get_target_property(ENUMFLAGS_INC_DIR enum-flags INTERFACE_INCLUDE_DIRECTORIES)
-target_include_directories(${OBJ_LIB_NAME} PUBLIC ${ENUMFLAGS_INC_DIR})
-
-#
-
 add_library(${LIB_NAME} ${PRJ_SHARED_MODE} $<TARGET_OBJECTS:${OBJ_LIB_NAME}>)
 add_library(${TEST_LIB_NAME} STATIC $<TARGET_OBJECTS:${OBJ_LIB_NAME}>)
-target_include_directories(${TEST_LIB_NAME} PUBLIC ${ENUMFLAGS_INC_DIR})
+
+# workaround for cmake's current inability to transitively provide requirements
+# from an object library to its users
+foreach(PRJ_LIB ${PRJ_LIB_NAMES})
+  set_target_properties(${PRJ_LIB} PROPERTIES
+    CXX_STANDARD 14
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+
+  target_compile_definitions(${PRJ_LIB} PUBLIC ${LLVM_DEFINITIONS})
+  target_compile_definitions(${PRJ_LIB}
+    PRIVATE VERSION_STRING=${PRJ_VERSION})
+
+  target_include_directories(${PRJ_LIB} PUBLIC ${LLVM_INCLUDE_DIRS})
+  target_include_directories(${PRJ_LIB} PUBLIC ${Boost_INCLUDE_DIRS})
+  target_include_directories(${PRJ_LIB} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+  target_include_directories(${PRJ_LIB} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
+  target_include_directories(${PRJ_LIB} PUBLIC
+    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${PATH_PREFIX}/include>)
+  target_include_directories(${PRJ_LIB} PUBLIC
+    $<TARGET_PROPERTY:enum-flags,INTERFACE_INCLUDE_DIRECTORIES>)
+endforeach()
+
 
 # according to http://llvm.org/docs/CMake.html
 # we do not need the below library dependencies since the plugin will be loaded
@@ -192,9 +194,10 @@ if(LLVM_LIBS)
   get_target_property(LLVM_LIB_TARGET_TYPE ${SINGLE_LLVM_LIB} TYPE)
 endif()
 
+target_link_libraries(${TEST_LIB_NAME} PUBLIC ${LLVM_LIBS})
+
 if(${LLVM_LIB_TARGET_TYPE} STREQUAL "STATIC_LIBRARY")
   target_link_libraries(${LIB_NAME} PUBLIC ${LLVM_LIBS})
-  target_link_libraries(${TEST_LIB_NAME} PUBLIC ${LLVM_LIBS})
 endif()
 
 #
