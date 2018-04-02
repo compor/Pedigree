@@ -32,19 +32,11 @@ set(PRJ_NAME Pedigree)
 string(TOUPPER ${PRJ_NAME} PRJ_NAME_UPPER)
 string(TOLOWER ${PRJ_NAME} PRJ_NAME_LOWER)
 
-# part of LLVM or standalone
-set(PRJ_STANDALONE_BUILD FALSE)
+project(${PRJ_NAME} C CXX)
 
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  project(${PRJ_NAME} C CXX)
-
-  set(PRJ_STANDALONE_BUILD TRUE)
-  set(PEDIGREE_SKIP_TESTS OFF)
-  set(PEDIGREE_DEBUG ON)
-  set(PEDIGREE_EXPORT ${PRJ_NAME})
-
-  message(STATUS "configuring as external LLVM project")
-endif()
+set(PEDIGREE_SKIP_TESTS OFF)
+set(PEDIGREE_DEBUG ON)
+set(PEDIGREE_EXPORT ${PRJ_NAME})
 
 if(NOT PEDIGREE_EXPORT)
   message(FATAL_ERROR
@@ -64,7 +56,7 @@ set_policies(CMP0056 NEW)
 
 # requirements
 
-handle_llvm_dependency(${PRJ_STANDALONE_BUILD})
+handle_llvm_dependency(TRUE)
 
 
 # project configuration
@@ -106,27 +98,25 @@ message(STATUS "EH support: ${LLVM_ENABLE_EH}")
 # RPATH empty so that potentially we can dynamically link against other
 # installed LLVM toolchains
 
-if(PRJ_STANDALONE_BUILD)
-  set(CMAKE_SKIP_BUILD_RPATH FALSE)
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-  #set(CMAKE_INSTALL_RPATH ${LLVM_LIBRARY_DIRS})
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+#set(CMAKE_INSTALL_RPATH ${LLVM_LIBRARY_DIRS})
 
-  if(CMAKE_VERSION VERSION_EQUAL "3.8.0"
-      OR CMAKE_VERSION VERSION_GREATER "3.8.0")
-    set(CMAKE_BUILD_RPATH ${LLVM_LIBRARY_DIRS})
-  else()
-    # unfortunately this also sets the install RPATH for older cmake versions
-    #set(PRJ_LINKER_FLAGS "${PRJ_LINKER_FLAGS} -Wl,-rpath ${LLVM_LIBRARY_DIRS}")
-  endif()
-
-  set(PRJ_LINKER_FLAGS "${PRJ_LINKER_FLAGS} -Wl,--disable-new-dtags")
-
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PRJ_LINKER_FLAGS}")
-  set(CMAKE_SHARED_LINKER_FLAGS
-    "${CMAKE_SHARED_LINKER_FLAGS} ${PRJ_LINKER_FLAGS}")
-  set(CMAKE_MODULE_LINKER_FLAGS
-    "${CMAKE_MODULE_LINKER_FLAGS} ${PRJ_LINKER_FLAGS}")
+if(CMAKE_VERSION VERSION_EQUAL "3.8.0"
+    OR CMAKE_VERSION VERSION_GREATER "3.8.0")
+  set(CMAKE_BUILD_RPATH ${LLVM_LIBRARY_DIRS})
+else()
+  # unfortunately this also sets the install RPATH for older cmake versions
+  #set(PRJ_LINKER_FLAGS "${PRJ_LINKER_FLAGS} -Wl,-rpath ${LLVM_LIBRARY_DIRS}")
 endif()
+
+set(PRJ_LINKER_FLAGS "${PRJ_LINKER_FLAGS} -Wl,--disable-new-dtags")
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PRJ_LINKER_FLAGS}")
+set(CMAKE_SHARED_LINKER_FLAGS
+  "${CMAKE_SHARED_LINKER_FLAGS} ${PRJ_LINKER_FLAGS}")
+set(CMAKE_MODULE_LINKER_FLAGS
+  "${CMAKE_MODULE_LINKER_FLAGS} ${PRJ_LINKER_FLAGS}")
 
 
 # dependencies
@@ -224,25 +214,16 @@ add_subdirectory(unittests)
 add_subdirectory(tests)
 add_subdirectory(doc)
 
-
-if(PRJ_STANDALONE_BUILD)
-  attach_compilation_db(TARGET ${LIB_NAME})
-endif()
+attach_compilation_db(TARGET ${LIB_NAME})
 
 
 # installation
 
 set(CMAKE_INSTALL_MESSAGE "LAZY")
 
-if(PRJ_STANDALONE_BUILD)
-  set(PRJ_INSTALL_INCLUDE_DIR "include")
-  set(PRJ_INSTALL_LIB_DIR "lib")
-  set(PRJ_INSTALL_SHARE_DIR "share")
-else()
-  set(PRJ_INSTALL_INCLUDE_DIR "${PATH_PREFIX}/include")
-  set(PRJ_INSTALL_LIB_DIR "${PATH_PREFIX}/lib")
-  set(PRJ_INSTALL_SHARE_DIR "${PATH_PREFIX}/share")
-endif()
+set(PRJ_INSTALL_INCLUDE_DIR "include")
+set(PRJ_INSTALL_LIB_DIR "lib")
+set(PRJ_INSTALL_SHARE_DIR "share")
 
 set(PRJ_CONFIG_HEADER_FILE "Config.hpp")
 set(PRJ_CMAKE_CONFIG_FILE "config.cmake")
@@ -289,13 +270,9 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/"
   DESTINATION ${PRJ_INSTALL_INCLUDE_DIR})
 
-if(PRJ_STANDALONE_BUILD)
-  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/share/"
-    DESTINATION ${PRJ_INSTALL_SHARE_DIR})
-endif()
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/share/"
+  DESTINATION ${PRJ_INSTALL_SHARE_DIR})
 
-if(PRJ_STANDALONE_BUILD)
-  install(EXPORT ${PEDIGREE_EXPORT}
-    DESTINATION "${PRJ_INSTALL_SHARE_DIR}/cmake")
-endif()
+install(EXPORT ${PEDIGREE_EXPORT}
+  DESTINATION "${PRJ_INSTALL_SHARE_DIR}/cmake")
 
