@@ -39,9 +39,8 @@ set(PEDIGREE_DEBUG ON)
 set(PEDIGREE_EXPORT ${PRJ_NAME})
 
 # CMP0056 is required for any libc++abi dependency of the try_compile() command
-# this bumps required version to 3.2
-# otherwise LD_LIBRARY_DIR needs to be set
-set_policies(CMP0056 NEW)
+# this bumps required version to 3.2 otherwise LD_LIBRARY_DIR needs to be set
+cmake_policy(SET CMP0056 NEW)
 
 
 # requirements
