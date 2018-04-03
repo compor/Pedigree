@@ -4,19 +4,20 @@
 
 cmake_minimum_required(VERSION 3.2.0)
 
-include(GNUInstallDirs)
-
-# add project cmake module path
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 list(APPEND CMAKE_MODULE_PATH
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake-utils/general"
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake-utils/modules")
 
+include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(HandleLLVMDependency)
-include(cmake-utils)
+include(AddCleanAllTarget)
+include(AttachCompilationDB)
 include(DetectLLVMSharedMode)
+include(GetGitVersion)
 
-add_cleanall_target()
+add_clean_all_target()
 
 option(PEDIGREE_SKIP_TESTS "Skip configuring the project tests" ON)
 option(PEDIGREE_DEBUG "Enable project custom debug output facilities" OFF)
@@ -28,7 +29,8 @@ if(PEDIGREE_DEBUG)
   set(PRJ_DEBUG_VALUE 1)
 endif()
 
-get_version(SHORT VERSION PRJ_VERSION)
+get_git_version(SHORT VERSION PRJ_VERSION)
+set(PRJ_VERSION_SHORT ${PRJ_VERSION})
 
 set(PRJ_NAME Pedigree)
 string(TOUPPER ${PRJ_NAME} PRJ_NAME_UPPER)
@@ -243,7 +245,6 @@ configure_file(
   "${CMAKE_INSTALL_LIBDIR}/cmake/${PRJ_NAME}-${PRJ_CMAKE_CONFIG_EXTRA_FILE}"
   @ONLY)
 
-get_version(SHORT VERSION PRJ_VERSION_SHORT)
 write_basic_package_version_file(
   "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PRJ_NAME_LOWER}-config-version.cmake"
   VERSION "${PRJ_VERSION_SHORT}" COMPATIBILITY SameMinorVersion)
