@@ -39,14 +39,22 @@ namespace pedigree {
 // also known as load-store classification (see OCMA book)
 enum class DependenceHazard : std::size_t {
   // unknown = 0,
-  flow,
-  anti,
-  out,
+  Flow,
+  Anti,
+  Out,
+};
+
+enum class DependenceOrigin : std::size_t {
+  // unknown = 0,
+  Data,
+  Memory,
+  Control,
 };
 
 } // namespace pedigree end
 
 ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceHazard);
+ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceOrigin);
 
 namespace pedigree {
 
@@ -55,13 +63,6 @@ struct NoDependenceInfo : private boost::orable<NoDependenceInfo> {
 };
 
 //
-
-enum class DependenceOrigin : std::size_t {
-  // unknown = 0,
-  data,
-  memory,
-  control,
-};
 
 // TODO maybe use this as an aggregate/result of orable operations
 class BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
@@ -117,7 +118,7 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
   static std::string toDOTAttributes(const BasicDependenceInfo &I) {
     auto attr = toDOTColor(I);
 
-    if (I.isOrigin(DependenceOrigin::memory))
+    if (I.isOrigin(DependenceOrigin::Memory))
       attr += " " + toDOTLabel(I);
 
     return attr;
@@ -129,13 +130,13 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
 
     colorAttribute << "color=\"";
 
-    if (I.isOrigin(DependenceOrigin::control))
+    if (I.isOrigin(DependenceOrigin::Control))
       colors.emplace_back("red;0.33");
 
-    if (I.isOrigin(DependenceOrigin::memory))
+    if (I.isOrigin(DependenceOrigin::Memory))
       colors.emplace_back("purple;0.33");
 
-    if (I.isOrigin(DependenceOrigin::data))
+    if (I.isOrigin(DependenceOrigin::Data))
       colors.emplace_back("blue;0.33");
 
     if (I.isUknownOrigin()) {
@@ -154,13 +155,13 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
   static std::string toDOTLabel(const BasicDependenceInfo &I) {
     std::string label{"label=\""};
 
-    if (I.isHazard(DependenceHazard::flow))
+    if (I.isHazard(DependenceHazard::Flow))
       label += "F";
 
-    if (I.isHazard(DependenceHazard::anti))
+    if (I.isHazard(DependenceHazard::Anti))
       label += "A";
 
-    if (I.isHazard(DependenceHazard::out))
+    if (I.isHazard(DependenceHazard::Out))
       label += "O";
 
     label += "\"";

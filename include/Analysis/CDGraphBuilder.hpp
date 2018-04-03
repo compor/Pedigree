@@ -37,7 +37,7 @@ public:
     pdf.analyze(*curPDT.DT);
 
     BasicDependenceInfo info{};
-    info.setOrigin(DependenceOrigin::control);
+    info.setOrigin(DependenceOrigin::Control);
 
     for (auto &f : pdf) {
       auto dst = Graph.getOrInsertNode(f.first);

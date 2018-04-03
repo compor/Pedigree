@@ -91,7 +91,7 @@ private:
     }
 
     BasicDependenceInfo info{};
-    info.setOrigin(DependenceOrigin::memory);
+    info.setOrigin(DependenceOrigin::Memory);
     // TODO
     // info.setHazard();
 
