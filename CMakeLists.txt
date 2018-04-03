@@ -38,11 +38,6 @@ set(PEDIGREE_SKIP_TESTS OFF)
 set(PEDIGREE_DEBUG ON)
 set(PEDIGREE_EXPORT ${PRJ_NAME})
 
-if(NOT PEDIGREE_EXPORT)
-  message(FATAL_ERROR
-    "PEDIGREE_EXPORT must be defined when built as dependent project")
-endif()
-
 # CMP0056 is required for any libc++abi dependency of the try_compile() command
 # this bumps required version to 3.2
 # otherwise LD_LIBRARY_DIR needs to be set
