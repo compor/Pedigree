@@ -47,19 +47,19 @@ cmake_policy(SET CMP0056 NEW)
 
 handle_llvm_dependency(TRUE)
 
+detect_llvm_shared_mode(
+  SHARED_MODE LLVM_SHARED_MODE
+  LLVM_VERSION ${LLVM_PACKAGE_VERSION})
+
+string(TOUPPER ${LLVM_SHARED_MODE} LLVM_SHARED_MODE)
+message(STATUS "LLVM shared mode: ${LLVM_SHARED_MODE}")
 
 # project configuration
 
 set(PRJ_SHARED_MODE "STATIC")
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
-  detect_llvm_shared_mode(SHARED_MODE shared_mode
-    LLVM_VERSION ${LLVM_PACKAGE_VERSION})
-  string(TOUPPER ${shared_mode} shared_mode)
-
-  message(STATUS "LLVM shared mode: ${shared_mode}")
-
-  if(NOT ${PRJ_SHARED_MODE} STREQUAL ${shared_mode})
+  if(NOT ${PRJ_SHARED_MODE} STREQUAL ${LLVM_SHARED_MODE})
     set(PRJ_SHARED_MODE "MODULE")
   endif()
 else()
@@ -173,14 +173,9 @@ target_link_libraries(${TEST_LIB_NAME} INTERFACE enum-flags::enum-flags)
 # via opt or clang which already have those libs in their dependencies
 llvm_map_components_to_libnames(LLVM_LIBS core support analysis passes)
 
-if(LLVM_LIBS)
-  list(GET LLVM_LIBS 0 SINGLE_LLVM_LIB)
-  get_target_property(LLVM_LIB_TARGET_TYPE ${SINGLE_LLVM_LIB} TYPE)
-endif()
-
 target_link_libraries(${TEST_LIB_NAME} PUBLIC ${LLVM_LIBS})
 
-if(${LLVM_LIB_TARGET_TYPE} STREQUAL "STATIC_LIBRARY")
+if(${LLVM_SHARED_MODE} STREQUAL "STATIC")
   target_link_libraries(${LIB_NAME} PUBLIC ${LLVM_LIBS})
 endif()
 
