@@ -1,7 +1,25 @@
 # cmake file
 
-macro(handle_llvm_dependency isStandaloneBuild)
-  if(${isStandaloneBuild})
+include(CMakeParseArguments)
+
+macro(handle_llvm_dependency)
+  set(options STANDALONE)
+  set(oneValueArgs)
+  set(multiValueArgs)
+
+  cmake_parse_arguments(HLD "${options}" "${oneValueArgs}"
+    "${multiValueArgs}" ${ARGN})
+
+  if(NOT HLD_STANDALONE)
+    set(HLD_STANDALONE FALSE)
+  endif()
+
+  if(HLD_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR
+      "${HLD_UNPARSED_ARGUMENTS} extraneous arguments provided")
+  endif()
+
+  if(HLD_STANDALONE)
     # find_package in CONFIG mode will lookup and include LLVMConfig.cmake
     find_package(LLVM REQUIRED CONFIG)
 
@@ -27,7 +45,7 @@ macro(handle_llvm_dependency isStandaloneBuild)
   # Required if these functions are used:
   # - add_llvm_loadable_module()
   # - add_llvm_library
-  if(${isStandaloneBuild})
+  if(HLD_STANDALONE)
     list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
   else()
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/share/llvm/cmake/")

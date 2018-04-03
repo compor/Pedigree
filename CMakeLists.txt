@@ -49,7 +49,7 @@ cmake_policy(SET CMP0056 NEW)
 
 # requirements
 
-handle_llvm_dependency(TRUE)
+handle_llvm_dependency(STANDALONE)
 
 detect_llvm_shared_mode(
   SHARED_MODE LLVM_SHARED_MODE
