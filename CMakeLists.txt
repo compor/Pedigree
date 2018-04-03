@@ -43,11 +43,6 @@ if(NOT PEDIGREE_EXPORT)
     "PEDIGREE_EXPORT must be defined when built as dependent project")
 endif()
 
-file(RELATIVE_PATH PATH_PREFIX ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-if(NOT PATH_PREFIX)
-  set(PATH_PREFIX ".")
-endif()
-
 # CMP0056 is required for any libc++abi dependency of the try_compile() command
 # this bumps required version to 3.2
 # otherwise LD_LIBRARY_DIR needs to be set
@@ -168,11 +163,16 @@ foreach(PRJ_LIB ${PRJ_LIB_NAMES})
   target_include_directories(${PRJ_LIB} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
   target_include_directories(${PRJ_LIB} PUBLIC
-    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${PATH_PREFIX}/include>)
-  target_include_directories(${PRJ_LIB} PUBLIC
-    $<TARGET_PROPERTY:enum-flags,INTERFACE_INCLUDE_DIRECTORIES>)
+    $<INSTALL_INTERFACE:include>)
 endforeach()
 
+# workaround for OBJECT libraries since they are not first class citizens
+# should be able to use target_link_libraries() against an INTERFACE library
+target_include_directories(${OBJ_LIB_NAME} PUBLIC
+  $<TARGET_PROPERTY:enum-flags::enum-flags,INTERFACE_INCLUDE_DIRECTORIES>)
+
+target_link_libraries(${LIB_NAME} INTERFACE enum-flags::enum-flags)
+target_link_libraries(${TEST_LIB_NAME} INTERFACE enum-flags::enum-flags)
 
 # according to http://llvm.org/docs/CMake.html
 # we do not need the below library dependencies since the plugin will be loaded
@@ -267,11 +267,19 @@ write_basic_package_version_file(
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
   DESTINATION ${PRJ_INSTALL_INCLUDE_DIR}
   PATTERN "*.in" EXCLUDE)
+
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/"
   DESTINATION ${PRJ_INSTALL_INCLUDE_DIR})
 
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/share/"
   DESTINATION ${PRJ_INSTALL_SHARE_DIR})
+
+#
+
+install(DIRECTORY "third_party/enum-flags/include/"
+  DESTINATION "${PRJ_INSTALL_INCLUDE_DIR}/third_party/enum-flags/include/")
+
+#
 
 install(EXPORT ${PEDIGREE_EXPORT}
   DESTINATION "${PRJ_INSTALL_SHARE_DIR}/cmake")
