@@ -88,11 +88,15 @@ private:
 
       if (Dst.mayWriteToMemory())
         info.hazards |= DependenceHazard::Out;
-
-      addDependenceWithInfo(*Query.getInst(), Dst, info);
     } else if (Query.isClobber()) {
-      // TODO what about clobbers?
+      if (Dst.mayReadFromMemory())
+        info.hazards |= DependenceHazard::Anti;
+
+      if (Dst.mayWriteToMemory())
+        info.hazards |= DependenceHazard::Out;
     }
+
+    addDependenceWithInfo(*Query.getInst(), Dst, info);
   }
 
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
