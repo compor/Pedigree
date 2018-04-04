@@ -93,9 +93,8 @@ private:
         dependees.push_back(query.getInst());
     }
 
-    BasicDependenceInfo info{};
-    info.origins = DependenceOrigin::Memory;
-    info.hazards = DependenceHazard::Flow;
+    constexpr BasicDependenceInfo info{DependenceOrigin::Memory,
+                                       DependenceHazard::Flow};
 
     for (const auto &e : dependees) {
       auto src = Graph.getOrInsertNode(e);

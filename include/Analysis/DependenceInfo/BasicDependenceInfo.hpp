@@ -54,8 +54,18 @@ ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceOrigin);
 namespace pedigree {
 
 struct BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
-  flags::flags<DependenceHazard> hazards;
   flags::flags<DependenceOrigin> origins;
+  flags::flags<DependenceHazard> hazards;
+
+  constexpr BasicDependenceInfo(DependenceOrigin origin,
+                                DependenceHazard hazard)
+      : origins(origin), hazards(hazard) {}
+
+  constexpr BasicDependenceInfo()
+      : BasicDependenceInfo(DependenceOrigin::Unknown,
+                            DependenceHazard::Unknown) {}
+
+  constexpr BasicDependenceInfo(const BasicDependenceInfo &) = default;
 
   BasicDependenceInfo &operator|=(const BasicDependenceInfo &Other) {
     this->hazards = this->hazards | Other.hazards;

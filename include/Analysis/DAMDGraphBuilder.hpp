@@ -42,9 +42,8 @@ public:
   template <typename T> void build(T &Unit) {
     visit(Unit);
 
-    BasicDependenceInfo info{};
-    info.origins = DependenceOrigin::Memory;
-    info.hazards = DependenceHazard::Flow;
+    constexpr BasicDependenceInfo info{DependenceOrigin::Memory,
+                                       DependenceHazard::Flow};
 
     for (auto ii = std::begin(m_MemInstructions),
               ie = std::end(m_MemInstructions);

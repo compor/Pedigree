@@ -25,6 +25,8 @@ namespace pedigree {
 
 class CDGraphBuilder {
   CDGraph &Graph;
+  static constexpr BasicDependenceInfo info{DependenceOrigin::Control,
+                                            DependenceHazard::Unknown};
 
 public:
   CDGraphBuilder(CDGraph &Graph) : Graph(Graph) {}
@@ -36,9 +38,6 @@ public:
     PostDominanceFrontierBase<llvm::BasicBlock> pdf;
     pdf.analyze(*curPDT.DT);
 
-    BasicDependenceInfo info{};
-    info.origins = DependenceOrigin::Control;
-
     for (auto &f : pdf) {
       auto dst = Graph.getOrInsertNode(f.first);
       for (auto &e : f.second) {
@@ -48,6 +47,8 @@ public:
     }
   }
 };
+
+constexpr BasicDependenceInfo CDGraphBuilder::info;
 
 } // namespace pedigree end
 
