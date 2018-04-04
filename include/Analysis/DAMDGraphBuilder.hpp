@@ -43,7 +43,7 @@ public:
     visit(Unit);
 
     BasicDependenceInfo info{};
-    info.setOrigin(DependenceOrigin::Memory);
+    info.origins |= DependenceOrigin::Memory;
     // TODO
     // info.setHazard();
 

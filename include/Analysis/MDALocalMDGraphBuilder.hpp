@@ -31,12 +31,13 @@ namespace pedigree {
 // TODO maybe we should consider providing an option for not including nodes
 // in the graph unless they have an edge
 
-class MDALocalMDGraphBuilder : public llvm::InstVisitor<MDALocalMDGraphBuilder> {
+class MDALocalMDGraphBuilder
+    : public llvm::InstVisitor<MDALocalMDGraphBuilder> {
 public:
-  MDALocalMDGraphBuilder(MDGraph &Graph, const llvm::MemoryDependenceAnalysis &MDA,
-                     AnalysisScope scope = AnalysisScope::Block)
-      : Graph(Graph),
-        m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
+  MDALocalMDGraphBuilder(MDGraph &Graph,
+                         const llvm::MemoryDependenceAnalysis &MDA,
+                         AnalysisScope scope = AnalysisScope::Block)
+      : Graph(Graph), m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
         m_Scope(scope) {}
 
   template <typename T> void build(T &Unit) { visit(Unit); }
@@ -91,7 +92,7 @@ private:
     }
 
     BasicDependenceInfo info{};
-    info.setOrigin(DependenceOrigin::Memory);
+    info.origins |= DependenceOrigin::Memory;
     // TODO
     // info.setHazard();
 
