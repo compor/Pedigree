@@ -2,8 +2,12 @@
 //
 //
 
-#ifndef DEPENDENCE_HPP
-#define DEPENDENCE_HPP
+#ifndef PEDIGREE_BASICDEPENDENCEINFO_HPP
+#define PEDIGREE_BASICDEPENDENCEINFO_HPP
+
+#include "Config.hpp"
+
+#include "Traits.hpp"
 
 #include "boost/operators.hpp"
 // using boost::orable
@@ -12,9 +16,6 @@
 
 #include <bitset>
 // using std::bitset
-
-#include <string>
-// using std::string
 
 #include <sstream>
 // using std::stringstream
@@ -58,12 +59,6 @@ ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceOrigin);
 
 namespace pedigree {
 
-struct NoDependenceInfo : private boost::orable<NoDependenceInfo> {
-  NoDependenceInfo &operator|=(const NoDependenceInfo &) { return *this; }
-};
-
-//
-
 // TODO maybe use this as an aggregate/result of orable operations
 class BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
   using DependenceHazardTy = std::underlying_type<DependenceHazard>::type;
@@ -101,18 +96,6 @@ public:
 };
 
 // traits
-
-template <typename InfoT> struct DependenceInfoTraits {
-  static std::string toDOTAttributes(const InfoT &I) {
-    return I.toDOTAttributes();
-  }
-};
-
-template <> struct DependenceInfoTraits<NoDependenceInfo> {
-  static std::string toDOTAttributes(const NoDependenceInfo &I) {
-    return std::string{"color=black"};
-  }
-};
 
 template <> struct DependenceInfoTraits<BasicDependenceInfo> {
   static std::string toDOTAttributes(const BasicDependenceInfo &I) {

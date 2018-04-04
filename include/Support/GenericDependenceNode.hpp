@@ -5,7 +5,7 @@
 #ifndef PEDIGREE_GENERICDEPENDENCENODE_HPP
 #define PEDIGREE_GENERICDEPENDENCENODE_HPP
 
-#include "Dependence.hpp"
+#include "Analysis/DependenceInfo/NoDependenceInfo.hpp"
 
 #include "llvm/ADT/SmallPtrSet.h"
 // using llvm::SmallPtrSet

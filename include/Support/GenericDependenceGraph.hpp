@@ -7,8 +7,6 @@
 
 #include "Config.hpp"
 
-#include "Dependence.hpp"
-
 #include "GenericDependenceGraphEdgeIterator.hpp"
 
 #include "llvm/ADT/STLExtras.h"

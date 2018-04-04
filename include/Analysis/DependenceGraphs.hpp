@@ -15,6 +15,8 @@
 
 #include "Support/Traits/LLVMDOTGraphTraitsHelperBase.hpp"
 
+#include "Analysis/DependenceInfo/BasicDependenceInfo.hpp"
+
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
