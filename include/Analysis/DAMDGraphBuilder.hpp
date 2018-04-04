@@ -28,16 +28,16 @@ namespace pedigree {
 
 class DAMDGraphBuilder : public llvm::InstVisitor<DAMDGraphBuilder> {
   MDGraph &Graph;
-  llvm::DependenceAnalysis &m_DA;
-  std::vector<llvm::Instruction *> m_MemInstructions;
+  llvm::DependenceAnalysis &DA;
+  std::vector<llvm::Instruction *> MemInstructions;
 
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
-    m_MemInstructions.push_back(&CurInstruction);
+    MemInstructions.emplace_back(&CurInstruction);
   }
 
 public:
   DAMDGraphBuilder(MDGraph &Graph, const llvm::DependenceAnalysis &DA)
-      : Graph(Graph), m_DA(const_cast<llvm::DependenceAnalysis &>(DA)) {}
+      : Graph(Graph), DA(const_cast<llvm::DependenceAnalysis &>(DA)) {}
 
   template <typename T> void build(T &Unit) {
     visit(Unit);
@@ -45,13 +45,12 @@ public:
     constexpr BasicDependenceInfo info{DependenceOrigin::Memory,
                                        DependenceHazard::Flow};
 
-    for (auto ii = std::begin(m_MemInstructions),
-              ie = std::end(m_MemInstructions);
+    for (auto ii = std::begin(MemInstructions), ie = std::end(MemInstructions);
          ii != ie; ++ii) {
       auto src = Graph.getOrInsertNode(*ii);
 
       for (auto jj = ii; jj != ie; ++jj)
-        if (auto D = m_DA.depends(*ii, *jj, true)) {
+        if (auto D = DA.depends(*ii, *jj, true)) {
           auto dst = Graph.getOrInsertNode(*jj);
           src->addDependentNode(dst, info);
         }
