@@ -37,10 +37,14 @@ class MDALocalMDGraphBuilder
     : public llvm::InstVisitor<MDALocalMDGraphBuilder> {
 public:
   MDALocalMDGraphBuilder(MDGraph &Graph,
-                         const llvm::MemoryDependenceAnalysis &MDA,
-                         AnalysisScope scope = AnalysisScope::Block)
-      : Graph(Graph), m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
-        scope(scope) {}
+                         const llvm::MemoryDependenceAnalysis &MDA)
+      : Graph(Graph), MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
+        dst(nullptr), Scope(AnalysisScope::Block) {}
+
+  MDALocalMDGraphBuilder &setScope(AnalysisScope AS) {
+    Scope = AS;
+    return *this;
+  }
 
   template <typename T> void build(T &Unit) { visit(Unit); }
 
@@ -51,8 +55,9 @@ public:
 
 private:
   MDGraph &Graph;
-  llvm::MemoryDependenceAnalysis &m_MDA;
-  AnalysisScope scope;
+  llvm::MemoryDependenceAnalysis &MDA;
+  llvm::Instruction *dst;
+  AnalysisScope Scope;
 
   void getInterproceduralDependees(
       llvm::CallSite CS,
@@ -60,37 +65,43 @@ private:
     if (!CS)
       return;
 
-    auto &result = m_MDA.getNonLocalCallDependency(CS);
+    auto &result = MDA.getNonLocalCallDependency(CS);
 
     for (auto &e : result)
-      Dependees.push_back(e.getResult().getInst());
+      Dependees.emplace_back(e.getResult().getInst());
   }
 
   void getFunctionLocalDependees(
       llvm::Instruction &CurInstruction,
       llvm::SmallVectorImpl<llvm::Instruction *> &Dependees) {
     llvm::SmallVector<llvm::NonLocalDepResult, 8> result;
-    m_MDA.getNonLocalPointerDependency(&CurInstruction, result);
+    MDA.getNonLocalPointerDependency(&CurInstruction, result);
 
     for (const auto &e : result)
-      Dependees.push_back(e.getResult().getInst());
+      Dependees.emplace_back(e.getResult().getInst());
+  }
+
+  void getBlockLocalDependees(
+      llvm::MemDepResult &Query, llvm::Instruction &CurInstruction,
+      llvm::SmallVectorImpl<llvm::Instruction *> &Dependees) {
+    // TODO what about clobbers?
+    if (Query.isDef())
+      Dependees.emplace_back(Query.getInst());
   }
 
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
-    auto query = m_MDA.getDependency(&CurInstruction);
+    auto query = MDA.getDependency(&CurInstruction);
     auto dst = Graph.getOrInsertNode(&CurInstruction);
     llvm::SmallVector<llvm::Instruction *, 8> dependees;
 
     if (query.isNonLocal()) {
-      if (scope >= AnalysisScope::Interprocedural)
+      if (Scope >= AnalysisScope::Interprocedural)
         getInterproceduralDependees(llvm::CallSite(&CurInstruction), dependees);
-      else if (scope >= AnalysisScope::Function)
+      else if (Scope >= AnalysisScope::Function)
         getFunctionLocalDependees(CurInstruction, dependees);
     } else {
       // AnalysisScope::Block is the minimum and thus always on
-      // TODO what about clobbers?
-      if (query.isDef())
-        dependees.push_back(query.getInst());
+      getBlockLocalDependees(query, CurInstruction, dependees);
     }
 
     constexpr BasicDependenceInfo info{DependenceOrigin::Memory,

@@ -78,7 +78,7 @@ static llvm::RegisterPass<pedigree::MDGraphPass>
 // RegisterStandardPasses class
 
 static void registerPedigreeMDGraphPass(const llvm::PassManagerBuilder &Builder,
-                                    llvm::legacy::PassManagerBase &PM) {
+                                        llvm::legacy::PassManagerBase &PM) {
   PM.add(new pedigree::MDGraphPass());
 
   return;
@@ -86,13 +86,13 @@ static void registerPedigreeMDGraphPass(const llvm::PassManagerBuilder &Builder,
 
 static llvm::RegisterStandardPasses
     RegisterPedigreeMDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                            registerPedigreeMDGraphPass);
+                                registerPedigreeMDGraphPass);
 
 //
 
 static llvm::cl::OptionCategory
     PedigreeMDGraphPassCategory("Pedigree MDGraph Pass",
-                            "Options for Pedigree MDGraph pass");
+                                "Options for Pedigree MDGraph pass");
 
 enum class AnalysisBackendType : uint8_t { MDA, DA, MemorySSA };
 
@@ -172,8 +172,8 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
     builder.build(CurFunc);
   } else {
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
-    MDALocalMDGraphBuilder builder{*Graph, mda, AnalysisBackendScopeOption};
-    builder.build(CurFunc);
+    MDALocalMDGraphBuilder builder{*Graph, mda};
+    builder.setScope(AnalysisBackendScopeOption).build(CurFunc);
   }
 
   return false;
