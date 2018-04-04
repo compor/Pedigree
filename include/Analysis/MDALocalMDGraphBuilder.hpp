@@ -9,6 +9,8 @@
 
 #include "MDGraph.hpp"
 
+#include "AnalysisScope.hpp"
+
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
@@ -38,7 +40,7 @@ public:
                          const llvm::MemoryDependenceAnalysis &MDA,
                          AnalysisScope scope = AnalysisScope::Block)
       : Graph(Graph), m_MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
-        m_Scope(scope) {}
+        scope(scope) {}
 
   template <typename T> void build(T &Unit) { visit(Unit); }
 
@@ -50,7 +52,7 @@ public:
 private:
   MDGraph &Graph;
   llvm::MemoryDependenceAnalysis &m_MDA;
-  AnalysisScope m_Scope;
+  AnalysisScope scope;
 
   void getInterproceduralDependees(
       llvm::CallSite CS,
@@ -80,9 +82,9 @@ private:
     llvm::SmallVector<llvm::Instruction *, 8> dependees;
 
     if (query.isNonLocal()) {
-      if (m_Scope >= AnalysisScope::Interprocedural)
+      if (scope >= AnalysisScope::Interprocedural)
         getInterproceduralDependees(llvm::CallSite(&CurInstruction), dependees);
-      else if (m_Scope >= AnalysisScope::Function)
+      else if (scope >= AnalysisScope::Function)
         getFunctionLocalDependees(CurInstruction, dependees);
     } else {
       // AnalysisScope::Block is the minimum and thus always on

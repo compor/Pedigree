@@ -6,7 +6,7 @@
 
 #include "Utils.hpp"
 
-#include "Pedigree.hpp"
+#include "Analysis/AnalysisScope.hpp"
 
 #include "Analysis/Passes/MDGraphPass.hpp"
 
