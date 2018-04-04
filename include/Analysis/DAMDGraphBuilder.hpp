@@ -43,9 +43,8 @@ public:
     visit(Unit);
 
     BasicDependenceInfo info{};
-    info.origins |= DependenceOrigin::Memory;
-    // TODO
-    // info.setHazard();
+    info.origins = DependenceOrigin::Memory;
+    info.hazards = DependenceHazard::Flow;
 
     for (auto ii = std::begin(m_MemInstructions),
               ie = std::end(m_MemInstructions);

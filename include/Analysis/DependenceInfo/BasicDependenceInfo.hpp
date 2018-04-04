@@ -33,17 +33,17 @@ namespace pedigree {
 
 // also known as load-store classification (see OCMA book)
 enum class DependenceHazard : std::size_t {
-  // Unknown = 0,
-  Flow,
-  Anti,
-  Out,
+  Unknown = 0,
+  Flow = 0b01,
+  Anti = 0b10,
+  Out = 0b11,
 };
 
 enum class DependenceOrigin : std::size_t {
-  // Unknown = 0,
-  Data,
-  Memory,
-  Control,
+  Unknown = 0,
+  Data = 0b01,
+  Memory = 0b10,
+  Control = 0b11,
 };
 
 } // namespace pedigree end

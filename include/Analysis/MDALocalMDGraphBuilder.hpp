@@ -94,9 +94,8 @@ private:
     }
 
     BasicDependenceInfo info{};
-    info.origins |= DependenceOrigin::Memory;
-    // TODO
-    // info.setHazard();
+    info.origins = DependenceOrigin::Memory;
+    info.hazards = DependenceHazard::Flow;
 
     for (const auto &e : dependees) {
       auto src = Graph.getOrInsertNode(e);

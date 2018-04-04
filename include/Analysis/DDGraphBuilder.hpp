@@ -27,9 +27,9 @@ public:
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
     BasicDependenceInfo info{};
-    info.origins |= DependenceOrigin::Data;
+    info.origins = DependenceOrigin::Data;
     // always flow for SSA use-def chains
-    // info.setHazard(DependenceHazard::flow);
+    info.hazards = DependenceHazard::Flow;
 
     auto src = Graph.getOrInsertNode(&CurInstruction);
     for (auto &u : CurInstruction.uses()) {
