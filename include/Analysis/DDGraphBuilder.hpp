@@ -29,10 +29,10 @@ public:
   template <typename T> void build(T &Unit) { visit(Unit); }
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
-    auto src = Graph.getOrInsertNode(&CurInstruction);
     for (auto &u : CurInstruction.uses()) {
       auto *user = llvm::dyn_cast<llvm::Instruction>(u.getUser());
       if (user) {
+        auto src = Graph.getOrInsertNode(&CurInstruction);
         auto dst = Graph.getOrInsertNode(user);
         src->addDependentNode(dst, info);
       }
