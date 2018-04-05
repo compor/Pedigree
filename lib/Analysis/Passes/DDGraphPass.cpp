@@ -97,9 +97,8 @@ void DDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool DDGraphPass::runOnFunction(llvm::Function &CurFunc) {
-  Graph = std::make_unique<DDGraph>();
-  DDGraphBuilder builder{*Graph};
-  builder.build(CurFunc);
+  DDGraphBuilder builder{};
+  Graph = builder.setUnit(CurFunc).build();
 
   return false;
 }
