@@ -73,8 +73,29 @@ private:
     llvm::SmallVector<llvm::NonLocalDepResult, 8> result;
     MDA.getNonLocalPointerDependency(&Dst, result);
 
-    for (const auto &e : result)
-      addDependenceWithInfo(*e.getResult().getInst(), Dst, {});
+    for (const auto &e : result) {
+      BasicDependenceInfo info{DependenceOrigin::Memory,
+                               DependenceHazard::Unknown};
+
+      auto &result = e.getResult();
+      auto src = result.getInst();
+
+      if (result.isDef()) {
+        if (Dst.mayReadFromMemory())
+          info.hazards |= DependenceHazard::Flow;
+
+        if (Dst.mayWriteToMemory())
+          info.hazards |= DependenceHazard::Out;
+      } else if (result.isClobber()) {
+        if (Dst.mayReadFromMemory())
+          info.hazards |= DependenceHazard::Flow;
+
+        if (Dst.mayWriteToMemory())
+          info.hazards |= DependenceHazard::Out;
+      }
+
+      addDependenceWithInfo(*src, Dst, info);
+    }
   }
 
   void getBlockLocalDependees(llvm::MemDepResult &Query,
