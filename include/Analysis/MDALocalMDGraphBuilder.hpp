@@ -90,7 +90,7 @@ private:
         info.hazards |= DependenceHazard::Out;
     } else if (Query.isClobber()) {
       if (Dst.mayReadFromMemory())
-        info.hazards |= DependenceHazard::Anti;
+        info.hazards |= DependenceHazard::Flow;
 
       if (Dst.mayWriteToMemory())
         info.hazards |= DependenceHazard::Out;
