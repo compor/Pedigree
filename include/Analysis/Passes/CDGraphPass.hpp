@@ -17,6 +17,9 @@
 #include <memory>
 // using std::unique_ptr
 
+#include <cassert>
+// using assert
+
 namespace llvm {
 class Function;
 class AnalysisUsage;
@@ -34,11 +37,25 @@ struct CDGraphPass : public llvm::FunctionPass {
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;
 
-  const CDGraph &getGraph() const { return *Graph; }
-  CDGraph &getGraph() { return *Graph; }
+  const CDGraph &getGraph() const {
+    assert(Graph && "Graph is null!");
+    return *Graph;
+  }
 
-  const InstCDGraph &getInstGraph() const { return *InstGraph; }
-  InstCDGraph &getInstGraph() { return *InstGraph; }
+  CDGraph &getGraph() {
+    assert(Graph && "Graph is null!");
+    return *Graph;
+  }
+
+  const InstCDGraph &getInstGraph() const {
+    assert(InstGraph && "Graph is null!");
+    return *InstGraph;
+  }
+
+  InstCDGraph &getInstGraph() {
+    assert(InstGraph && "Graph is null!");
+    return *InstGraph;
+  }
 };
 
 } // namespace pedigree end
