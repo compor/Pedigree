@@ -43,8 +43,9 @@ std::ostream &operator<<(std::ostream &os, const DDGraphTestData &td) {
 
 //
 
-class DDGraphConstructionTest : public TestIRAssemblyParser,
-                            public ::testing::TestWithParam<DDGraphTestData> {};
+class DDGraphConstructionTest
+    : public TestIRAssemblyParser,
+      public ::testing::TestWithParam<DDGraphTestData> {};
 
 //
 
@@ -64,9 +65,9 @@ TEST_P(DDGraphConstructionTest, DDGraphConstruction) {
   EXPECT_EQ(td.numEdges, ddg.numEdges());
 }
 
-std::array<DDGraphTestData, 3> testData1 = {"whalebook_fig81.ll",  13, 9,
-                                        "whalebook_fig85.ll",  10, 3,
-                                        "whalebook_fig821.ll", 16, 10};
+std::array<DDGraphTestData, 3> testData1 = {"whalebook_fig81.ll",  10, 9,
+                                            "whalebook_fig85.ll",  6,  3,
+                                            "whalebook_fig821.ll", 11, 10};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGraphConstructionTest,
                         ::testing::ValuesIn(testData1));
