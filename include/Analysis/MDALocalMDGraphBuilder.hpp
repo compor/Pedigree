@@ -28,6 +28,13 @@
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
 
+#include "boost/optional.hpp"
+// using boost::optional
+
+#include <memory>
+// using std::unique_ptr
+// using std::make_unique
+
 #include <cassert>
 // using assert
 
@@ -38,18 +45,42 @@ namespace pedigree {
 
 class MDALocalMDGraphBuilder
     : public llvm::InstVisitor<MDALocalMDGraphBuilder> {
-public:
-  MDALocalMDGraphBuilder(MDGraph &Graph,
-                         const llvm::MemoryDependenceAnalysis &MDA)
-      : Graph(Graph), MDA(const_cast<llvm::MemoryDependenceAnalysis &>(MDA)),
-        Scope(AnalysisScope::Block) {}
+private:
+  std::unique_ptr<MDGraph> Graph;
+  boost::optional<const llvm::Function &> CurUnit;
+  boost::optional<llvm::MemoryDependenceAnalysis &> CurAnalysis;
+  AnalysisScope CurScope;
 
-  MDALocalMDGraphBuilder &setScope(AnalysisScope AS) {
-    Scope = AS;
+public:
+  MDALocalMDGraphBuilder() : CurScope(AnalysisScope::Block) {}
+
+  MDALocalMDGraphBuilder &
+  setAnalysis(llvm::MemoryDependenceAnalysis &Analysis) {
+    CurAnalysis = const_cast<llvm::MemoryDependenceAnalysis &>(Analysis);
+
     return *this;
   }
 
-  template <typename T> void build(T &Unit) { visit(Unit); }
+  MDALocalMDGraphBuilder &setUnit(const llvm::Function &Unit) {
+    CurUnit.emplace(Unit);
+
+    return *this;
+  }
+
+  MDALocalMDGraphBuilder &setScope(AnalysisScope Scope) {
+    CurScope = Scope;
+
+    return *this;
+  }
+
+  std::unique_ptr<MDGraph> build() {
+    if (CurUnit && CurAnalysis) {
+      Graph = std::make_unique<MDGraph>();
+      visit(const_cast<llvm::Function &>(*CurUnit));
+    }
+
+    return std::move(Graph);
+  }
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
     if (CurInstruction.mayReadOrWriteMemory())
@@ -57,17 +88,13 @@ public:
   }
 
 private:
-  MDGraph &Graph;
-  llvm::MemoryDependenceAnalysis &MDA;
-  AnalysisScope Scope;
-
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
-    auto query = MDA.getDependency(&CurInstruction);
+    auto query = CurAnalysis->getDependency(&CurInstruction);
 
     if (query.isNonLocal()) {
-      if (Scope >= AnalysisScope::Interprocedural)
+      if (CurScope >= AnalysisScope::Interprocedural)
         getInterproceduralDependees(llvm::CallSite(&CurInstruction));
-      else if (Scope >= AnalysisScope::Function)
+      else if (CurScope >= AnalysisScope::Function)
         getFunctionLocalDependees(CurInstruction);
     } else {
       // AnalysisScope::Block is the minimum and thus always on
@@ -111,8 +138,8 @@ private:
 
   void addDependenceWithInfo(llvm::Instruction &Src, llvm::Instruction &Dst,
                              const BasicDependenceInfo &Info) {
-    auto src = Graph.getOrInsertNode(&Src);
-    auto dst = Graph.getOrInsertNode(&Dst);
+    auto src = Graph->getOrInsertNode(&Src);
+    auto dst = Graph->getOrInsertNode(&Dst);
     src->addDependentNode(dst, Info);
   }
 
@@ -120,7 +147,7 @@ private:
     if (!Dst)
       return;
 
-    auto &results = MDA.getNonLocalCallDependency(Dst);
+    auto &results = CurAnalysis->getNonLocalCallDependency(Dst);
     auto dst = Dst.getInstruction();
 
     for (auto &e : results) {
@@ -134,7 +161,7 @@ private:
 
   void getFunctionLocalDependees(llvm::Instruction &Dst) {
     llvm::SmallVector<llvm::NonLocalDepResult, 8> results;
-    MDA.getNonLocalPointerDependency(&Dst, results);
+    CurAnalysis->getNonLocalPointerDependency(&Dst, results);
 
     for (const auto &e : results) {
       auto &queryResult = e.getResult();

@@ -172,8 +172,12 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
     builder.build(CurFunc);
   } else {
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
-    MDALocalMDGraphBuilder builder{*Graph, mda};
-    builder.setScope(AnalysisBackendScopeOption).build(CurFunc);
+    MDALocalMDGraphBuilder builder{};
+
+    Graph = builder.setScope(AnalysisBackendScopeOption)
+                .setAnalysis(mda)
+                .setUnit(CurFunc)
+                .build();
   }
 
   return false;
