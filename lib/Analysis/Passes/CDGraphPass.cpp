@@ -106,8 +106,6 @@ void CDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool CDGraphPass::runOnFunction(llvm::Function &CurFunc) {
-  Graph.reset();
-  InstGraph.reset();
   CDGraphBuilder builder{};
   Graph = builder.setUnit(CurFunc).build();
 
