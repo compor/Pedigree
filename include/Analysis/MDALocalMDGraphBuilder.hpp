@@ -28,6 +28,9 @@
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
 
+#include <cassert>
+// using assert
+
 namespace pedigree {
 
 // TODO maybe we should consider providing an option for not including nodes
@@ -62,11 +65,38 @@ private:
     if (!Dst)
       return;
 
-    auto &result = MDA.getNonLocalCallDependency(Dst);
+    auto &results = MDA.getNonLocalCallDependency(Dst);
+    auto dst = Dst.getInstruction();
 
-    for (auto &e : result)
-      addDependenceWithInfo(*e.getResult().getInst(), *Dst.getInstruction(),
-                            {});
+    for (auto &e : results) {
+      BasicDependenceInfo info{DependenceOrigin::Memory,
+                               DependenceHazard::Unknown};
+
+      auto &result = e.getResult();
+      auto src = result.getInst();
+
+      if (result.isDef()) {
+        if (src->mayReadFromMemory() && dst->mayReadFromMemory())
+          assert(true && "A RAW hazard was reported!");
+
+        if (src->mayReadFromMemory() && dst->mayWriteToMemory())
+          info.hazards |= DependenceHazard::Anti;
+
+        if (src->mayWriteToMemory() && dst->mayReadFromMemory())
+          info.hazards |= DependenceHazard::Flow;
+
+        if (src->mayWriteToMemory() && dst->mayWriteToMemory())
+          info.hazards |= DependenceHazard::Out;
+      } else if (result.isClobber()) {
+        if (dst->mayReadFromMemory())
+          info.hazards |= DependenceHazard::Flow;
+
+        if (dst->mayWriteToMemory())
+          info.hazards |= DependenceHazard::Out;
+      }
+
+      addDependenceWithInfo(*src, *dst, info);
+    }
   }
 
   void getFunctionLocalDependees(llvm::Instruction &Dst) {
@@ -81,10 +111,16 @@ private:
       auto src = result.getInst();
 
       if (result.isDef()) {
-        if (Dst.mayReadFromMemory())
+        if (src->mayReadFromMemory() && Dst.mayReadFromMemory())
+          assert(true && "A RAW hazard was reported!");
+
+        if (src->mayReadFromMemory() && Dst.mayWriteToMemory())
+          info.hazards |= DependenceHazard::Anti;
+
+        if (src->mayWriteToMemory() && Dst.mayReadFromMemory())
           info.hazards |= DependenceHazard::Flow;
 
-        if (Dst.mayWriteToMemory())
+        if (src->mayWriteToMemory() && Dst.mayWriteToMemory())
           info.hazards |= DependenceHazard::Out;
       } else if (result.isClobber()) {
         if (Dst.mayReadFromMemory())
@@ -102,12 +138,19 @@ private:
                               llvm::Instruction &Dst) {
     BasicDependenceInfo info{DependenceOrigin::Memory,
                              DependenceHazard::Unknown};
+    auto src = Query.getInst();
 
     if (Query.isDef()) {
-      if (Dst.mayReadFromMemory())
+      if (src->mayReadFromMemory() && Dst.mayReadFromMemory())
+        assert(true && "A RAW hazard was reported!");
+
+      if (src->mayReadFromMemory() && Dst.mayWriteToMemory())
+        info.hazards |= DependenceHazard::Anti;
+
+      if (src->mayWriteToMemory() && Dst.mayReadFromMemory())
         info.hazards |= DependenceHazard::Flow;
 
-      if (Dst.mayWriteToMemory())
+      if (src->mayWriteToMemory() && Dst.mayWriteToMemory())
         info.hazards |= DependenceHazard::Out;
     } else if (Query.isClobber()) {
       if (Dst.mayReadFromMemory())
@@ -117,7 +160,7 @@ private:
         info.hazards |= DependenceHazard::Out;
     }
 
-    addDependenceWithInfo(*Query.getInst(), Dst, info);
+    addDependenceWithInfo(*src, Dst, info);
   }
 
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
