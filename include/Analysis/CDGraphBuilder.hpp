@@ -17,6 +17,13 @@
 #include "llvm/Analysis/PostDominators.h"
 // using llvm::PostDominatorTree
 
+#include "boost/optional.hpp"
+// using boost::optional
+
+#include <memory>
+// using std::unique_ptr
+// using std::make_unique
+
 namespace llvm {
 class Function;
 } // namespace llvm end
@@ -24,27 +31,41 @@ class Function;
 namespace pedigree {
 
 class CDGraphBuilder {
-  CDGraph &Graph;
+  boost::optional<const llvm::Function &> CurUnit;
+
   static constexpr BasicDependenceInfo info{DependenceOrigin::Control,
                                             DependenceHazard::Unknown};
 
 public:
-  CDGraphBuilder(CDGraph &Graph) : Graph(Graph) {}
+  CDGraphBuilder() = default;
 
-  void build(const llvm::Function &CurFunc) {
+  CDGraphBuilder &setUnit(const llvm::Function &Unit) {
+    CurUnit.emplace(Unit);
+
+    return *this;
+  }
+
+  std::unique_ptr<CDGraph> build() {
+    if (!CurUnit)
+      return {};
+
     llvm::PostDominatorTree curPDT;
-    curPDT.DT->recalculate(const_cast<llvm::Function &>(CurFunc));
+    curPDT.DT->recalculate(const_cast<llvm::Function &>(*CurUnit));
 
     PostDominanceFrontierBase<llvm::BasicBlock> pdf;
     pdf.analyze(*curPDT.DT);
 
+    auto Graph = std::make_unique<CDGraph>();
+
     for (auto &f : pdf) {
-      auto dst = Graph.getOrInsertNode(f.first);
+      auto dst = Graph->getOrInsertNode(f.first);
       for (auto &e : f.second) {
-        auto src = Graph.getOrInsertNode(e);
+        auto src = Graph->getOrInsertNode(e);
         src->addDependentNode(dst, info);
       }
     }
+
+    return Graph;
   }
 };
 

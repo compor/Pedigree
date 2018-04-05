@@ -106,13 +106,14 @@ void CDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool CDGraphPass::runOnFunction(llvm::Function &CurFunc) {
-  Graph = std::make_unique<CDGraph>();
-  CDGraphBuilder builder{*Graph};
-  builder.build(CurFunc);
+  Graph.reset();
+  InstGraph.reset();
+  CDGraphBuilder builder{};
+  Graph = builder.setUnit(CurFunc).build();
 
   if (PedigreeCDGraphConvertToInstruction) {
-    m_InstGraph = std::make_unique<InstCDGraph>();
-    Convert(*Graph, *m_InstGraph, BlockToInstructionUnitConverter{});
+    InstGraph = std::make_unique<InstCDGraph>();
+    Convert(*Graph, *InstGraph, BlockToInstructionUnitConverter{});
   }
 
   return false;
