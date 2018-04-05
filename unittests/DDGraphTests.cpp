@@ -56,13 +56,11 @@ TEST_P(DDGraphConstructionTest, DDGraphConstruction) {
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  DDGraph ddg;
-  DDGraphBuilder ddgBuilder{ddg};
+  DDGraphBuilder ddgBuilder{};
+  auto ddg = ddgBuilder.setUnit(*curFunc).build();
 
-  ddgBuilder.visit(*curFunc);
-
-  EXPECT_EQ(td.numVertices, ddg.numVertices());
-  EXPECT_EQ(td.numEdges, ddg.numEdges());
+  EXPECT_EQ(td.numVertices, ddg->numVertices());
+  EXPECT_EQ(td.numEdges, ddg->numEdges());
 }
 
 std::array<DDGraphTestData, 3> testData1 = {"whalebook_fig81.ll",  10, 9,
