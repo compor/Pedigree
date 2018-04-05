@@ -124,31 +124,31 @@ private:
     auto dst = Dst.getInstruction();
 
     for (auto &e : results) {
-      auto &result = e.getResult();
-      auto src = result.getInst();
-      auto info = determineHazard(*src, *dst, result);
+      auto &queryResult = e.getResult();
+      auto src = queryResult.getInst();
+      auto info = determineHazard(*src, *dst, queryResult);
 
       addDependenceWithInfo(*src, *dst, info);
     }
   }
 
   void getFunctionLocalDependees(llvm::Instruction &Dst) {
-    llvm::SmallVector<llvm::NonLocalDepResult, 8> result;
-    MDA.getNonLocalPointerDependency(&Dst, result);
+    llvm::SmallVector<llvm::NonLocalDepResult, 8> results;
+    MDA.getNonLocalPointerDependency(&Dst, results);
 
-    for (const auto &e : result) {
-      auto &result = e.getResult();
-      auto src = result.getInst();
-      auto info = determineHazard(*src, Dst, result);
+    for (const auto &e : results) {
+      auto &queryResult = e.getResult();
+      auto src = queryResult.getInst();
+      auto info = determineHazard(*src, Dst, queryResult);
 
       addDependenceWithInfo(*src, Dst, info);
     }
   }
 
-  void getBlockLocalDependees(llvm::MemDepResult &Query,
+  void getBlockLocalDependees(llvm::MemDepResult &QueryResult,
                               llvm::Instruction &Dst) {
-    auto src = Query.getInst();
-    auto info = determineHazard(*src, Dst, Query);
+    auto src = QueryResult.getInst();
+    auto info = determineHazard(*src, Dst, QueryResult);
 
     addDependenceWithInfo(*src, Dst, info);
   }
