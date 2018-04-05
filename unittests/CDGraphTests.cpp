@@ -66,13 +66,11 @@ TEST_P(CDGraphConstructionTest, CDGraphConstruction) {
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  CDGraph cdg;
-  CDGraphBuilder cdgBuilder{cdg};
+  CDGraphBuilder cdgBuilder{};
+  auto cdg = cdgBuilder.setUnit(*curFunc).build();
 
-  cdgBuilder.build(*curFunc);
-
-  EXPECT_EQ(td.numVertices, cdg.numVertices());
-  EXPECT_EQ(td.numEdges, cdg.numEdges());
+  EXPECT_EQ(td.numVertices, cdg->numVertices());
+  EXPECT_EQ(td.numEdges, cdg->numEdges());
 }
 
 TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
@@ -82,13 +80,11 @@ TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
   auto *curFunc = m_Module->getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
-  CDGraph cdg;
-  CDGraphBuilder cdgBuilder{cdg};
-
-  cdgBuilder.build(*curFunc);
+  CDGraphBuilder cdgBuilder{};
+  auto cdg = cdgBuilder.setUnit(*curFunc).build();
 
   InstCDGraph cdg2;
-  Convert(cdg, cdg2, BlockToInstructionUnitConverter{});
+  Convert(*cdg, cdg2, BlockToInstructionUnitConverter{});
 
   EXPECT_EQ(td.numVertices, cdg2.numVertices());
   EXPECT_EQ(td.numEdges, cdg2.numEdges());
