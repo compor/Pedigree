@@ -18,6 +18,13 @@
 #include "llvm/Analysis/DependenceAnalysis.h"
 // using llvm::DependenceAnalysis
 
+#include "boost/optional.hpp"
+// using boost::optional
+
+#include <memory>
+// using std::unique_ptr
+// using std::make_unique
+
 #include <vector>
 // using std::vector
 
@@ -27,8 +34,9 @@ namespace pedigree {
 // in the graph unless they have an edge
 
 class DAMDGraphBuilder : public llvm::InstVisitor<DAMDGraphBuilder> {
-  MDGraph &Graph;
-  llvm::DependenceAnalysis &DA;
+  std::unique_ptr<MDGraph> Graph;
+  boost::optional<llvm::DependenceAnalysis &> CurAnalysis;
+  boost::optional<const llvm::Function &> CurUnit;
   std::vector<llvm::Instruction *> MemInstructions;
 
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
@@ -36,25 +44,42 @@ class DAMDGraphBuilder : public llvm::InstVisitor<DAMDGraphBuilder> {
   }
 
 public:
-  DAMDGraphBuilder(MDGraph &Graph, const llvm::DependenceAnalysis &DA)
-      : Graph(Graph), DA(const_cast<llvm::DependenceAnalysis &>(DA)) {}
+  DAMDGraphBuilder() = default;
 
-  template <typename T> void build(T &Unit) {
-    visit(Unit);
+  DAMDGraphBuilder &setAnalysis(llvm::DependenceAnalysis &Analysis) {
+    CurAnalysis = const_cast<llvm::DependenceAnalysis &>(Analysis);
 
-    constexpr BasicDependenceInfo info{DependenceOrigin::Memory,
-                                       DependenceHazard::Flow};
+    return *this;
+  }
 
-    for (auto ii = std::begin(MemInstructions), ie = std::end(MemInstructions);
-         ii != ie; ++ii) {
-      auto src = Graph.getOrInsertNode(*ii);
+  DAMDGraphBuilder &setUnit(const llvm::Function &Unit) {
+    CurUnit.emplace(Unit);
 
-      for (auto jj = ii; jj != ie; ++jj)
-        if (auto D = DA.depends(*ii, *jj, true)) {
-          auto dst = Graph.getOrInsertNode(*jj);
-          src->addDependentNode(dst, info);
-        }
+    return *this;
+  }
+
+  std::unique_ptr<MDGraph> build() {
+    if (CurUnit && CurAnalysis) {
+      Graph = std::make_unique<MDGraph>();
+      visit(const_cast<llvm::Function &>(*CurUnit));
+
+      constexpr BasicDependenceInfo info{DependenceOrigin::Memory,
+                                         DependenceHazard::Flow};
+
+      for (auto ii = std::begin(MemInstructions),
+                ie = std::end(MemInstructions);
+           ii != ie; ++ii) {
+        auto src = Graph->getOrInsertNode(*ii);
+
+        for (auto jj = ii; jj != ie; ++jj)
+          if (auto D = CurAnalysis->depends(*ii, *jj, true)) {
+            auto dst = Graph->getOrInsertNode(*jj);
+            src->addDependentNode(dst, info);
+          }
+      }
     }
+
+    return std::move(Graph);
   }
 
   void visitInstruction(llvm::Instruction &CurInstruction) {

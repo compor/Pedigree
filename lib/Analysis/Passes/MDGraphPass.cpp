@@ -168,8 +168,9 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   if (AnalysisBackendType::DA == AnalysisBackendOption) {
     auto &da = getAnalysis<llvm::DependenceAnalysis>();
-    DAMDGraphBuilder builder{*Graph, da};
-    builder.build(CurFunc);
+    DAMDGraphBuilder builder{};
+
+    Graph = builder.setAnalysis(da).setUnit(CurFunc).build();
   } else {
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
     MDALocalMDGraphBuilder builder{};
