@@ -27,7 +27,7 @@ class PDGraphBuilder {
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>>
       componentGraphs;
   std::unique_ptr<PDGraph> Graph;
-  bool LazyConstruction;
+  bool LazilyConstructible;
 
   void combine(InstructionDependenceGraph &ToGraph,
                const InstructionDependenceGraph &FromGraph) {
@@ -46,10 +46,10 @@ class PDGraphBuilder {
   }
 
 public:
-  PDGraphBuilder() : LazyConstruction(false) {}
+  PDGraphBuilder() : LazilyConstructible(false) {}
 
   PDGraphBuilder &addGraph(const InstructionDependenceGraph &FromGraph) {
-    if (LazyConstruction)
+    if (LazilyConstructible)
       componentGraphs.emplace_back(std::cref(FromGraph));
     else {
       if (!Graph)
@@ -61,14 +61,14 @@ public:
     return *this;
   }
 
-  PDGraphBuilder &setLazyConstruction(bool Mode) {
-    LazyConstruction = Mode;
+  PDGraphBuilder &setLazilyConstructible(bool Mode) {
+    LazilyConstructible = Mode;
 
     return *this;
   }
 
   std::unique_ptr<PDGraph> build() {
-    if (LazyConstruction && !componentGraphs.empty()) {
+    if (LazilyConstructible && !componentGraphs.empty()) {
       Graph = std::make_unique<PDGraph>();
 
       for (const auto &e : componentGraphs)
