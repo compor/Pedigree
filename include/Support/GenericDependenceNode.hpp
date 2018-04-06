@@ -115,7 +115,16 @@ public:
                : boost::none;
   }
 
-  bool setEdgeInfo(const NodeType *Node, const EdgeInfoType &Info) const {
+  bool setEdgeInfo(const NodeType *Node, const EdgeInfoType &Info) {
+    auto found =
+        std::find_if(Edges.begin(), Edges.end(),
+                     [&Node](const auto &e) { return Node == e.first; });
+
+    if (found == Edges.end())
+      return false;
+
+    (*found).second = Info;
+
     return true;
   }
 
