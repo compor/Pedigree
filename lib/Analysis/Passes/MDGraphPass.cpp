@@ -94,7 +94,7 @@ static llvm::cl::OptionCategory
     PedigreeMDGraphPassCategory("Pedigree MDGraph Pass",
                                 "Options for Pedigree MDGraph pass");
 
-enum class AnalysisBackendType : uint8_t { MDA, DA, MemorySSA };
+enum class AnalysisBackendType { MDA, DA, MemorySSA };
 
 static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
     "pedigree-mdg-backend", llvm::cl::desc("analysis backend selection"),
