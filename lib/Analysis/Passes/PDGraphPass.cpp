@@ -44,6 +44,7 @@
 
 #include "llvm/Support/CommandLine.h"
 // using llvm::cl::opt
+// using llvm::cl::bits
 // using llvm::cl::desc
 // using llvm::cl::location
 // using llvm::cl::cat
@@ -86,14 +87,25 @@ static llvm::RegisterStandardPasses
 //
 
 static llvm::cl::OptionCategory
-    PDGraphPassCategory("Pedigree PDGraph Pass",
-                        "Options for Pedigree PDGraph pass");
+    PedigreePDGraphPassCategory("Pedigree PDGraph Pass",
+                                "Options for Pedigree PDGraph pass");
+
+enum class PDGraphComponent { CDG, DDG, MDG };
+
+static llvm::cl::bits<PDGraphComponent> GraphComponentOption(
+    "pedigree-pdg-components", llvm::cl::desc("component graph selection"),
+    llvm::cl::values(
+        clEnumValN(PDGraphComponent::CDG, "CDG", "Control Dependence Graph"),
+        clEnumValN(PDGraphComponent::DDG, "DDG", "Data Dependence Graph"),
+        clEnumValN(PDGraphComponent::MDG, "MDG", "Memory Dependence Graph"),
+        nullptr),
+    llvm::cl::cat(PedigreePDGraphPassCategory));
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-debug", llvm::cl::desc("debug pedigree pdg pass"),
           llvm::cl::location(pedigree::utility::passDebugFlag),
-          llvm::cl::cat(PDGraphPassCategory));
+          llvm::cl::cat(PedigreePDGraphPassCategory));
 
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-pdg-debug-level",
@@ -105,7 +117,7 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
         clEnumValN(LogLevel::warning, "warning", "warning conditions"),
         clEnumValN(LogLevel::error, "error", "error conditions"),
         clEnumValN(LogLevel::debug, "debug", "debug messages"), nullptr),
-    llvm::cl::cat(PDGraphPassCategory));
+    llvm::cl::cat(PedigreePDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 
 //
@@ -113,22 +125,39 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 namespace pedigree {
 
 void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
-  AU.addRequired<DDGraphPass>();
-  AU.addRequired<CDGraphPass>();
-  AU.addRequired<MDGraphPass>();
+  if (GraphComponentOption.isSet(PDGraphComponent::CDG))
+    AU.addRequired<CDGraphPass>();
+
+  if (GraphComponentOption.isSet(PDGraphComponent::DDG))
+    AU.addRequired<DDGraphPass>();
+
+  if (GraphComponentOption.isSet(PDGraphComponent::MDG))
+    AU.addRequired<MDGraphPass>();
+
   AU.setPreservesAll();
 }
 
 bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
-  auto &DDG = getAnalysis<DDGraphPass>().getGraph();
-  auto &CDG = getAnalysis<CDGraphPass>().getGraph();
-  auto &MDG = getAnalysis<MDGraphPass>().getGraph();
-
   InstructionDependenceGraph instCDG;
-  Convert(CDG, instCDG, BlockToInstructionUnitConverter{});
+  std::vector<std::reference_wrapper<const InstructionDependenceGraph>> graphs;
+
+  if (GraphComponentOption.isSet(PDGraphComponent::CDG)) {
+    Convert(getAnalysis<CDGraphPass>().getGraph(), instCDG,
+            BlockToInstructionUnitConverter{});
+    graphs.emplace_back(instCDG);
+  }
+
+  if (GraphComponentOption.isSet(PDGraphComponent::CDG))
+    graphs.emplace_back(getAnalysis<DDGraphPass>().getGraph());
+
+  if (GraphComponentOption.isSet(PDGraphComponent::CDG))
+    graphs.emplace_back(getAnalysis<MDGraphPass>().getGraph());
 
   PDGraphBuilder builder{};
-  Graph = builder.addGraph(instCDG).addGraph(DDG).addGraph(MDG).build();
+  for (const auto &e : graphs)
+    builder.addGraph(e.get());
+
+  Graph = builder.build();
 
   return false;
 }
