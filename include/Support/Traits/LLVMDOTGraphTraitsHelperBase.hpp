@@ -85,8 +85,14 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
                                        typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
     using DIT = pedigree::DependenceInfoTraits<typename NodeType::EdgeInfoType>;
-    return DIT::toDOTAttributes(Node->getEdgeInfo(*EI)) +
-           Base::getEdgeAttributes(Node, EI, Graph);
+
+    auto info = Node->getEdgeInfo(*EI);
+    std::string infoStr{};
+
+    if (info)
+      infoStr = DIT::toDOTAttributes(info.value());
+
+    return infoStr + Base::getEdgeAttributes(Node, EI, Graph);
   }
 };
 

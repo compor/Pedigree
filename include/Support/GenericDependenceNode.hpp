@@ -16,6 +16,9 @@
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
 
+#include "boost/optional.hpp"
+// using boost::optional
+
 #include "boost/operators.hpp"
 // using boost::equality_comparable
 
@@ -102,14 +105,18 @@ public:
     Node->incrementDependeeCount();
   }
 
-  const EdgeInfoType &getEdgeInfo(NodeType *Node) const {
+  boost::optional<const EdgeInfoType &> getEdgeInfo(NodeType *Node) const {
     auto found =
         std::find_if(Edges.begin(), Edges.end(),
                      [&Node](const auto &e) { return Node == e.first; });
 
-    assert(found != Edges.end() && "Edge could not be found!");
+    return found != Edges.end()
+               ? boost::optional<const EdgeInfoType &>((*found).second)
+               : boost::none;
+  }
 
-    return (*found).second;
+  bool setEdgeInfo(const NodeType *Node, const EdgeInfoType &Info) const {
+    return true;
   }
 
   EdgesSizeType numEdges() const { return Edges.size(); }
