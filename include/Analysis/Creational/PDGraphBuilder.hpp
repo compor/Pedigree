@@ -48,7 +48,7 @@ class PDGraphBuilder {
 public:
   PDGraphBuilder() : LazyConstruction(false) {}
 
-  PDGraphBuilder &addGraph(InstructionDependenceGraph &FromGraph) {
+  PDGraphBuilder &addGraph(const InstructionDependenceGraph &FromGraph) {
     if (LazyConstruction)
       componentGraphs.emplace_back(std::cref(FromGraph));
     else {
