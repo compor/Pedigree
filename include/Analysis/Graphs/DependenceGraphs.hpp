@@ -28,11 +28,11 @@
 
 namespace pedigree {
 
-extern template class GenericDependenceNode<
-    llvm::Instruction, BasicDependenceInfo>;
+extern template class GenericDependenceNode<llvm::Instruction,
+                                            BasicDependenceInfo>;
 
-extern template class GenericDependenceNode<
-    llvm::BasicBlock, BasicDependenceInfo>;
+extern template class GenericDependenceNode<llvm::BasicBlock,
+                                            BasicDependenceInfo>;
 
 extern template class GenericDependenceGraph<
     GenericDependenceNode<llvm::Instruction, BasicDependenceInfo>>;
