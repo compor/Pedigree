@@ -16,6 +16,10 @@
 
 #include "Analysis/Creational/PDGraphBuilder.hpp"
 
+#include "Support/GraphConverter.hpp"
+
+#include "Support/Utils/UnitConverters.hpp"
+
 #include "llvm/IR/Type.h"
 // using llvm::Type
 
@@ -120,8 +124,11 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   auto &CDG = getAnalysis<CDGraphPass>().getGraph();
   auto &MDG = getAnalysis<MDGraphPass>().getGraph();
 
+  InstructionDependenceGraph instCDG;
+  Convert(CDG, instCDG, BlockToInstructionUnitConverter{});
+
   PDGraphBuilder builder{};
-  Graph = builder.addGraph(DDG).addGraph(MDG).build();
+  Graph = builder.addGraph(instCDG).addGraph(DDG).addGraph(MDG).build();
 
   return false;
 }
