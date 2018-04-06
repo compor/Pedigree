@@ -58,8 +58,8 @@ public:
     auto Graph = std::make_unique<CDGraph>();
 
     for (auto &f : pdf) {
-      auto dst = Graph->getOrInsertNode(f.first);
       for (auto &e : f.second) {
+        auto dst = Graph->getOrInsertNode(f.first);
         auto src = Graph->getOrInsertNode(e);
         src->addDependentNode(dst, info);
       }
