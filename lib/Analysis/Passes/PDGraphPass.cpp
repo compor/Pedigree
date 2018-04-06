@@ -120,9 +120,8 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   auto &CDG = getAnalysis<CDGraphPass>().getGraph();
   auto &MDG = getAnalysis<MDGraphPass>().getGraph();
 
-  PDGraphBuilder builder{CDG, DDG, MDG};
-  Graph = std::make_unique<DDGraph>();
-  builder.build(*Graph);
+  PDGraphBuilder builder{};
+  Graph = builder.addGraph(DDG).addGraph(MDG).build();
 
   return false;
 }

@@ -17,52 +17,57 @@
 
 #include "Analysis/Graphs/MDGraph.hpp"
 
-#include "Support/GraphConverter.hpp"
+#include <vector>
+// using std::vector
 
-#include "Support/Utils/UnitConverters.hpp"
+#include <functional>
+// using std::cref
 
-#include <cassert>
-// using assert
-
-namespace llvm {
-class Function;
-} // namespace llvm end
+#include <memory>
+// using std::unique_ptr
+// using std::make_unique
 
 namespace pedigree {
 
 class PDGraphBuilder {
-  const CDGraph &CDG;
-  const DDGraph &DDG;
-  const MDGraph &MDG;
+  std::vector<std::reference_wrapper<const InstructionDependenceGraph>>
+      componentGraphs;
+  std::unique_ptr<PDGraph> Graph;
 
-  void build(const InstructionDependenceGraph *FromGraph,
-             InstructionDependenceGraph *ToGraph) const {
-    assert(FromGraph && "Graph pointer is empty!");
-    assert(ToGraph && "Graph pointer is empty!");
+  void combine(InstructionDependenceGraph &ToGraph,
+               const InstructionDependenceGraph &FromGraph) {
+    assert(Graph && "Graph is null!");
 
-    using GT = llvm::GraphTraits<decltype(FromGraph)>;
+    using GT = llvm::GraphTraits<decltype(&FromGraph)>;
 
-    for (const auto &node : GT::nodes(FromGraph)) {
-      auto src = ToGraph->getOrInsertNode(node->get());
+    for (const auto &node : GT::nodes(&FromGraph)) {
+      auto src = ToGraph.getOrInsertNode(node->get());
 
       for (const auto &child : GT::children(node)) {
-        auto dst = ToGraph->getOrInsertNode(child->get());
+        auto dst = ToGraph.getOrInsertNode(child->get());
         src->addDependentNode(dst, {});
       }
     }
   }
 
 public:
-  PDGraphBuilder(const CDGraph &CDG, const DDGraph &DDG, const MDGraph &MDG)
-      : CDG(CDG), DDG(DDG), MDG(MDG) {}
+  PDGraphBuilder() = default;
 
-  void build(PDGraph &PDG) const {
-    InstructionDependenceGraph instCDG;
-    Convert(CDG, instCDG, BlockToInstructionUnitConverter{});
+  PDGraphBuilder &addGraph(InstructionDependenceGraph &Graph) {
+    componentGraphs.emplace_back(std::cref(Graph));
 
-    build(&instCDG, &PDG);
-    build(&DDG, &PDG);
-    build(&MDG, &PDG);
+    return *this;
+  }
+
+  std::unique_ptr<PDGraph> build() {
+    if (!componentGraphs.empty()) {
+      Graph = std::make_unique<PDGraph>();
+
+      for (const auto &e : componentGraphs)
+        combine(*Graph, e);
+    }
+
+    return std::move(Graph);
   }
 };
 
