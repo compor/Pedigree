@@ -7,15 +7,15 @@
 
 #include "Config.hpp"
 
-#include "DependenceGraphs.hpp"
+#include "Analysis/Graphs/DependenceGraphs.hpp"
 
-#include "PDGraph.hpp"
+#include "Analysis/Graphs/PDGraph.hpp"
 
-#include "DDGraph.hpp"
+#include "Analysis/Graphs/DDGraph.hpp"
 
-#include "CDGraph.hpp"
+#include "Analysis/Graphs/CDGraph.hpp"
 
-#include "MDGraph.hpp"
+#include "Analysis/Graphs/MDGraph.hpp"
 
 #include "Support/GraphConverter.hpp"
 
@@ -23,6 +23,10 @@
 
 #include <cassert>
 // using assert
+
+namespace llvm {
+class Function;
+} // namespace llvm end
 
 namespace pedigree {
 

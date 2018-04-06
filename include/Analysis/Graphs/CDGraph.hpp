@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "DependenceGraphs.hpp"
+#include "Analysis/Graphs/DependenceGraphs.hpp"
 
 namespace pedigree {
 

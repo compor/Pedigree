@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "MDGraph.hpp"
+#include "Analysis/Graphs/MDGraph.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
@@ -27,6 +27,10 @@
 
 #include <vector>
 // using std::vector
+
+namespace llvm {
+class Function;
+} // namespace llvm end
 
 namespace pedigree {
 

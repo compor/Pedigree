@@ -4,7 +4,7 @@
 
 #include "Config.hpp"
 
-#include "Analysis/DependenceGraphs.hpp"
+#include "Analysis/Graphs/DependenceGraphs.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction

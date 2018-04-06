@@ -6,9 +6,9 @@
 
 #include "TestCommon.hpp"
 
-#include "Analysis/CDGraph.hpp"
+#include "Analysis/Graphs/CDGraph.hpp"
 
-#include "Analysis/CDGraphBuilder.hpp"
+#include "Analysis/Creational/CDGraphBuilder.hpp"
 
 #include "Support/GraphConverter.hpp"
 

@@ -10,9 +10,9 @@
 
 #include "Analysis/Passes/MDGraphPass.hpp"
 
-#include "Analysis/MDALocalMDGraphBuilder.hpp"
+#include "Analysis/Creational/MDALocalMDGraphBuilder.hpp"
 
-#include "Analysis/DAMDGraphBuilder.hpp"
+#include "Analysis/Creational/DAMDGraphBuilder.hpp"
 
 #include "llvm/Config/llvm-config.h"
 

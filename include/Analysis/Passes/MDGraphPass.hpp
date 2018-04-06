@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "Analysis/MDGraph.hpp"
+#include "Analysis/Graphs/MDGraph.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::FunctionPass

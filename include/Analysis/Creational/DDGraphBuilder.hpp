@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "DDGraph.hpp"
+#include "Analysis/Graphs/DDGraph.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
@@ -21,6 +21,10 @@
 #include <memory>
 // using std::unique_ptr
 // using std::make_unique
+
+namespace llvm {
+class Function;
+} // namespace llvm end
 
 namespace pedigree {
 

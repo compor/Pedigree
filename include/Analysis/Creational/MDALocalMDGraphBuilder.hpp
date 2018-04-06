@@ -7,9 +7,9 @@
 
 #include "Config.hpp"
 
-#include "MDGraph.hpp"
+#include "Analysis/Graphs/MDGraph.hpp"
 
-#include "AnalysisScope.hpp"
+#include "Analysis/AnalysisScope.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
@@ -37,6 +37,10 @@
 
 #include <cassert>
 // using assert
+
+namespace llvm {
+class Function;
+} // namespace llvm end
 
 namespace pedigree {
 

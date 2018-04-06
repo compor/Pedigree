@@ -6,7 +6,7 @@
 
 #include "Analysis/Passes/DDGraphPass.hpp"
 
-#include "Analysis/DDGraphBuilder.hpp"
+#include "Analysis/Creational/DDGraphBuilder.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
@@ -53,7 +53,7 @@ static llvm::RegisterPass<pedigree::DDGraphPass>
 // RegisterStandardPasses class
 
 static void registerPedigreeDDGraphPass(const llvm::PassManagerBuilder &Builder,
-                                    llvm::legacy::PassManagerBase &PM) {
+                                        llvm::legacy::PassManagerBase &PM) {
   PM.add(new pedigree::DDGraphPass());
 
   return;
@@ -61,13 +61,13 @@ static void registerPedigreeDDGraphPass(const llvm::PassManagerBuilder &Builder,
 
 static llvm::RegisterStandardPasses
     RegisterPedigreeDDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                            registerPedigreeDDGraphPass);
+                                registerPedigreeDDGraphPass);
 
 //
 
 static llvm::cl::OptionCategory
     PedigreeDDGraphPassCategory("Pedigree DDGraph Pass",
-                            "Options for Pedigree DDGraph pass");
+                                "Options for Pedigree DDGraph pass");
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>

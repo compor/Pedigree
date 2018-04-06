@@ -6,7 +6,7 @@
 
 #include "Analysis/Passes/CDGraphPass.hpp"
 
-#include "Analysis/CDGraphBuilder.hpp"
+#include "Analysis/Creational/CDGraphBuilder.hpp"
 
 #include "Support/GraphConverter.hpp"
 
