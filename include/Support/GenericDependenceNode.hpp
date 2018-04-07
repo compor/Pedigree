@@ -50,9 +50,6 @@ private:
   using DependenceRecordType = std::pair<NodeType *, EdgeInfoType>;
   using EdgeStorageType = std::vector<DependenceRecordType>;
 
-  void incrementDependeeCount() { ++DependeeCount; }
-  void decrementDependeeCount() { --DependeeCount; }
-
   EdgeStorageType Edges;
   UnderlyingType Underlying;
   unsigned DependeeCount;
@@ -206,6 +203,9 @@ public:
   }
 
 private:
+  void incrementDependeeCount() { ++DependeeCount; }
+  void decrementDependeeCount() { --DependeeCount; }
+
   const_iterator getEdgeWith(const NodeType *Node) const {
     return std::find_if(Edges.begin(), Edges.end(),
                         [&Node](const auto &e) { return Node == e.first; });
