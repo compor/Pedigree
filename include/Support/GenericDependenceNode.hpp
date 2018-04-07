@@ -105,7 +105,8 @@ public:
     Node->incrementDependeeCount();
   }
 
-  boost::optional<const EdgeInfoType &> getEdgeInfo(NodeType *Node) const {
+  boost::optional<const EdgeInfoType &>
+  getEdgeInfo(const NodeType *Node) const {
     auto found =
         std::find_if(Edges.begin(), Edges.end(),
                      [&Node](const auto &e) { return Node == e.first; });
