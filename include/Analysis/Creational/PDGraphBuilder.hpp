@@ -29,6 +29,7 @@ class PDGraphBuilder {
   std::unique_ptr<PDGraph> Graph;
   bool LazilyConstructible;
 
+  // TODO consider moving this to the graph, maybe as an operator
   void combine(InstructionDependenceGraph &ToGraph,
                const InstructionDependenceGraph &FromGraph) {
     assert(Graph && "Graph is null!");
@@ -40,7 +41,15 @@ class PDGraphBuilder {
 
       for (const auto &child : GT::children(node)) {
         auto dst = ToGraph.getOrInsertNode(child->get());
-        src->addDependentNode(dst, {});
+
+        auto newInfo = node->getEdgeInfo(child);
+
+        if (!src->hasEdgeWith(dst))
+          src->addDependentNode(dst, newInfo.value());
+        else {
+          auto curInfo = src->getEdgeInfo(dst);
+          src->setEdgeInfo(dst, curInfo.value() | newInfo.value());
+        }
       }
     }
   }
