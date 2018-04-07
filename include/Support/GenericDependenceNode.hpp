@@ -100,6 +100,10 @@ public:
 
   UnderlyingType get() const { return Underlying; }
 
+  bool hasEdgeWith(const NodeType *Node) const {
+    return Edges.end() != getEdgeWith(Node);
+  }
+
   void addDependentNode(NodeType *Node, const EdgeInfoType &Info) {
     Edges.emplace_back(Node, Info);
     Node->incrementDependeeCount();
@@ -107,9 +111,7 @@ public:
 
   boost::optional<const EdgeInfoType &>
   getEdgeInfo(const NodeType *Node) const {
-    auto found =
-        std::find_if(Edges.begin(), Edges.end(),
-                     [&Node](const auto &e) { return Node == e.first; });
+    auto found = getEdgeWith(Node);
 
     return found != Edges.end()
                ? boost::optional<const EdgeInfoType &>((*found).second)
@@ -117,9 +119,7 @@ public:
   }
 
   bool setEdgeInfo(const NodeType *Node, const EdgeInfoType &Info) {
-    auto found =
-        std::find_if(Edges.begin(), Edges.end(),
-                     [&Node](const auto &e) { return Node == e.first; });
+    auto found = getEdgeWith(Node);
 
     if (found == Edges.end())
       return false;
@@ -203,6 +203,17 @@ public:
 
   bool operator==(const GenericDependenceNode &Other) const {
     return !compare(Other);
+  }
+
+private:
+  const_iterator getEdgeWith(const NodeType *Node) const {
+    return std::find_if(Edges.begin(), Edges.end(),
+                        [&Node](const auto &e) { return Node == e.first; });
+  }
+
+  iterator getEdgeWith(const NodeType *Node) {
+    return std::find_if(Edges.begin(), Edges.end(),
+                        [&Node](const auto &e) { return Node == e.first; });
   }
 };
 
