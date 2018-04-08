@@ -119,7 +119,7 @@ private:
     if (QueryResult.isDef()) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory())
         // TODO decide how to handle these cases (if any) better
-        assert(true && "A RAW hazard was reported!");
+        assert(false && "A RAW hazard was reported!");
 
       if (Src.mayReadFromMemory() && Dst.mayWriteToMemory())
         info.hazards |= DependenceHazard::Anti;
