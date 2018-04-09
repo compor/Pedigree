@@ -46,18 +46,18 @@ class Function;
 } // namespace llvm end
 
 namespace pedigree {
+enum class AnalysisMode : uint8_t;
+} // namespace pedigree end
+
+ALLOW_FLAGS_FOR_ENUM(pedigree::AnalysisMode);
+
+namespace pedigree {
 
 enum class AnalysisMode : uint8_t {
   Unknown = 0,
   MemDefs = 0b01,
   MemClobbers = 0b10,
 };
-
-} // namespace pedigree end
-
-ALLOW_FLAGS_FOR_ENUM(pedigree::AnalysisMode);
-
-namespace pedigree {
 
 // TODO maybe we should consider providing an option for not including nodes
 // in the graph unless they have an edge

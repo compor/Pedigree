@@ -32,6 +32,17 @@
 
 namespace pedigree {
 
+enum class DependenceHazard : std::size_t;
+
+enum class DependenceOrigin : std::size_t;
+
+} // namespace pedigree end
+
+ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceHazard);
+ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceOrigin);
+
+namespace pedigree {
+
 // also known as load-store classification (see OCMA book)
 enum class DependenceHazard : std::size_t {
   Unknown = 0,
@@ -46,13 +57,6 @@ enum class DependenceOrigin : std::size_t {
   Memory = 0b10,
   Control = 0b11,
 };
-
-} // namespace pedigree end
-
-ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceHazard);
-ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceOrigin);
-
-namespace pedigree {
 
 struct BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
   flags::flags<DependenceOrigin> origins;
