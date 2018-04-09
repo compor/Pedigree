@@ -42,6 +42,7 @@
 
 #include "llvm/Support/CommandLine.h"
 // using llvm::cl::opt
+// using llvm::cl::bits
 // using llvm::cl::desc
 // using llvm::cl::location
 // using llvm::cl::cat
@@ -118,6 +119,15 @@ static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
     llvm::cl::init(pedigree::AnalysisScope::Block),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
+static llvm::cl::bits<pedigree::AnalysisMode> AnalysisBackendModeOption(
+    "pedigree-mdg-backend-mode", llvm::cl::desc("analysis backend mode"),
+    llvm::cl::values(clEnumValN(pedigree::AnalysisMode::MemDefs, "mem defs",
+                                "mem defs"),
+                     clEnumValN(pedigree::AnalysisMode::MemClobbers,
+                                "mem clobbers", "mem clobbers"),
+                     nullptr),
+    llvm::cl::cat(PedigreeMDGraphPassCategory));
+
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-mdg-debug", llvm::cl::desc("debug pedigree mdg pass"),
@@ -174,6 +184,12 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   } else {
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
     MDALocalMDGraphBuilder builder{};
+
+    if (AnalysisBackendModeOption.isSet(AnalysisMode::MemDefs))
+      builder.turnOnMode(AnalysisMode::MemDefs);
+
+    if (AnalysisBackendModeOption.isSet(AnalysisMode::MemClobbers))
+      builder.turnOnMode(AnalysisMode::MemClobbers);
 
     Graph = builder.setScope(AnalysisBackendScopeOption)
                 .setAnalysis(mda)

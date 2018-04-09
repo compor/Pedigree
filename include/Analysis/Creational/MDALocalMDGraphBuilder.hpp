@@ -94,7 +94,7 @@ public:
     return *this;
   }
 
-  MDALocalMDGraphBuilder &setMode(AnalysisMode Mode) {
+  MDALocalMDGraphBuilder &turnOnMode(AnalysisMode Mode) {
     CurMode |= Mode;
 
     return *this;
