@@ -35,7 +35,8 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
     for (const auto &child : GT::children(node)) {
       auto converted = ConvertOp(child->get());
       auto dst = To.getOrInsertNode(converted);
-      src->addDependentNode(dst, {});
+      auto info = node->getEdgeInfo(child);
+      src->addDependentNode(dst, info.value());
     }
   }
 }
