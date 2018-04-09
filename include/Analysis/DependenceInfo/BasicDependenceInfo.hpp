@@ -48,14 +48,14 @@ enum class DependenceHazard : std::size_t {
   Unknown = 0,
   Flow = 0b01,
   Anti = 0b10,
-  Out = 0b11,
+  Out = 0b100,
 };
 
 enum class DependenceOrigin : std::size_t {
   Unknown = 0,
   Data = 0b01,
   Memory = 0b10,
-  Control = 0b11,
+  Control = 0b100,
 };
 
 struct BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
