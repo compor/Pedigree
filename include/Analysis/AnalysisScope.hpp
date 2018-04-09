@@ -11,7 +11,7 @@
 namespace pedigree {
 
 enum class AnalysisScope : uint8_t {
-  // Uknown
+  // Unknown
   Block,
   Function,
   Interprocedural

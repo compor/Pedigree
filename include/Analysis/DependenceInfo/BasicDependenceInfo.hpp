@@ -13,6 +13,7 @@
 // using boost::orable
 
 #include "flags/flags.hpp"
+// using ALLOW_FLAGS_FOR_ENUM
 
 #include <sstream>
 // using std::stringstream

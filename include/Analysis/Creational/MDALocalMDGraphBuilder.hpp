@@ -31,6 +31,9 @@
 #include "boost/optional.hpp"
 // using boost::optional
 
+#include "flags/flags.hpp"
+// using ALLOW_FLAGS_FOR_ENUM
+
 #include <memory>
 // using std::unique_ptr
 // using std::make_unique
@@ -44,6 +47,18 @@ class Function;
 
 namespace pedigree {
 
+enum class AnalysisMode : uint8_t {
+  Unknown = 0,
+  MemDefs = 0b01,
+  MemClobbers = 0b10,
+};
+
+} // namespace pedigree end
+
+ALLOW_FLAGS_FOR_ENUM(pedigree::AnalysisMode);
+
+namespace pedigree {
+
 // TODO maybe we should consider providing an option for not including nodes
 // in the graph unless they have an edge
 
@@ -54,9 +69,11 @@ private:
   boost::optional<const llvm::Function &> CurUnit;
   boost::optional<llvm::MemoryDependenceAnalysis &> CurAnalysis;
   AnalysisScope CurScope;
+  flags::flags<AnalysisMode> CurMode;
 
 public:
-  MDALocalMDGraphBuilder() : CurScope(AnalysisScope::Block) {}
+  MDALocalMDGraphBuilder()
+      : CurScope(AnalysisScope::Block), CurMode(AnalysisMode::MemDefs) {}
 
   MDALocalMDGraphBuilder &
   setAnalysis(llvm::MemoryDependenceAnalysis &Analysis) {
@@ -73,6 +90,12 @@ public:
 
   MDALocalMDGraphBuilder &setScope(AnalysisScope Scope) {
     CurScope = Scope;
+
+    return *this;
+  }
+
+  MDALocalMDGraphBuilder &setMode(AnalysisMode Mode) {
+    CurMode |= Mode;
 
     return *this;
   }
@@ -113,10 +136,10 @@ private:
                              DependenceHazard::Unknown};
 
     // TODO decide what to do when the query is unknown
-    if (QueryResult.isUnknown())
+    if (QueryResult.isUnknown() || CurMode.empty())
       return info;
 
-    if (QueryResult.isDef()) {
+    if (QueryResult.isDef() && (CurMode & AnalysisMode::MemDefs)) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory())
         // TODO decide how to handle these cases (if any) better
         assert(false && "A RAW hazard was reported!");
@@ -129,7 +152,8 @@ private:
 
       if (Src.mayWriteToMemory() && Dst.mayWriteToMemory())
         info.hazards |= DependenceHazard::Out;
-    } else if (QueryResult.isClobber()) {
+    } else if (QueryResult.isClobber() &&
+               (CurMode & AnalysisMode::MemClobbers)) {
       if (Dst.mayReadFromMemory())
         info.hazards |= DependenceHazard::Flow;
 
