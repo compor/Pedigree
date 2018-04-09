@@ -77,15 +77,12 @@ public:
   }
 
   std::unique_ptr<PDGraph> build() {
-    if (LazilyConstructible && !componentGraphs.empty()) {
-      Graph = std::make_unique<PDGraph>();
-
-      for (const auto &e : componentGraphs)
-        combine(*Graph, e);
-    }
-
     if (!Graph)
       Graph = std::make_unique<PDGraph>();
+
+    if (LazilyConstructible && !componentGraphs.empty())
+      for (const auto &e : componentGraphs)
+        combine(*Graph, e);
 
     return std::move(Graph);
   }
