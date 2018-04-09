@@ -18,6 +18,12 @@
 #include <sstream>
 // using std::stringstream
 
+#include <string>
+// using std::string
+
+#include <iomanip>
+// using std::setprecision
+
 #include <vector>
 // using std::vector
 
@@ -93,25 +99,31 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
 
   static std::string toDOTColor(const BasicDependenceInfo &I) {
     std::stringstream colorAttribute{};
-    std::vector<std::string> colors{3};
+    std::stringstream sep{};
+    std::vector<std::string> colors{};
 
     colorAttribute << "color=\"";
 
     if (I.origins.empty()) {
-      colors.emplace_back("gray");
+      colors.emplace_back("grey");
     } else {
+      auto n = std::distance(I.origins.cbegin(), I.origins.cend());
+      auto ratio = 1.0 / n;
+      sep << std::setprecision(2) << ";" << ratio << ":";
+
       if (I.origins & DependenceOrigin::Control)
-        colors.emplace_back("red;0.33");
+        colors.emplace_back("red");
 
       if (I.origins & DependenceOrigin::Memory)
-        colors.emplace_back("purple;0.33");
+        colors.emplace_back("purple");
 
       if (I.origins & DependenceOrigin::Data)
-        colors.emplace_back("blue;0.33");
+        colors.emplace_back("blue");
     }
 
-    std::copy(colors.begin(), colors.end(),
-              std::ostream_iterator<std::string>(colorAttribute, ":"));
+    std::copy(
+        colors.begin(), colors.end(),
+        std::ostream_iterator<std::string>(colorAttribute, sep.str().c_str()));
 
     colorAttribute << "\"";
 
