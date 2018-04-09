@@ -84,6 +84,9 @@ public:
         combine(*Graph, e);
     }
 
+    if (!Graph)
+      Graph = std::make_unique<PDGraph>();
+
     return std::move(Graph);
   }
 };
