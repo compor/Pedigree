@@ -149,10 +149,10 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
     graphs.emplace_back(instCDG);
   }
 
-  if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG))
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::DDG))
     graphs.emplace_back(getAnalysis<DDGraphPass>().getGraph());
 
-  if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG))
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG))
     graphs.emplace_back(getAnalysis<MDGraphPass>().getGraph());
 
   PDGraphBuilder builder{};
