@@ -29,18 +29,11 @@
 // using llvm::cl::desc
 // using llvm::cl::Hidden
 
-#include "llvm/Support/raw_ostream.h"
-// using llvm::raw_string_ostream
-
 #include <algorithm>
 // std::find
 
 #include <string>
 // using std::string
-
-static llvm::cl::opt<bool>
-    CDGraphDOTSimple("pedigree-cdg-dot-simple", llvm::cl::Hidden,
-                     llvm::cl::desc("generate simple CDGraph DOT graph"));
 
 static llvm::cl::list<std::string> CDGraphDOTFunctionWhitelist(
     "pedigree-cdg-dot-func-wl", llvm::cl::Hidden,
@@ -74,12 +67,45 @@ struct CDGraphPrinterPass
   }
 };
 
+struct CDGraphSimplePrinterPass
+    : public llvm::DOTGraphTraitsPrinter<
+          CDGraphPass, true, CDGraph *,
+          LLVMAnalysisDependenceGraphPassTraitsHelperBase<CDGraphPass,
+                                                          CDGraph>> {
+  using Base = llvm::DOTGraphTraitsPrinter<
+      CDGraphPass, true, CDGraph *,
+      LLVMAnalysisDependenceGraphPassTraitsHelperBase<CDGraphPass, CDGraph>>;
+
+  static char ID;
+
+  CDGraphSimplePrinterPass() : Base("cdg", ID) {}
+
+  bool runOnFunction(llvm::Function &CurFunction) override {
+    auto found = std::find(std::begin(CDGraphDOTFunctionWhitelist),
+                           std::end(CDGraphDOTFunctionWhitelist),
+                           CurFunction.getName().str());
+
+    if (CDGraphDOTFunctionWhitelist.empty() ||
+        std::end(CDGraphDOTFunctionWhitelist) != found)
+      return Base::runOnFunction(CurFunction);
+    else
+      return false;
+  }
+};
+
 } // namespace pedigree end
 
 char pedigree::CDGraphPrinterPass::ID = 0;
 static llvm::RegisterPass<pedigree::CDGraphPrinterPass>
     X("pedigree-cdg-dot", PRJ_CMDLINE_DESC("pedigree cdg DOT pass"), false,
       false);
+
+//
+
+char pedigree::CDGraphSimplePrinterPass::ID = 0;
+static llvm::RegisterPass<pedigree::CDGraphSimplePrinterPass>
+    Y("pedigree-cdg-simple-dot",
+      PRJ_CMDLINE_DESC("pedigree simple cdg DOT pass"), false, false);
 
 // plugin registration for clang
 
@@ -100,3 +126,17 @@ registerPedigreeCDGraphPrinterPass(const llvm::PassManagerBuilder &Builder,
 static llvm::RegisterStandardPasses RegisterPedigreeCDGraphPrinterPass(
     llvm::PassManagerBuilder::EP_EarlyAsPossible,
     registerPedigreeCDGraphPrinterPass);
+
+//
+
+static void registerPedigreeCDGraphSimplePrinterPass(
+    const llvm::PassManagerBuilder &Builder,
+    llvm::legacy::PassManagerBase &PM) {
+  PM.add(new pedigree::CDGraphSimplePrinterPass());
+
+  return;
+}
+
+static llvm::RegisterStandardPasses RegisterPedigreeCDGraphSimplePrinterPass(
+    llvm::PassManagerBuilder::EP_EarlyAsPossible,
+    registerPedigreeCDGraphSimplePrinterPass);
