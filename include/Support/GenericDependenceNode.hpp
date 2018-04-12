@@ -32,6 +32,7 @@
 // using std::make_unique
 
 #include <utility>
+// using std::move
 // using std::pair
 
 #include <functional>
@@ -109,8 +110,8 @@ public:
     return Edges.end() != getEdgeWith(Node);
   }
 
-  void addDependentNode(NodeType *Node, const EdgeInfoType &Info) {
-    Edges.emplace_back(Node, Info);
+  void addDependentNode(NodeType *Node, EdgeInfoType Info) {
+    Edges.emplace_back(Node, std::move(Info));
     Node->incrementDependeeCount();
   }
 
@@ -123,14 +124,14 @@ public:
                : boost::none;
   }
 
-  bool setEdgeInfo(const NodeType *Node, const EdgeInfoType &Info) {
+  bool setEdgeInfo(const NodeType *Node, EdgeInfoType Info) {
     auto found = getEdgeWith(Node);
 
     if (found == Edges.end()) {
       return false;
     }
 
-    (*found).second = Info;
+    (*found).second = std::move(Info);
 
     return true;
   }
