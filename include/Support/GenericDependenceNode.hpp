@@ -143,21 +143,36 @@ public:
     return numEdges();
   }
 
-  decltype(auto) begin() { return Edges.begin(); }
-  decltype(auto) begin() const { return Edges.begin(); }
-  decltype(auto) end() { return Edges.end(); }
-  decltype(auto) end() const { return Edges.end(); }
+  decltype(auto) begin() noexcept(noexcept(Edges.begin())) {
+    return Edges.begin();
+  }
 
-  decltype(auto) edges_begin() { return begin(); }
-  decltype(auto) edges_begin() const { return begin(); }
-  decltype(auto) edges_end() { return end(); }
-  decltype(auto) edges_end() const { return end(); }
+  decltype(auto) begin() const noexcept(noexcept(Edges.begin())) {
+    return Edges.begin();
+  }
 
-  decltype(auto) edges() {
+  decltype(auto) end() noexcept(noexcept(Edges.end())) { return Edges.end(); }
+
+  decltype(auto) end() const noexcept(noexcept(Edges.end())) {
+    return Edges.end();
+  }
+
+  decltype(auto) edges_begin() noexcept(noexcept(begin())) { return begin(); }
+
+  decltype(auto) edges_begin() const noexcept(noexcept(begin())) {
+    return begin();
+  }
+
+  decltype(auto) edges_end() noexcept(noexcept(end())) { return end(); }
+  decltype(auto) edges_end() const noexcept(noexcept(end())) { return end(); }
+
+  decltype(auto)
+  edges() noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
     return llvm::make_range(edges_begin(), edges_end());
   }
 
-  decltype(auto) edges() const {
+  decltype(auto) edges() const
+      noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
     return llvm::make_range(edges_begin(), edges_end());
   }
 
@@ -171,27 +186,33 @@ public:
     return P.first;
   }
 
-  decltype(auto) nodes_begin() {
+  decltype(auto)
+  nodes_begin() noexcept(noexcept(nodes_iterator(Edges.begin(), {}))) {
     return nodes_iterator(Edges.begin(), nodes_iterator_map);
   }
 
-  decltype(auto) nodes_begin() const {
+  decltype(auto) nodes_begin() const
+      noexcept(noexcept(const_nodes_iterator(Edges.begin(), {}))) {
     return const_nodes_iterator(Edges.begin(), nodes_const_iterator_map);
   }
 
-  decltype(auto) nodes_end() {
+  decltype(auto)
+  nodes_end() noexcept(noexcept(nodes_iterator(Edges.end(), {}))) {
     return nodes_iterator(Edges.end(), nodes_iterator_map);
   }
 
-  decltype(auto) nodes_end() const {
+  decltype(auto) nodes_end() const
+      noexcept(noexcept(const_nodes_iterator(Edges.end(), {}))) {
     return const_nodes_iterator(Edges.end(), nodes_const_iterator_map);
   }
 
-  decltype(auto) nodes() {
+  decltype(auto)
+  nodes() noexcept(noexcept(llvm::make_range(nodes_begin(), nodes_end()))) {
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  decltype(auto) nodes() const {
+  decltype(auto) nodes() const
+      noexcept(noexcept(llvm::make_range(nodes_begin(), nodes_end()))) {
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
