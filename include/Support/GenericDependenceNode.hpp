@@ -89,7 +89,9 @@ public:
     Other.DependeeCount = {};
   }
 
-  GenericDependenceNode &operator=(GenericDependenceNode &&Other) {
+  GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
+      are_all_nothrow_move_assignable<decltype(Edges), decltype(Underlying),
+                                      decltype(DependeeCount)>::value) {
     Edges = std::move(Other.Edges);
     Underlying = std::move(Other.Underlying);
     DependeeCount = std::move(Other.DependeeCount);
@@ -133,8 +135,13 @@ public:
     return true;
   }
 
-  EdgesSizeType numEdges() const { return Edges.size(); }
-  decltype(auto) size() const { return numEdges(); }
+  EdgesSizeType numEdges() const noexcept(noexcept(Edges.size())) {
+    return Edges.size();
+  }
+
+  decltype(auto) size() const noexcept(noexcept(numEdges())) {
+    return numEdges();
+  }
 
   decltype(auto) begin() { return Edges.begin(); }
   decltype(auto) begin() const { return Edges.begin(); }
@@ -188,7 +195,7 @@ public:
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  unsigned getDependeeCount() const { return DependeeCount; }
+  unsigned getDependeeCount() const noexcept { return DependeeCount; }
 
   bool compare(const GenericDependenceNode &Other) const {
     if (this->numEdges() != Other.numEdges()) {
@@ -212,8 +219,8 @@ public:
   }
 
 private:
-  void incrementDependeeCount() { ++DependeeCount; }
-  void decrementDependeeCount() { --DependeeCount; }
+  void incrementDependeeCount() noexcept { ++DependeeCount; }
+  void decrementDependeeCount() noexcept { --DependeeCount; }
 
   const_iterator getEdgeWith(const NodeType *Node) const {
     return std::find_if(Edges.begin(), Edges.end(),
