@@ -69,6 +69,8 @@ struct CDGraphPrinterPass
   }
 };
 
+//
+
 struct CDGraphSimplePrinterPass
     : public llvm::DOTGraphTraitsPrinter<
           CDGraphPass, true, CDGraph *,
