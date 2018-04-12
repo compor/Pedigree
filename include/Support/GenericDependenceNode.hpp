@@ -7,6 +7,8 @@
 
 #include "Analysis/DependenceInfo/NoDependenceInfo.hpp"
 
+#include "Support/Utils/TypeTraits.hpp"
+
 #include "llvm/ADT/SmallPtrSet.h"
 // using llvm::SmallPtrSet
 
@@ -34,8 +36,6 @@
 
 #include <functional>
 // using std::function
-
-#include <type_traits>
 
 namespace pedigree {
 
@@ -80,9 +80,8 @@ public:
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
-      std::is_nothrow_move_constructible<EdgeStorageType>::value
-          &&std::is_nothrow_move_constructible<UnderlyingType>::value &&std::
-              is_nothrow_move_constructible<decltype(DependeeCount)>::value)
+      are_all_nothrow_move_constructible<decltype(Edges), decltype(Underlying),
+                                         decltype(DependeeCount)>::value)
       : Edges(std::move(Other.Edges)), Underlying(std::move(Other.Underlying)),
         DependeeCount(std::move(Other.DependeeCount)) {
     Other.Edges.clear();
@@ -98,10 +97,11 @@ public:
     Other.Edges.clear();
     Other.Underlying = {};
     Other.DependeeCount = {};
+
     return *this;
   };
 
-  UnderlyingType get() const { return Underlying; }
+  UnderlyingType get() const noexcept { return Underlying; }
 
   bool hasEdgeWith(const NodeType *Node) const {
     return Edges.end() != getEdgeWith(Node);
