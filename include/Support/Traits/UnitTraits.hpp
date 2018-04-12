@@ -32,7 +32,15 @@ template <> struct unit_traits<llvm::Instruction> {
   using unit_category = instruction_unit_tag;
 };
 
+template <> struct unit_traits<const llvm::Instruction> {
+  using unit_category = instruction_unit_tag;
+};
+
 template <> struct unit_traits<llvm::Instruction *> {
+  using unit_category = instruction_unit_tag;
+};
+
+template <> struct unit_traits<const llvm::Instruction *> {
   using unit_category = instruction_unit_tag;
 };
 
@@ -40,7 +48,15 @@ template <> struct unit_traits<llvm::BasicBlock> {
   using unit_category = basicblock_unit_tag;
 };
 
+template <> struct unit_traits<const llvm::BasicBlock> {
+  using unit_category = basicblock_unit_tag;
+};
+
 template <> struct unit_traits<llvm::BasicBlock *> {
+  using unit_category = basicblock_unit_tag;
+};
+
+template <> struct unit_traits<const llvm::BasicBlock *> {
   using unit_category = basicblock_unit_tag;
 };
 
@@ -48,7 +64,15 @@ template <> struct unit_traits<llvm::Function> {
   using unit_category = function_unit_tag;
 };
 
+template <> struct unit_traits<const llvm::Function> {
+  using unit_category = function_unit_tag;
+};
+
 template <> struct unit_traits<llvm::Function *> {
+  using unit_category = function_unit_tag;
+};
+
+template <> struct unit_traits<const llvm::Function *> {
   using unit_category = function_unit_tag;
 };
 
