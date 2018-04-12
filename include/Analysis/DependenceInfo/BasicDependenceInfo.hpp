@@ -69,18 +69,20 @@ struct BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
   flags::flags<DependenceHazard> hazards;
 
   constexpr BasicDependenceInfo(DependenceOrigin origin,
-                                DependenceHazard hazard)
-      : origins(origin), hazards(hazard) {}
+                                DependenceHazard hazard) noexcept
+      : origins(origin),
+        hazards(hazard) {}
 
-  constexpr BasicDependenceInfo()
+  constexpr BasicDependenceInfo() noexcept
       : BasicDependenceInfo(DependenceOrigin::Unknown,
                             DependenceHazard::Unknown) {}
 
   constexpr BasicDependenceInfo(const BasicDependenceInfo &) = default;
 
-  BasicDependenceInfo &operator|=(const BasicDependenceInfo &Other) {
+  BasicDependenceInfo &operator|=(const BasicDependenceInfo &Other) noexcept {
     this->hazards = this->hazards | Other.hazards;
     this->origins = this->origins | Other.origins;
+
     return *this;
   }
 };

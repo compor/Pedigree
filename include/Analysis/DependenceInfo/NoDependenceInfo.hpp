@@ -18,7 +18,9 @@
 namespace pedigree {
 
 struct NoDependenceInfo : private boost::orable<NoDependenceInfo> {
-  NoDependenceInfo &operator|=(const NoDependenceInfo &) { return *this; }
+  NoDependenceInfo &operator|=(const NoDependenceInfo &) noexcept {
+    return *this;
+  }
 };
 
 // traits
