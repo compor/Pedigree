@@ -55,7 +55,7 @@ private:
 
   EdgeStorageType Edges;
   UnderlyingType Underlying;
-  unsigned DependeeCount;
+  mutable unsigned DependeeCount;
 
 public:
   using value_type = typename EdgeStorageType::value_type;
@@ -110,8 +110,8 @@ public:
     return Edges.end() != getEdgeWith(Node);
   }
 
-  void addDependentNode(NodeType *Node, EdgeInfoType Info) {
-    Edges.emplace_back(Node, std::move(Info));
+  void addDependentNode(const NodeType *Node, EdgeInfoType Info) {
+    Edges.emplace_back(const_cast<NodeType *>(Node), std::move(Info));
     Node->incrementDependeeCount();
   }
 
@@ -241,8 +241,8 @@ public:
   }
 
 private:
-  void incrementDependeeCount() noexcept { ++DependeeCount; }
-  void decrementDependeeCount() noexcept { --DependeeCount; }
+  void incrementDependeeCount() const noexcept { ++DependeeCount; }
+  void decrementDependeeCount() const noexcept { --DependeeCount; }
 
   const_iterator getEdgeWith(const NodeType *Node) const {
     return std::find_if(Edges.begin(), Edges.end(),
