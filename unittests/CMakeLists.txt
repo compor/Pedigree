@@ -36,8 +36,13 @@ set(TEST_SOURCES
 
 add_executable(${PRJ_TEST_NAME} ${TEST_SOURCES})
 
+if(NOT LLVM_ENABLE_EH)
+  target_compile_definitions(${PRJ_TEST_NAME} PUBLIC BOOST_NO_EXCEPTIONS)
+endif()
+
 target_include_directories(${PRJ_TEST_NAME} PUBLIC include)
 target_include_directories(${PRJ_TEST_NAME} PUBLIC ${GTEST_INCLUDE_DIRS})
+target_include_directories(${PRJ_TEST_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${GTEST_BOTH_LIBRARIES})
 target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 
