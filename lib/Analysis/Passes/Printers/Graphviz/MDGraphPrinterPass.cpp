@@ -38,10 +38,6 @@
 #include <string>
 // using std::string
 
-static llvm::cl::opt<bool>
-    MDGraphDOTSimple("pedigree-mdg-dot-simple", llvm::cl::Hidden,
-                     llvm::cl::desc("generate simple MDGraph DOT graph"));
-
 static llvm::cl::list<std::string> MDGraphDOTFunctionWhitelist(
     "pedigree-mdg-dot-func-wl", llvm::cl::Hidden,
     llvm::cl::desc("generate MDGraph DOT graph only for these functions"));
@@ -76,12 +72,49 @@ struct MDGraphPrinterPass
   }
 };
 
+//
+
+struct MDGraphSimplePrinterPass
+    : public llvm::DOTGraphTraitsPrinter<
+          MDGraphPass, true, MDGraph *,
+          LLVMAnalysisDependenceGraphPassTraitsHelperBase<MDGraphPass,
+                                                          MDGraph>> {
+  using Base = llvm::DOTGraphTraitsPrinter<
+      MDGraphPass, true, MDGraph *,
+      LLVMAnalysisDependenceGraphPassTraitsHelperBase<MDGraphPass, MDGraph>>;
+
+  static char ID;
+
+  MDGraphSimplePrinterPass() : Base("mdg", ID) {}
+
+  bool runOnFunction(llvm::Function &CurFunction) override {
+    auto found = std::find(std::begin(MDGraphDOTFunctionWhitelist),
+                           std::end(MDGraphDOTFunctionWhitelist),
+                           CurFunction.getName().str());
+    auto hasChanged = false;
+
+    if (MDGraphDOTFunctionWhitelist.empty() ||
+        std::end(MDGraphDOTFunctionWhitelist) != found) {
+      hasChanged = Base::runOnFunction(CurFunction);
+    }
+
+    return hasChanged;
+  }
+};
+
 } // namespace pedigree
 
 char pedigree::MDGraphPrinterPass::ID = 0;
 static llvm::RegisterPass<pedigree::MDGraphPrinterPass>
     X("pedigree-mdg-dot", PRJ_CMDLINE_DESC("pedigree mdg DOT pass"), false,
       false);
+
+//
+
+char pedigree::MDGraphSimplePrinterPass::ID = 0;
+static llvm::RegisterPass<pedigree::MDGraphSimplePrinterPass>
+    Y("pedigree-mdg-simple-dot",
+      PRJ_CMDLINE_DESC("pedigree simple mdg DOT pass"), false, false);
 
 // plugin registration for clang
 
@@ -102,3 +135,17 @@ registerPedigreeMDGraphPrinterPass(const llvm::PassManagerBuilder &Builder,
 static llvm::RegisterStandardPasses RegisterPedigreeMDGraphPrinterPass(
     llvm::PassManagerBuilder::EP_EarlyAsPossible,
     registerPedigreeMDGraphPrinterPass);
+
+//
+
+static void registerPedigreeMDGraphSimplePrinterPass(
+    const llvm::PassManagerBuilder &Builder,
+    llvm::legacy::PassManagerBase &PM) {
+  PM.add(new pedigree::MDGraphSimplePrinterPass());
+
+  return;
+}
+
+static llvm::RegisterStandardPasses RegisterPedigreeMDGraphSimplePrinterPass(
+    llvm::PassManagerBuilder::EP_EarlyAsPossible,
+    registerPedigreeMDGraphSimplePrinterPass);
