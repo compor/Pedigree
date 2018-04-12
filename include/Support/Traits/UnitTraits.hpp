@@ -7,6 +7,9 @@
 
 #include "Config.hpp"
 
+#include <type_traits>
+// using std::integral_constant
+
 namespace llvm {
 class Instruction;
 class BasicBlock;
@@ -52,14 +55,11 @@ template <> struct unit_traits<llvm::Function *> {
 //
 
 template <typename FromCategoryT, typename ToCategoryT>
-struct is_unit_convertible {
-  static constexpr bool value = false;
-};
+struct is_unit_convertible : std::integral_constant<bool, false> {};
 
 template <>
-struct is_unit_convertible<basicblock_unit_tag, instruction_unit_tag> {
-  static constexpr bool value = true;
-};
+struct is_unit_convertible<basicblock_unit_tag, instruction_unit_tag>
+    : std::integral_constant<bool, true> {};
 
 } // namespace pedigree
 
