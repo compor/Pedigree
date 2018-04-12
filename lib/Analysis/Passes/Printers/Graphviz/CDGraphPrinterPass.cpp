@@ -58,12 +58,14 @@ struct CDGraphPrinterPass
     auto found = std::find(std::begin(CDGraphDOTFunctionWhitelist),
                            std::end(CDGraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
+    auto hasChanged = false;
 
     if (CDGraphDOTFunctionWhitelist.empty() ||
-        std::end(CDGraphDOTFunctionWhitelist) != found)
-      return Base::runOnFunction(CurFunction);
-    else
-      return false;
+        std::end(CDGraphDOTFunctionWhitelist) != found) {
+      hasChanged = Base::runOnFunction(CurFunction);
+    }
+
+    return hasChanged;
   }
 };
 
@@ -84,16 +86,18 @@ struct CDGraphSimplePrinterPass
     auto found = std::find(std::begin(CDGraphDOTFunctionWhitelist),
                            std::end(CDGraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
+    auto hasChanged = false;
 
     if (CDGraphDOTFunctionWhitelist.empty() ||
-        std::end(CDGraphDOTFunctionWhitelist) != found)
-      return Base::runOnFunction(CurFunction);
-    else
-      return false;
+        std::end(CDGraphDOTFunctionWhitelist) != found) {
+      hasChanged = Base::runOnFunction(CurFunction);
+    }
+
+    return hasChanged;
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 char pedigree::CDGraphPrinterPass::ID = 0;
 static llvm::RegisterPass<pedigree::CDGraphPrinterPass>

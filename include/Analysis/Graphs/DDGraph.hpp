@@ -14,6 +14,6 @@ namespace pedigree {
 using DataDependenceNode = InstructionDependenceNode;
 using DDGraph = InstructionDependenceGraph;
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

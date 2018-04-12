@@ -66,8 +66,9 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
                                        const GraphType *Graph) {
     std::string attr;
 
-    if (Graph->getEntryNode() == Node)
+    if (Graph->getEntryNode() == Node) {
       attr = "color=grey,style=filled";
+    }
 
     return attr;
   }
@@ -89,13 +90,14 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
     auto info = Node->getEdgeInfo(*EI);
     std::string infoStr{};
 
-    if (info)
+    if (info) {
       infoStr = DIT::toDOTAttributes(info.value());
+    }
 
     return infoStr + Base::getEdgeAttributes(Node, EI, Graph);
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

@@ -39,8 +39,9 @@ public:
       : CurNI(Begin), EndNI(End) {
     initNodeEdgeIterator();
 
-    if (isNodeEdgesIterationComplete())
+    if (isNodeEdgesIterationComplete()) {
       advanceToNextValid();
+    }
   }
 
   template <typename U, typename K>
@@ -56,8 +57,9 @@ private:
   void initNodeEdgeIterator() {
     CurNEI = EndNEI = {};
 
-    if (isNodesIterationComplete())
+    if (isNodesIterationComplete()) {
       return;
+    }
 
     CurNEI = (*CurNI)->edges_begin();
     EndNEI = (*CurNI)->edges_end();
@@ -67,16 +69,18 @@ private:
     const auto step = 1;
 
     while (!isNodesIterationComplete()) {
-      if (!isNodeEdgesIterationComplete())
+      if (!isNodeEdgesIterationComplete()) {
         std::advance(CurNEI, step);
+      }
 
       while (isNodeEdgesIterationComplete() && !isNodesIterationComplete()) {
         std::advance(CurNI, step);
         initNodeEdgeIterator();
       }
 
-      if (!isNodeEdgesIterationComplete())
+      if (!isNodeEdgesIterationComplete()) {
         break;
+      }
     }
   }
 
@@ -98,7 +102,7 @@ private:
   NodeEdgeIteratorT EndNEI;
 };
 
-} // namespace detail end
-} // namespace pedigree end
+} // namespace detail
+} // namespace pedigree
 
 #endif // header

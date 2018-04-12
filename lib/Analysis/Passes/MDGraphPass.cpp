@@ -62,7 +62,7 @@
 
 namespace llvm {
 class Function;
-} // namespace llvm end
+} // namespace llvm
 
 // plugin registration for opt
 
@@ -185,11 +185,13 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
     MDALocalMDGraphBuilder builder{};
 
-    if (AnalysisBackendModeOption.isSet(AnalysisMode::MemDefs))
+    if (AnalysisBackendModeOption.isSet(AnalysisMode::MemDefs)) {
       builder.turnOnMode(AnalysisMode::MemDefs);
+    }
 
-    if (AnalysisBackendModeOption.isSet(AnalysisMode::MemClobbers))
+    if (AnalysisBackendModeOption.isSet(AnalysisMode::MemClobbers)) {
       builder.turnOnMode(AnalysisMode::MemClobbers);
+    }
 
     Graph = builder.setScope(AnalysisBackendScopeOption)
                 .setAnalysis(mda)
@@ -200,4 +202,4 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   return false;
 }
 
-} // namespace pedigree end
+} // namespace pedigree

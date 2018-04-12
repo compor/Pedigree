@@ -42,7 +42,7 @@ enum class DependenceHazard : std::size_t;
 
 enum class DependenceOrigin : std::size_t;
 
-} // namespace pedigree end
+} // namespace pedigree
 
 ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceHazard);
 ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceOrigin);
@@ -91,8 +91,9 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
   static std::string toDOTAttributes(const BasicDependenceInfo &I) {
     auto attr = toDOTColor(I);
 
-    if (I.origins & DependenceOrigin::Memory)
+    if (I.origins & DependenceOrigin::Memory) {
       attr += " " + toDOTLabel(I);
+    }
 
     return attr;
   }
@@ -111,14 +112,17 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
       auto ratio = 1.0 / n;
       sep << std::setprecision(2) << ";" << ratio << ":";
 
-      if (I.origins & DependenceOrigin::Control)
+      if (I.origins & DependenceOrigin::Control) {
         colors.emplace_back("red");
+      }
 
-      if (I.origins & DependenceOrigin::Memory)
+      if (I.origins & DependenceOrigin::Memory) {
         colors.emplace_back("purple");
+      }
 
-      if (I.origins & DependenceOrigin::Data)
+      if (I.origins & DependenceOrigin::Data) {
         colors.emplace_back("blue");
+      }
     }
 
     std::copy(
@@ -136,14 +140,17 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
     if (I.hazards.empty()) {
       label = "label=\"U\"";
     } else {
-      if (I.hazards & DependenceHazard::Flow)
+      if (I.hazards & DependenceHazard::Flow) {
         label += "F";
+      }
 
-      if (I.hazards & DependenceHazard::Anti)
+      if (I.hazards & DependenceHazard::Anti) {
         label += "A";
+      }
 
-      if (I.hazards & DependenceHazard::Out)
+      if (I.hazards & DependenceHazard::Out) {
         label += "O";
+      }
 
       label += "\"";
     }
@@ -152,6 +159,6 @@ template <> struct DependenceInfoTraits<BasicDependenceInfo> {
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

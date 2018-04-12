@@ -26,6 +26,6 @@ struct BlockToInstructionUnitConverter {
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

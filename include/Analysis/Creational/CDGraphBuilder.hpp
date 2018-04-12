@@ -26,7 +26,7 @@
 
 namespace llvm {
 class Function;
-} // namespace llvm end
+} // namespace llvm
 
 namespace pedigree {
 
@@ -46,8 +46,9 @@ public:
   }
 
   std::unique_ptr<CDGraph> build() {
-    if (!CurUnit)
+    if (!CurUnit) {
       return {};
+    }
 
     llvm::PostDominatorTree curPDT;
     curPDT.DT->recalculate(const_cast<llvm::Function &>(*CurUnit));
@@ -71,6 +72,6 @@ public:
 
 constexpr BasicDependenceInfo CDGraphBuilder::info;
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

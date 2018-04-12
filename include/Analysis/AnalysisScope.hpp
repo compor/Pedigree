@@ -17,6 +17,6 @@ enum class AnalysisScope : uint8_t {
   Interprocedural
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

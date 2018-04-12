@@ -44,9 +44,9 @@ class PDGraphBuilder {
 
         auto newInfo = node->getEdgeInfo(child);
 
-        if (!src->hasEdgeWith(dst))
+        if (!src->hasEdgeWith(dst)) {
           src->addDependentNode(dst, newInfo.value());
-        else {
+        } else {
           auto curInfo = src->getEdgeInfo(dst);
           src->setEdgeInfo(dst, curInfo.value() | newInfo.value());
         }
@@ -58,11 +58,12 @@ public:
   PDGraphBuilder() : LazilyConstructible(false) {}
 
   PDGraphBuilder &addGraph(const InstructionDependenceGraph &FromGraph) {
-    if (LazilyConstructible)
+    if (LazilyConstructible) {
       componentGraphs.emplace_back(std::cref(FromGraph));
-    else {
-      if (!Graph)
+    } else {
+      if (!Graph) {
         Graph = std::make_unique<PDGraph>();
+      }
 
       combine(*Graph, FromGraph);
     }
@@ -77,17 +78,20 @@ public:
   }
 
   std::unique_ptr<PDGraph> build() {
-    if (!Graph)
+    if (!Graph) {
       Graph = std::make_unique<PDGraph>();
+    }
 
-    if (LazilyConstructible && !componentGraphs.empty())
-      for (const auto &e : componentGraphs)
+    if (LazilyConstructible && !componentGraphs.empty()) {
+      for (const auto &e : componentGraphs) {
         combine(*Graph, e);
+      }
+    }
 
     return std::move(Graph);
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

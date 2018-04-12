@@ -30,7 +30,7 @@
 
 namespace llvm {
 class Function;
-} // namespace llvm end
+} // namespace llvm
 
 namespace pedigree {
 
@@ -75,11 +75,12 @@ public:
            ii != ie; ++ii) {
         auto src = Graph->getOrInsertNode(*ii);
 
-        for (auto jj = ii; jj != ie; ++jj)
+        for (auto jj = ii; jj != ie; ++jj) {
           if (auto D = CurAnalysis->depends(*ii, *jj, true)) {
             auto dst = Graph->getOrInsertNode(*jj);
             src->addDependentNode(dst, info);
           }
+        }
       }
     }
 
@@ -87,11 +88,12 @@ public:
   }
 
   void visitInstruction(llvm::Instruction &CurInstruction) {
-    if (CurInstruction.mayReadOrWriteMemory())
+    if (CurInstruction.mayReadOrWriteMemory()) {
       visitMemRefInstruction(CurInstruction);
+    }
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

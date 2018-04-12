@@ -39,8 +39,8 @@ namespace utility {
 static bool passDebugFlag = false;
 static LogLevel passLogLevel = LogLevel::info;
 
-} // namespace utility end
-} // namespace pedigree end
+} // namespace utility
+} // namespace pedigree
 
 #define DEBUG_MSG(L, STR)                                                      \
   do {                                                                         \
@@ -75,8 +75,8 @@ static bool dumpFunction(const llvm::Function *CurFunc = nullptr) {
   return false;
 }
 
-} // namespace utility end
-} // namespace pedigree end
+} // namespace utility
+} // namespace pedigree
 
 #else
 
@@ -90,7 +90,7 @@ static bool dumpFunction(const llvm::Function *CurFunc = nullptr) {
 
 namespace llvm {
 class Function;
-} // namespace llvm end
+} // namespace llvm
 
 namespace pedigree {
 namespace utility {
@@ -99,8 +99,8 @@ static constexpr bool dumpFunction(const llvm::Function *CurFunc = nullptr) {
   return true;
 }
 
-} // namespace utility end
-} // namespace pedigree end
+} // namespace utility
+} // namespace pedigree
 
 #endif // PEDIGREE_DEBUG
 

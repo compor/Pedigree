@@ -40,7 +40,7 @@
 
 namespace llvm {
 class Function;
-} // namespace llvm end
+} // namespace llvm
 
 // plugin registration for opt
 
@@ -117,4 +117,4 @@ bool CDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   return false;
 }
 
-} // namespace pedigree end
+} // namespace pedigree

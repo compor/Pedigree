@@ -24,7 +24,7 @@
 
 namespace llvm {
 class Function;
-} // namespace llvm end
+} // namespace llvm
 
 namespace pedigree {
 
@@ -68,6 +68,6 @@ public:
 
 constexpr BasicDependenceInfo DDGraphBuilder::info;
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

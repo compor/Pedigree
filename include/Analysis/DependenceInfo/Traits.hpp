@@ -18,6 +18,6 @@ template <typename InfoT> struct DependenceInfoTraits {
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

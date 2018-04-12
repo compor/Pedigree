@@ -17,6 +17,6 @@ using CDGraph = BasicBlockDependenceGraph;
 using InstControlDependenceNode = InstructionDependenceNode;
 using InstCDGraph = InstructionDependenceGraph;
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

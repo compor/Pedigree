@@ -23,4 +23,4 @@ template class GenericDependenceGraph<
 template class GenericDependenceGraph<
     GenericDependenceNode<llvm::BasicBlock, BasicDependenceInfo>>;
 
-} // namespace pedigree end
+} // namespace pedigree

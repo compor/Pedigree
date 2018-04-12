@@ -74,7 +74,7 @@ using BasicBlockGenericDependenceGraph =
 using BasicBlockDependenceGraph =
     BasicBlockGenericDependenceGraph<BasicDependenceInfo>;
 
-} // namespace pedigree end
+} // namespace pedigree
 
 // graph traits specializations
 
@@ -153,6 +153,6 @@ struct DOTGraphTraits<pedigree::BasicBlockDependenceGraph *>
   DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
 };
 
-} // namespace llvm end
+} // namespace llvm
 
 #endif // header

@@ -65,16 +65,18 @@ struct DDGraphPrinterPass
     auto found = std::find(std::begin(DDGraphDOTFunctionWhitelist),
                            std::end(DDGraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
+    auto hasChanged = false;
 
     if (DDGraphDOTFunctionWhitelist.empty() ||
-        std::end(DDGraphDOTFunctionWhitelist) != found)
-      return Base::runOnFunction(CurFunction);
-    else
-      return false;
+        std::end(DDGraphDOTFunctionWhitelist) != found) {
+      hasChanged = Base::runOnFunction(CurFunction);
+    }
+
+    return hasChanged;
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 char pedigree::DDGraphPrinterPass::ID = 0;
 static llvm::RegisterPass<pedigree::DDGraphPrinterPass>

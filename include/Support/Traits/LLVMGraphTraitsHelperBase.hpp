@@ -126,6 +126,6 @@ struct LLVMDependenceGraphTraitsHelperBase<const GraphT *> {
   static decltype(auto) nodes(const GraphT *G) { return G->nodes(); }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

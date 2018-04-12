@@ -41,6 +41,6 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
   }
 }
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

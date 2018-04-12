@@ -118,8 +118,9 @@ public:
   bool setEdgeInfo(const NodeType *Node, const EdgeInfoType &Info) {
     auto found = getEdgeWith(Node);
 
-    if (found == Edges.end())
+    if (found == Edges.end()) {
       return false;
+    }
 
     (*found).second = Info;
 
@@ -184,16 +185,18 @@ public:
   unsigned getDependeeCount() const { return DependeeCount; }
 
   bool compare(const GenericDependenceNode &Other) const {
-    if (this->numEdges() != Other.numEdges())
+    if (this->numEdges() != Other.numEdges()) {
       return true;
+    }
 
     llvm::SmallPtrSet<ConstUnderlyingType, 8> otherChildren;
     for (const auto &e : Other)
       otherChildren.insert(e.first->get());
 
     for (const auto &e : *this)
-      if (otherChildren.count(e.first->get()) == 0)
+      if (otherChildren.count(e.first->get()) == 0) {
         return true;
+      }
 
     return false;
   }
@@ -217,6 +220,6 @@ private:
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

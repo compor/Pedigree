@@ -108,6 +108,6 @@ public:
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

@@ -127,14 +127,17 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 namespace pedigree {
 
 void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
-  if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG))
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
     AU.addRequired<CDGraphPass>();
+  }
 
-  if (GraphComponentOption.isSet(PedigreePDGraphComponent::DDG))
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::DDG)) {
     AU.addRequired<DDGraphPass>();
+  }
 
-  if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG))
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG)) {
     AU.addRequired<MDGraphPass>();
+  }
 
   AU.setPreservesAll();
 }
@@ -149,19 +152,22 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
     graphs.emplace_back(instCDG);
   }
 
-  if (GraphComponentOption.isSet(PedigreePDGraphComponent::DDG))
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::DDG)) {
     graphs.emplace_back(getAnalysis<DDGraphPass>().getGraph());
+  }
 
-  if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG))
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG)) {
     graphs.emplace_back(getAnalysis<MDGraphPass>().getGraph());
+  }
 
   PDGraphBuilder builder{};
-  for (const auto &e : graphs)
+  for (const auto &e : graphs) {
     builder.addGraph(e.get());
+  }
 
   Graph = builder.build();
 
   return false;
 }
 
-} // namespace pedigree end
+} // namespace pedigree

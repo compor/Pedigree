@@ -23,7 +23,7 @@
 namespace llvm {
 class Function;
 class AnalysisUsage;
-} // namespace llvm end
+} // namespace llvm
 
 namespace pedigree {
 
@@ -47,6 +47,6 @@ struct PDGraphPass : public llvm::FunctionPass {
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

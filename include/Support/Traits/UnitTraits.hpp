@@ -11,7 +11,7 @@ namespace llvm {
 class Instruction;
 class BasicBlock;
 class Function;
-} // namespace llvm end
+} // namespace llvm
 
 namespace pedigree {
 
@@ -61,6 +61,6 @@ struct is_unit_convertible<basicblock_unit_tag, instruction_unit_tag> {
   static constexpr bool value = true;
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

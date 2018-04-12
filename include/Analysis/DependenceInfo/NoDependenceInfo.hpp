@@ -29,6 +29,6 @@ template <> struct DependenceInfoTraits<NoDependenceInfo> {
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header include

@@ -43,11 +43,11 @@
 
 namespace llvm {
 class Function;
-} // namespace llvm end
+} // namespace llvm
 
 namespace pedigree {
 enum class AnalysisMode : uint8_t;
-} // namespace pedigree end
+} // namespace pedigree
 
 ALLOW_FLAGS_FOR_ENUM(pedigree::AnalysisMode);
 
@@ -119,10 +119,11 @@ private:
     auto query = CurAnalysis->getDependency(&CurInstruction);
 
     if (query.isNonLocal()) {
-      if (CurScope >= AnalysisScope::Interprocedural)
+      if (CurScope >= AnalysisScope::Interprocedural) {
         getInterproceduralDependees(llvm::CallSite(&CurInstruction));
-      else if (CurScope >= AnalysisScope::Function)
+      } else if (CurScope >= AnalysisScope::Function) {
         getFunctionLocalDependees(CurInstruction);
+      }
     } else {
       // AnalysisScope::Block is the minimum and thus always on
       getBlockLocalDependees(query, CurInstruction);
@@ -136,29 +137,36 @@ private:
                              DependenceHazard::Unknown};
 
     // TODO decide what to do when the query is unknown
-    if (QueryResult.isUnknown() || CurMode.empty())
+    if (QueryResult.isUnknown() || CurMode.empty()) {
       return info;
+    }
 
     if (QueryResult.isDef() && (CurMode & AnalysisMode::MemDefs)) {
-      if (Src.mayReadFromMemory() && Dst.mayReadFromMemory())
+      if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
         // TODO decide how to handle these cases (if any) better
         assert(false && "A RAW hazard was reported!");
+      }
 
-      if (Src.mayReadFromMemory() && Dst.mayWriteToMemory())
+      if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Anti;
+      }
 
-      if (Src.mayWriteToMemory() && Dst.mayReadFromMemory())
+      if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
         info.hazards |= DependenceHazard::Flow;
+      }
 
-      if (Src.mayWriteToMemory() && Dst.mayWriteToMemory())
+      if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Out;
+      }
     } else if (QueryResult.isClobber() &&
                (CurMode & AnalysisMode::MemClobbers)) {
-      if (Dst.mayReadFromMemory())
+      if (Dst.mayReadFromMemory()) {
         info.hazards |= DependenceHazard::Flow;
+      }
 
-      if (Dst.mayWriteToMemory())
+      if (Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Out;
+      }
     }
 
     return info;
@@ -172,8 +180,9 @@ private:
   }
 
   void getInterproceduralDependees(llvm::CallSite Dst) {
-    if (!Dst)
+    if (!Dst) {
       return;
+    }
 
     auto &results = CurAnalysis->getNonLocalCallDependency(Dst);
     auto dst = Dst.getInstruction();
@@ -209,6 +218,6 @@ private:
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header

@@ -95,8 +95,9 @@ public:
 
   decltype(auto) getOrInsertNode(UnderlyingType Under) {
     auto &node = NodeMap[Under];
-    if (!node)
+    if (!node) {
       node = std::make_unique<NodeType>(Under);
+    }
 
     return node.get();
   }
@@ -186,19 +187,23 @@ public:
   const NodeType *getEntryNode() const { return begin()->second.get(); }
 
   bool compare(const GenericDependenceGraph &Other) const {
-    if (numVertices() != Other.numVertices() || numEdges() != Other.numEdges())
+    if (numVertices() != Other.numVertices() ||
+        numEdges() != Other.numEdges()) {
       return true;
+    }
 
     for (const auto &e : *this) {
       auto found = Other.NodeMap.find(e.first);
-      if (found == Other.NodeMap.end())
+      if (found == Other.NodeMap.end()) {
         return true;
+      }
 
       const auto &curNode = e.second;
       const auto &foundNode = (*found).second;
 
-      if (curNode->compare(*foundNode))
+      if (curNode->compare(*foundNode)) {
         return true;
+      }
     }
 
     return false;
@@ -209,6 +214,6 @@ public:
   }
 };
 
-} // namespace pedigree end
+} // namespace pedigree
 
 #endif // header
