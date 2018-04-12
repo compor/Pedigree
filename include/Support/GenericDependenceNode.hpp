@@ -35,6 +35,8 @@
 #include <functional>
 // using std::function
 
+#include <type_traits>
+
 namespace pedigree {
 
 template <typename T, typename EdgeInfoT = NoDependenceInfo>
@@ -70,13 +72,17 @@ public:
   using edges_iterator = iterator;
   using const_edges_iterator = const_iterator;
 
-  explicit GenericDependenceNode(UnderlyingType Under)
-      : Underlying(Under), DependeeCount(0) {}
+  explicit GenericDependenceNode(UnderlyingType Under) noexcept
+      : Underlying(Under),
+        DependeeCount(0) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
-  GenericDependenceNode(GenericDependenceNode &&Other)
+  GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
+      std::is_nothrow_move_constructible<EdgeStorageType>::value
+          &&std::is_nothrow_move_constructible<UnderlyingType>::value &&std::
+              is_nothrow_move_constructible<decltype(DependeeCount)>::value)
       : Edges(std::move(Other.Edges)), Underlying(std::move(Other.Underlying)),
         DependeeCount(std::move(Other.DependeeCount)) {
     Other.Edges.clear();
