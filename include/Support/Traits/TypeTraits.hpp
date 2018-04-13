@@ -8,6 +8,7 @@
 #include <type_traits>
 // using std::integral_constant
 // using std::conditional
+// using std::is_same
 // using std::is_pointer
 // using std::remove_pointer
 // using std::remove_reference
@@ -25,6 +26,13 @@ using remove_pointer_or_reference =
 template <typename T>
 using remove_pointer_or_reference_t =
     typename remove_pointer_or_reference<T>::type;
+
+//
+
+template <typename T, typename U> using is_same = typename std::is_same<T, U>;
+
+template <typename T, typename U>
+constexpr bool is_same_v = std::is_same<T, U>::value;
 
 //
 
