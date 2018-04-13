@@ -7,6 +7,8 @@
 
 #include "Config.hpp"
 
+#include "Support/Traits/UnitTraits.hpp"
+
 #include <type_traits>
 // using std::integral_constant
 
@@ -24,55 +26,26 @@ struct function_unit_tag {};
 
 //
 
-template <typename UnderlyingT> struct unit_traits {
-  using unit_category = typename UnderlyingT::unit_category;
+template <typename UnderlyingT, typename _ = void> struct unit_traits {
+  // using unit_category = typename UnderlyingT::unit_category;
 };
 
-template <> struct unit_traits<llvm::Instruction> {
+template <typename UnderlyingT>
+struct unit_traits<UnderlyingT, typename std::enable_if_t<is_unqual_same_v<
+                                    llvm::Instruction, UnderlyingT>>> {
   using unit_category = instruction_unit_tag;
 };
 
-template <> struct unit_traits<const llvm::Instruction> {
-  using unit_category = instruction_unit_tag;
-};
-
-template <> struct unit_traits<llvm::Instruction *> {
-  using unit_category = instruction_unit_tag;
-};
-
-template <> struct unit_traits<const llvm::Instruction *> {
-  using unit_category = instruction_unit_tag;
-};
-
-template <> struct unit_traits<llvm::BasicBlock> {
+template <typename UnderlyingT>
+struct unit_traits<UnderlyingT, typename std::enable_if_t<is_unqual_same_v<
+                                    llvm::BasicBlock, UnderlyingT>>> {
   using unit_category = basicblock_unit_tag;
 };
 
-template <> struct unit_traits<const llvm::BasicBlock> {
-  using unit_category = basicblock_unit_tag;
-};
-
-template <> struct unit_traits<llvm::BasicBlock *> {
-  using unit_category = basicblock_unit_tag;
-};
-
-template <> struct unit_traits<const llvm::BasicBlock *> {
-  using unit_category = basicblock_unit_tag;
-};
-
-template <> struct unit_traits<llvm::Function> {
-  using unit_category = function_unit_tag;
-};
-
-template <> struct unit_traits<const llvm::Function> {
-  using unit_category = function_unit_tag;
-};
-
-template <> struct unit_traits<llvm::Function *> {
-  using unit_category = function_unit_tag;
-};
-
-template <> struct unit_traits<const llvm::Function *> {
+template <typename UnderlyingT>
+struct unit_traits<
+    UnderlyingT,
+    typename std::enable_if_t<is_unqual_same_v<llvm::Function, UnderlyingT>>> {
   using unit_category = function_unit_tag;
 };
 
