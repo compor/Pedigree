@@ -7,10 +7,26 @@
 
 #include <type_traits>
 // using std::integral_constant
+// using std::conditional
+// using std::is_pointer
+// using std::remove_pointer
+// using std::remove_reference
 // using std::is_nothrow_move_constructible
 // using std::is_nothrow_move_assignable
 
 namespace pedigree {
+
+template <typename T>
+using remove_pointer_or_reference =
+    std::conditional<std::is_pointer<T>::value,
+                     typename std::remove_pointer<T>::type,
+                     typename std::remove_reference<T>::type>;
+
+template <typename T>
+using remove_pointer_or_reference_t =
+    typename remove_pointer_or_reference<T>::type;
+
+//
 
 template <bool... B> struct conjuction {};
 
