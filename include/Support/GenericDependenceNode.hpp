@@ -7,7 +7,7 @@
 
 #include "Analysis/DependenceInfo/NoDependenceInfo.hpp"
 
-#include "Support/Utils/TypeTraits.hpp"
+#include "Support/Traits/TypeTraits.hpp"
 
 #include "llvm/ADT/SmallPtrSet.h"
 // using llvm::SmallPtrSet
