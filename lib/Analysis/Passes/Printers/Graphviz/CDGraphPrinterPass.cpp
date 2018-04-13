@@ -32,12 +32,7 @@
 #include <algorithm>
 // std::find
 
-#include <string>
-// using std::string
-
-static llvm::cl::list<std::string> CDGraphDOTFunctionWhitelist(
-    "pedigree-cdg-dot-func-wl", llvm::cl::Hidden,
-    llvm::cl::desc("generate CDGraph DOT graph only for these functions"));
+extern llvm::cl::list<std::string> GraphDOTFunctionWhitelist;
 
 namespace pedigree {
 
@@ -55,13 +50,13 @@ struct CDGraphPrinterPass
   CDGraphPrinterPass() : Base("cdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
-    auto found = std::find(std::begin(CDGraphDOTFunctionWhitelist),
-                           std::end(CDGraphDOTFunctionWhitelist),
+    auto found = std::find(std::begin(GraphDOTFunctionWhitelist),
+                           std::end(GraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
     auto hasChanged = false;
 
-    if (CDGraphDOTFunctionWhitelist.empty() ||
-        std::end(CDGraphDOTFunctionWhitelist) != found) {
+    if (GraphDOTFunctionWhitelist.empty() ||
+        std::end(GraphDOTFunctionWhitelist) != found) {
       hasChanged |= Base::runOnFunction(CurFunction);
     }
 
@@ -85,13 +80,13 @@ struct CDGraphSimplePrinterPass
   CDGraphSimplePrinterPass() : Base("cdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
-    auto found = std::find(std::begin(CDGraphDOTFunctionWhitelist),
-                           std::end(CDGraphDOTFunctionWhitelist),
+    auto found = std::find(std::begin(GraphDOTFunctionWhitelist),
+                           std::end(GraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
     auto hasChanged = false;
 
-    if (CDGraphDOTFunctionWhitelist.empty() ||
-        std::end(CDGraphDOTFunctionWhitelist) != found) {
+    if (GraphDOTFunctionWhitelist.empty() ||
+        std::end(GraphDOTFunctionWhitelist) != found) {
       hasChanged = Base::runOnFunction(CurFunction);
     }
 

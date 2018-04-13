@@ -35,12 +35,7 @@
 #include <algorithm>
 // std::find
 
-#include <string>
-// using std::string
-
-static llvm::cl::list<std::string> MDGraphDOTFunctionWhitelist(
-    "pedigree-mdg-dot-func-wl", llvm::cl::Hidden,
-    llvm::cl::desc("generate MDGraph DOT graph only for these functions"));
+extern llvm::cl::list<std::string> GraphDOTFunctionWhitelist;
 
 namespace pedigree {
 
@@ -58,13 +53,13 @@ struct MDGraphPrinterPass
   MDGraphPrinterPass() : Base("mdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
-    auto found = std::find(std::begin(MDGraphDOTFunctionWhitelist),
-                           std::end(MDGraphDOTFunctionWhitelist),
+    auto found = std::find(std::begin(GraphDOTFunctionWhitelist),
+                           std::end(GraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
     auto hasChanged = false;
 
-    if (MDGraphDOTFunctionWhitelist.empty() ||
-        std::end(MDGraphDOTFunctionWhitelist) != found) {
+    if (GraphDOTFunctionWhitelist.empty() ||
+        std::end(GraphDOTFunctionWhitelist) != found) {
       hasChanged |= Base::runOnFunction(CurFunction);
     }
 
@@ -88,13 +83,13 @@ struct MDGraphSimplePrinterPass
   MDGraphSimplePrinterPass() : Base("mdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
-    auto found = std::find(std::begin(MDGraphDOTFunctionWhitelist),
-                           std::end(MDGraphDOTFunctionWhitelist),
+    auto found = std::find(std::begin(GraphDOTFunctionWhitelist),
+                           std::end(GraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
     auto hasChanged = false;
 
-    if (MDGraphDOTFunctionWhitelist.empty() ||
-        std::end(MDGraphDOTFunctionWhitelist) != found) {
+    if (GraphDOTFunctionWhitelist.empty() ||
+        std::end(GraphDOTFunctionWhitelist) != found) {
       hasChanged = Base::runOnFunction(CurFunction);
     }
 

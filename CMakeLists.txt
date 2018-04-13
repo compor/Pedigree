@@ -126,6 +126,7 @@ set(LIB_SOURCES
   lib/Analysis/Passes/CDGraphPass.cpp
   lib/Analysis/Passes/MDGraphPass.cpp
   lib/Analysis/Passes/PDGraphPass.cpp
+  lib/Analysis/Passes/Printers/Graphviz/GraphPrinterPassCommandLineOptions.cpp
   lib/Analysis/Passes/Printers/Graphviz/DDGraphPrinterPass.cpp
   lib/Analysis/Passes/Printers/Graphviz/CDGraphPrinterPass.cpp
   lib/Analysis/Passes/Printers/Graphviz/MDGraphPrinterPass.cpp
