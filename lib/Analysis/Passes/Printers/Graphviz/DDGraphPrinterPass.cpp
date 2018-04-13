@@ -65,7 +65,7 @@ struct DDGraphPrinterPass
 
     if (DDGraphDOTFunctionWhitelist.empty() ||
         std::end(DDGraphDOTFunctionWhitelist) != found) {
-      hasChanged = Base::runOnFunction(CurFunction);
+      hasChanged |= Base::runOnFunction(CurFunction);
     }
 
     return hasChanged;

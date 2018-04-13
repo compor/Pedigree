@@ -65,7 +65,7 @@ struct MDGraphPrinterPass
 
     if (MDGraphDOTFunctionWhitelist.empty() ||
         std::end(MDGraphDOTFunctionWhitelist) != found) {
-      hasChanged = Base::runOnFunction(CurFunction);
+      hasChanged |= Base::runOnFunction(CurFunction);
     }
 
     return hasChanged;

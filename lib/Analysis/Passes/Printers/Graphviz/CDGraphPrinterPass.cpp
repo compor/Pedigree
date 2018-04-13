@@ -62,7 +62,7 @@ struct CDGraphPrinterPass
 
     if (CDGraphDOTFunctionWhitelist.empty() ||
         std::end(CDGraphDOTFunctionWhitelist) != found) {
-      hasChanged = Base::runOnFunction(CurFunction);
+      hasChanged |= Base::runOnFunction(CurFunction);
     }
 
     return hasChanged;
