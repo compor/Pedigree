@@ -11,6 +11,7 @@
 
 #include <type_traits>
 // using std::integral_constant
+// using std::enable_if
 
 namespace llvm {
 class Instruction;
@@ -51,12 +52,24 @@ struct unit_traits<
 
 //
 
+namespace detail {
+
 template <typename FromCategoryT, typename ToCategoryT>
-struct is_unit_convertible : std::integral_constant<bool, false> {};
+struct is_unit_convertible_impl : std::integral_constant<bool, false> {};
 
 template <>
-struct is_unit_convertible<basicblock_unit_tag, instruction_unit_tag>
+struct is_unit_convertible_impl<basicblock_unit_tag, instruction_unit_tag>
     : std::integral_constant<bool, true> {};
+
+} // namespace detail
+
+template <typename FromT, typename ToT>
+struct is_unit_convertible : detail::is_unit_convertible_impl<
+                                 typename unit_traits<FromT>::unit_category,
+                                 typename unit_traits<ToT>::unit_category> {};
+
+template <typename FromT, typename ToT>
+constexpr bool is_unit_convertible_v = is_unit_convertible<FromT, ToT>::value;
 
 } // namespace pedigree
 

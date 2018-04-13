@@ -21,9 +21,7 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
   using FromUnderlyingT = typename FromNodeT::UnderlyingType;
   using ToUnderlyingT = typename ToNodeT::UnderlyingType;
 
-  static_assert(is_unit_convertible<
-                    typename unit_traits<FromUnderlyingT>::unit_category,
-                    typename unit_traits<ToUnderlyingT>::unit_category>::value,
+  static_assert(is_unit_convertible_v<FromUnderlyingT, ToUnderlyingT>,
                 "Graph node undelying units are not convertible!");
 
   using GT = llvm::GraphTraits<typename std::add_pointer_t<
