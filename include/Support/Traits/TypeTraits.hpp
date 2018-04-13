@@ -10,6 +10,7 @@
 // using std::conditional
 // using std::is_same
 // using std::is_pointer
+// using std::remove_cv
 // using std::remove_pointer
 // using std::remove_reference
 // using std::is_nothrow_move_constructible
@@ -33,6 +34,15 @@ template <typename T, typename U> using is_same = typename std::is_same<T, U>;
 
 template <typename T, typename U>
 constexpr bool is_same_v = std::is_same<T, U>::value;
+
+//
+
+template <typename T, typename U>
+using is_unqual_same =
+    is_same<T, typename std::remove_cv_t<remove_pointer_or_reference_t<U>>>;
+
+template <typename T, typename U>
+constexpr bool is_unqual_same_v = is_unqual_same<T, U>::value;
 
 //
 
