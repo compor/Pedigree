@@ -5,14 +5,13 @@
 #ifndef PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 #define PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 
+#include "Support/Traits/UnitTraits.hpp"
+
 #include "llvm/Support/DOTGraphTraits.h"
 // using llvm::DOTGraphTraits
 
 #include "llvm/ADT/GraphTraits.h"
 // using llvm::GraphTraits
-
-#include "llvm/Support/raw_ostream.h"
-// using llvm::raw_string_ostream
 
 #include <string>
 // using std::string
@@ -48,18 +47,12 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
 
   static std::string getCompleteNodeLabel(const NodeType *Node,
                                           const GraphType *Graph) {
-    std::string s;
-    llvm::raw_string_ostream os(s);
-    Node->get()->print(os);
-
-    return os.str();
+    return unit_traits<typename NodeType::UnderlyingType>::print(Node->get());
   }
 
   static std::string getSimpleNodeLabel(const NodeType *Node,
                                         const GraphType *Graph) {
-    auto name = Node->get()->getName();
-
-    return name.str();
+    return unit_traits<typename NodeType::UnderlyingType>::name(Node->get());
   }
 
   static std::string getNodeAttributes(const NodeType *Node,
