@@ -43,7 +43,7 @@ struct function_unit_tag {};
 
 //
 
-struct default_unit_traits {
+struct DefaultUnitTraits {
   template <typename T> static std::string name(const T &Unit) {
     return ToObj(Unit).getName();
   }
@@ -59,18 +59,18 @@ struct default_unit_traits {
 
 //
 
-template <typename UnderlyingT, typename _ = void> struct unit_traits {
+template <typename UnderlyingT, typename _ = void> struct UnitTraits {
   // using unit_category = typename UnderlyingT::unit_category;
   // static std::string name(const UnderlyingT &);
   // static std::string print(const UnderlyingT &);
 };
 
 template <typename UnderlyingT>
-struct unit_traits<
+struct UnitTraits<
     UnderlyingT,
     typename std::enable_if_t<is_unqual_same_v<llvm::Instruction, UnderlyingT>>>
-    : default_unit_traits {
-  using Base = default_unit_traits;
+    : DefaultUnitTraits {
+  using Base = DefaultUnitTraits;
 
   using unit_category = instruction_unit_tag;
 
@@ -85,11 +85,11 @@ struct unit_traits<
 };
 
 template <typename UnderlyingT>
-struct unit_traits<
+struct UnitTraits<
     UnderlyingT,
     typename std::enable_if_t<is_unqual_same_v<llvm::BasicBlock, UnderlyingT>>>
-    : default_unit_traits {
-  using Base = default_unit_traits;
+    : DefaultUnitTraits {
+  using Base = DefaultUnitTraits;
 
   using unit_category = basicblock_unit_tag;
 
@@ -98,11 +98,11 @@ struct unit_traits<
 };
 
 template <typename UnderlyingT>
-struct unit_traits<
+struct UnitTraits<
     UnderlyingT,
     typename std::enable_if_t<is_unqual_same_v<llvm::Function, UnderlyingT>>>
-    : default_unit_traits {
-  using Base = default_unit_traits;
+    : DefaultUnitTraits {
+  using Base = DefaultUnitTraits;
 
   using unit_category = function_unit_tag;
 
@@ -125,8 +125,8 @@ struct is_unit_convertible_impl<basicblock_unit_tag, instruction_unit_tag>
 
 template <typename FromT, typename ToT>
 struct is_unit_convertible : detail::is_unit_convertible_impl<
-                                 typename unit_traits<FromT>::unit_category,
-                                 typename unit_traits<ToT>::unit_category> {};
+                                 typename UnitTraits<FromT>::unit_category,
+                                 typename UnitTraits<ToT>::unit_category> {};
 
 template <typename FromT, typename ToT>
 constexpr bool is_unit_convertible_v = is_unit_convertible<FromT, ToT>::value;

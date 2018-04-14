@@ -47,12 +47,12 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
 
   static std::string getCompleteNodeLabel(const NodeType *Node,
                                           const GraphType *Graph) {
-    return unit_traits<typename NodeType::UnderlyingType>::print(Node->get());
+    return UnitTraits<typename NodeType::UnderlyingType>::print(Node->get());
   }
 
   static std::string getSimpleNodeLabel(const NodeType *Node,
                                         const GraphType *Graph) {
-    return unit_traits<typename NodeType::UnderlyingType>::name(Node->get());
+    return UnitTraits<typename NodeType::UnderlyingType>::name(Node->get());
   }
 
   static std::string getNodeAttributes(const NodeType *Node,
