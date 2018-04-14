@@ -17,6 +17,12 @@ template <typename T> T &ToObj(T *Ptr) {
   return *Ptr;
 }
 
+//
+
+template <typename T> T *ToPtr(T &Obj) { return &Obj; }
+
+template <typename T> T *ToPtr(T *Ptr) { return Ptr; }
+
 } // namespace pedigree
 
 #endif // header

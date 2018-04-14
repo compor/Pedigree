@@ -75,7 +75,7 @@ struct unit_traits<
   using unit_category = instruction_unit_tag;
 
   template <typename T> static std::string name(const T &Unit) {
-    auto *term = llvm::dyn_cast<llvm::TerminatorInst>(&ToObj(Unit));
+    auto *term = llvm::dyn_cast<llvm::TerminatorInst>(ToPtr(Unit));
 
     return term ? "term@" + ToObj(Unit).getParent()->getName().str()
                 : ToObj(Unit).getName().str();
