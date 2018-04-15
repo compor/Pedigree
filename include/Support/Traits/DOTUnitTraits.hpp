@@ -37,7 +37,7 @@ class Function;
 
 namespace pedigree {
 
-template <typename UnderlyingT, typename _ = void> struct DOTUnitTraits {
+template <typename T, typename _ = void> struct DOTUnitTraits {
   // static std::string name(const T &);
   // static std::string print(const T &);
 };
@@ -60,14 +60,13 @@ struct DefaultDOTUnitTraits {
 
 //
 
-template <typename UnderlyingT>
+template <typename T>
 struct DOTUnitTraits<
-    UnderlyingT,
-    typename std::enable_if_t<is_unqual_same_v<llvm::Instruction, UnderlyingT>>>
+    T, typename std::enable_if_t<is_unqual_same_v<llvm::Instruction, T>>>
     : DefaultDOTUnitTraits {
   using Base = DefaultDOTUnitTraits;
 
-  template <typename T> static std::string name(const T &Unit) {
+  template <typename U> static std::string name(const U &Unit) {
     auto *term = llvm::dyn_cast<llvm::TerminatorInst>(ToPtr(Unit));
 
     return term ? "term@" + ToObj(Unit).getParent()->getName().str()
@@ -77,10 +76,9 @@ struct DOTUnitTraits<
   using Base::print;
 };
 
-template <typename UnderlyingT>
+template <typename T>
 struct DOTUnitTraits<
-    UnderlyingT,
-    typename std::enable_if_t<is_unqual_same_v<llvm::BasicBlock, UnderlyingT>>>
+    T, typename std::enable_if_t<is_unqual_same_v<llvm::BasicBlock, T>>>
     : DefaultDOTUnitTraits {
   using Base = DefaultDOTUnitTraits;
 
@@ -88,10 +86,9 @@ struct DOTUnitTraits<
   using Base::print;
 };
 
-template <typename UnderlyingT>
+template <typename T>
 struct DOTUnitTraits<
-    UnderlyingT,
-    typename std::enable_if_t<is_unqual_same_v<llvm::Function, UnderlyingT>>>
+    T, typename std::enable_if_t<is_unqual_same_v<llvm::Function, T>>>
     : DefaultDOTUnitTraits {
   using Base = DefaultDOTUnitTraits;
 

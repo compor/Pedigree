@@ -27,26 +27,25 @@ struct function_unit_tag {};
 
 //
 
-template <typename UnderlyingT, typename _ = void> struct UnitTraits {
-  // using unit_category = typename UnderlyingT::unit_category;
+template <typename T, typename _ = void> struct UnitTraits {
+  // using unit_category = typename T::unit_category;
 };
 
-template <typename UnderlyingT>
-struct UnitTraits<UnderlyingT, typename std::enable_if_t<is_unqual_same_v<
-                                   llvm::Instruction, UnderlyingT>>> {
+template <typename T>
+struct UnitTraits<
+    T, typename std::enable_if_t<is_unqual_same_v<llvm::Instruction, T>>> {
   using unit_category = instruction_unit_tag;
 };
 
-template <typename UnderlyingT>
-struct UnitTraits<UnderlyingT, typename std::enable_if_t<is_unqual_same_v<
-                                   llvm::BasicBlock, UnderlyingT>>> {
+template <typename T>
+struct UnitTraits<
+    T, typename std::enable_if_t<is_unqual_same_v<llvm::BasicBlock, T>>> {
   using unit_category = basicblock_unit_tag;
 };
 
-template <typename UnderlyingT>
+template <typename T>
 struct UnitTraits<
-    UnderlyingT,
-    typename std::enable_if_t<is_unqual_same_v<llvm::Function, UnderlyingT>>> {
+    T, typename std::enable_if_t<is_unqual_same_v<llvm::Function, T>>> {
   using unit_category = function_unit_tag;
 };
 
