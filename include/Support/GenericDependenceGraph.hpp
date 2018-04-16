@@ -9,6 +9,8 @@
 
 #include "GenericDependenceGraphEdgeIterator.hpp"
 
+#include "Support/Traits/TypeTraits.hpp"
+
 #include "llvm/ADT/STLExtras.h"
 // using llvm::mapped_iterator
 
@@ -34,6 +36,9 @@
 #include <iterator>
 // using std::begin
 // using std::end
+
+#include <utility>
+// using std::declval
 
 namespace pedigree {
 
@@ -76,17 +81,21 @@ public:
   // explicitly define default methods
   // workaround for gcc bug 57728 which is present in clang too
   // GenericDependenceGraph() = default;
-  GenericDependenceGraph(){};
+  GenericDependenceGraph() noexcept {};
 
   GenericDependenceGraph(const GenericDependenceGraph &) = delete;
   GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
 
-  explicit GenericDependenceGraph(GenericDependenceGraph &&Other)
+  explicit GenericDependenceGraph(GenericDependenceGraph &&Other) noexcept(
+      noexcept(Other.NodeMap.clear()) &&
+      are_all_nothrow_move_constructible_v<decltype(NodeMap)>)
       : NodeMap(std::move(Other.NodeMap)) {
     Other.NodeMap.clear();
   }
 
-  GenericDependenceGraph &operator=(GenericDependenceGraph &&Other) {
+  GenericDependenceGraph &operator=(GenericDependenceGraph &&Other) noexcept(
+      noexcept(Other.NodeMap.clear()) &&
+      are_all_nothrow_move_assignable_v<decltype(NodeMap)>) {
     NodeMap = std::move(Other.NodeMap);
     Other.NodeMap.clear();
 
@@ -102,20 +111,37 @@ public:
     return node.get();
   }
 
-  VerticesSizeType numVertices() const { return NodeMap.size(); }
-  decltype(auto) size() const { return numVertices(); }
+  VerticesSizeType numVertices() const noexcept(noexcept(NodeMap.size())) {
+    return NodeMap.size();
+  }
 
-  EdgesSizeType numEdges() const {
+  decltype(auto) size() const noexcept(noexcept(numVertices())) {
+    return numVertices();
+  }
+
+  EdgesSizeType numEdges() const
+      noexcept(noexcept(std::declval<NodeType>().numEdges())) {
     EdgesSizeType n{};
     std::for_each(std::begin(NodeMap), std::end(NodeMap),
                   [&n](const auto &e) { n += e.second.get()->numEdges(); });
     return n;
   }
 
-  decltype(auto) begin() { return NodeMap.begin(); }
-  decltype(auto) begin() const { return NodeMap.begin(); }
-  decltype(auto) end() { return NodeMap.end(); }
-  decltype(auto) end() const { return NodeMap.end(); }
+  decltype(auto) begin() noexcept(noexcept(NodeMap.begin())) {
+    return NodeMap.begin();
+  }
+
+  decltype(auto) begin() const noexcept(noexcept(NodeMap.begin())) {
+    return NodeMap.begin();
+  }
+
+  decltype(auto) end() noexcept(noexcept(NodeMap.end())) {
+    return NodeMap.end();
+  }
+
+  decltype(auto) end() const noexcept(noexcept(NodeMap.end())) {
+    return NodeMap.end();
+  }
 
   static NodeType *nodes_iterator_map(value_type &P) {
     assert(P.second.get() && "Pointer to graph node is null!");
@@ -127,27 +153,35 @@ public:
     return P.second.get();
   }
 
-  decltype(auto) nodes_begin() {
+  decltype(auto) nodes_begin() noexcept(
+      noexcept(nodes_iterator(NodeMap.begin(), nodes_iterator_map))) {
     return nodes_iterator(NodeMap.begin(), nodes_iterator_map);
   }
 
-  decltype(auto) nodes_begin() const {
+  decltype(auto) nodes_begin() const
+      noexcept(noexcept(const_nodes_iterator(NodeMap.begin(),
+                                             nodes_const_iterator_map))) {
     return const_nodes_iterator(NodeMap.begin(), nodes_const_iterator_map);
   }
 
-  decltype(auto) nodes_end() {
+  decltype(auto) nodes_end() noexcept(
+      noexcept(nodes_iterator(NodeMap.end(), nodes_iterator_map))) {
     return nodes_iterator(NodeMap.end(), nodes_iterator_map);
   }
 
-  decltype(auto) nodes_end() const {
+  decltype(auto) nodes_end() const
+      noexcept(noexcept(const_nodes_iterator(NodeMap.end(),
+                                             nodes_const_iterator_map))) {
     return const_nodes_iterator(NodeMap.end(), nodes_const_iterator_map);
   }
 
-  decltype(auto) nodes() {
+  decltype(auto)
+  nodes() noexcept(noexcept(llvm::make_range(nodes_begin(), nodes_end()))) {
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  decltype(auto) nodes() const {
+  decltype(auto) nodes() const
+      noexcept(noexcept(llvm::make_range(nodes_begin(), nodes_end()))) {
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
@@ -175,17 +209,26 @@ public:
         nodes_end(), nodes_end()};
   }
 
-  decltype(auto) edges() {
+  decltype(auto)
+  edges() noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
     return llvm::make_range(edges_begin(), edges_end());
   }
 
-  decltype(auto) edges() const {
+  decltype(auto) edges() const
+      noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
     return llvm::make_range(edges_begin(), edges_end());
   }
 
-  NodeType *getEntryNode() { return begin()->second.get(); }
-  const NodeType *getEntryNode() const { return begin()->second.get(); }
+  NodeType *getEntryNode() noexcept(noexcept(begin()->second.get())) {
+    return begin()->second.get();
+  }
 
+  const NodeType *getEntryNode() const
+      noexcept(noexcept(begin()->second.get())) {
+    return begin()->second.get();
+  }
+
+  // TODO this is completely wrong
   bool compare(const GenericDependenceGraph &Other) const {
     if (numVertices() != Other.numVertices() ||
         numEdges() != Other.numEdges()) {
@@ -209,7 +252,8 @@ public:
     return false;
   }
 
-  bool operator==(const GenericDependenceGraph &Other) const {
+  bool operator==(const GenericDependenceGraph &Other) const
+      noexcept(noexcept(compare(Other))) {
     return !compare(Other);
   }
 };
