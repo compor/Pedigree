@@ -21,6 +21,10 @@
 #include "boost/optional.hpp"
 // using boost::optional
 
+#include "boost/any.hpp"
+// using boost::any
+// using boost::any_cast
+
 #include "boost/operators.hpp"
 // using boost::equality_comparable
 
@@ -53,9 +57,10 @@ private:
   using DependenceRecordType = std::pair<NodeType *, EdgeInfoType>;
   using EdgeStorageType = std::vector<DependenceRecordType>;
 
-  EdgeStorageType Edges;
-  UnderlyingType Underlying;
   mutable unsigned DependeeCount;
+  UnderlyingType Underlying;
+  boost::any NodeInfo;
+  EdgeStorageType Edges;
 
 public:
   using value_type = typename EdgeStorageType::value_type;
@@ -74,32 +79,38 @@ public:
   using const_edges_iterator = const_iterator;
 
   explicit GenericDependenceNode(UnderlyingType Under) noexcept
-      : Underlying(Under),
-        DependeeCount(0) {}
+      : DependeeCount(0),
+        Underlying(Under) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_constructible_v<
-          decltype(Edges), decltype(Underlying), decltype(DependeeCount)>)
-      : Edges(std::move(Other.Edges)), Underlying(std::move(Other.Underlying)),
-        DependeeCount(std::move(Other.DependeeCount)) {
-    Other.Edges.clear();
-    Other.Underlying = {};
+      are_all_nothrow_move_constructible_v<decltype(DependeeCount),
+                                           decltype(Underlying),
+                                           decltype(NodeInfo), decltype(Edges)>)
+      : DependeeCount(std::move(Other.DependeeCount)),
+        Underlying(std::move(Other.Underlying)),
+        NodeInfo(std::move(Other.NodeInfo)), Edges(std::move(Other.Edges)) {
     Other.DependeeCount = {};
+    Other.Underlying = {};
+    Other.NodeInfo = {};
+    Other.Edges.clear();
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_assignable_v<decltype(Edges), decltype(Underlying),
-                                        decltype(DependeeCount)>) {
-    Edges = std::move(Other.Edges);
-    Underlying = std::move(Other.Underlying);
+      are_all_nothrow_move_assignable_v<decltype(DependeeCount),
+                                        decltype(Underlying),
+                                        decltype(NodeInfo), decltype(Edges)>) {
     DependeeCount = std::move(Other.DependeeCount);
+    Underlying = std::move(Other.Underlying);
+    NodeInfo = std::move(Other.NodeInfo);
+    Edges = std::move(Other.Edges);
 
-    Other.Edges.clear();
-    Other.Underlying = {};
     Other.DependeeCount = {};
+    Other.Underlying = {};
+    Other.NodeInfo = {};
+    Other.Edges.clear();
 
     return *this;
   };
@@ -108,6 +119,15 @@ public:
 
   bool hasEdgeWith(const NodeType *Node) const {
     return Edges.end() != getEdgeWith(Node);
+  }
+
+  bool setNodeInfo(boost::any Info) {
+    NodeInfo = std::move(Info);
+    return true;
+  }
+
+  template <typename U> U getNodeInfo() const {
+    return boost::any_cast<U>(NodeInfo);
   }
 
   void addDependentNode(const NodeType *Node, EdgeInfoType Info) {
