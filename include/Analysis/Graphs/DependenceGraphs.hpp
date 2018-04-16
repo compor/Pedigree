@@ -28,24 +28,24 @@
 
 namespace pedigree {
 
-extern template class GenericDependenceNode<llvm::Instruction,
+extern template class GenericDependenceNode<llvm::Instruction, void,
                                             BasicDependenceInfo>;
 
-extern template class GenericDependenceNode<llvm::BasicBlock,
+extern template class GenericDependenceNode<llvm::BasicBlock, void,
                                             BasicDependenceInfo>;
 
 extern template class GenericDependenceGraph<
-    GenericDependenceNode<llvm::Instruction, BasicDependenceInfo>>;
+    GenericDependenceNode<llvm::Instruction, void, BasicDependenceInfo>>;
 
 extern template class GenericDependenceGraph<
-    GenericDependenceNode<llvm::BasicBlock, BasicDependenceInfo>>;
+    GenericDependenceNode<llvm::BasicBlock, void, BasicDependenceInfo>>;
 
 //
 // aliases for llvm::Instruction
 
 template <typename EdgeInfoT>
 using InstructionGenericDependenceNode =
-    GenericDependenceNode<llvm::Instruction, EdgeInfoT>;
+    GenericDependenceNode<llvm::Instruction, void, EdgeInfoT>;
 
 using InstructionDependenceNode =
     InstructionGenericDependenceNode<BasicDependenceInfo>;
@@ -62,7 +62,7 @@ using InstructionDependenceGraph =
 
 template <typename EdgeInfoT>
 using BasicBlockGenericDependenceNode =
-    GenericDependenceNode<llvm::BasicBlock, EdgeInfoT>;
+    GenericDependenceNode<llvm::BasicBlock, void, EdgeInfoT>;
 
 using BasicBlockDependenceNode =
     BasicBlockGenericDependenceNode<BasicDependenceInfo>;

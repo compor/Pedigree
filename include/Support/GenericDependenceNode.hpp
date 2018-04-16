@@ -21,10 +21,6 @@
 #include "boost/optional.hpp"
 // using boost::optional
 
-#include "boost/any.hpp"
-// using boost::any
-// using boost::any_cast
-
 #include "boost/operators.hpp"
 // using boost::equality_comparable
 
@@ -42,15 +38,28 @@
 #include <functional>
 // using std::function
 
+#include <type_traits>
+// using std::enable_if
+// using std::is_void
+
 namespace pedigree {
 
-template <typename T, typename EdgeInfoT = NoDependenceInfo>
+namespace detail {
+
+template <typename U> struct NodeInfoImpl { U data; };
+template <> struct NodeInfoImpl<void> {};
+
+} // namespace detail
+
+template <typename T, typename NodeInfoT = void,
+          typename EdgeInfoT = NoDependenceInfo>
 class GenericDependenceNode
     : boost::equality_comparable<GenericDependenceNode<T, EdgeInfoT>> {
 public:
   using NodeType = GenericDependenceNode;
   using UnderlyingType = T *;
   using ConstUnderlyingType = const T *;
+  using NodeInfoType = NodeInfoT;
   using EdgeInfoType = EdgeInfoT;
 
 private:
@@ -59,7 +68,7 @@ private:
 
   mutable unsigned DependeeCount;
   UnderlyingType Underlying;
-  boost::any NodeInfo;
+  detail::NodeInfoImpl<NodeInfoType> NodeInfo;
   EdgeStorageType Edges;
 
 public:
@@ -121,13 +130,15 @@ public:
     return Edges.end() != getEdgeWith(Node);
   }
 
-  bool setNodeInfo(boost::any Info) {
-    NodeInfo = std::move(Info);
+  template <typename U = NodeInfoType>
+  std::enable_if_t<!std::is_void<U>::value, bool> setNodeInfo(U Info) {
+    NodeInfo.data = std::move(Info);
     return true;
   }
 
-  template <typename U> U getNodeInfo() const {
-    return boost::any_cast<U>(NodeInfo);
+  template <typename U = NodeInfoType>
+  std::enable_if_t<!std::is_void<U>::value, U> getNodeInfo() const {
+    return NodeInfo.data;
   }
 
   void addDependentNode(const NodeType *Node, EdgeInfoType Info) {
