@@ -81,8 +81,8 @@ public:
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_constructible<decltype(Edges), decltype(Underlying),
-                                         decltype(DependeeCount)>::value)
+      are_all_nothrow_move_constructible_v<
+          decltype(Edges), decltype(Underlying), decltype(DependeeCount)>)
       : Edges(std::move(Other.Edges)), Underlying(std::move(Other.Underlying)),
         DependeeCount(std::move(Other.DependeeCount)) {
     Other.Edges.clear();
@@ -91,8 +91,8 @@ public:
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_assignable<decltype(Edges), decltype(Underlying),
-                                      decltype(DependeeCount)>::value) {
+      are_all_nothrow_move_assignable_v<decltype(Edges), decltype(Underlying),
+                                        decltype(DependeeCount)>) {
     Edges = std::move(Other.Edges);
     Underlying = std::move(Other.Underlying);
     DependeeCount = std::move(Other.DependeeCount);

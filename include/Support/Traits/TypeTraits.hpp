@@ -61,8 +61,18 @@ struct are_all_nothrow_move_constructible
     : conjuction<std::is_nothrow_move_constructible<Args>::value...> {};
 
 template <typename... Args>
+constexpr bool are_all_nothrow_move_constructible_v =
+    are_all_nothrow_move_constructible<Args...>::value;
+
+//
+
+template <typename... Args>
 struct are_all_nothrow_move_assignable
     : conjuction<std::is_nothrow_move_assignable<Args>::value...> {};
+
+template <typename... Args>
+constexpr bool are_all_nothrow_move_assignable_v =
+    are_all_nothrow_move_assignable<Args...>::value;
 
 } // namespace pedigree
 
