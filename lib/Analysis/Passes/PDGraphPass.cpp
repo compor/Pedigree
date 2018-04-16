@@ -48,6 +48,7 @@
 // using llvm::cl::desc
 // using llvm::cl::location
 // using llvm::cl::cat
+// using llvm::cl::CommaSeparated
 // using llvm::cl::OptionCategory
 
 #include "llvm/Support/raw_ostream.h"
@@ -101,6 +102,7 @@ static llvm::cl::bits<PedigreePDGraphComponent> GraphComponentOption(
                      clEnumValN(PedigreePDGraphComponent::MDG, "MDG",
                                 "Memory Dependence Graph"),
                      nullptr),
+    llvm::cl::CommaSeparated,
     llvm::cl::cat(PedigreePDGraphPassCategory));
 
 #if PEDIGREE_DEBUG
