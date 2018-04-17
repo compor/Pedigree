@@ -33,8 +33,6 @@
 
 #include <utility>
 // using std::move
-// using std::pair
-// using std:forward
 
 #include <functional>
 // using std::function
@@ -47,12 +45,21 @@ namespace pedigree {
 
 namespace detail {
 
-template <typename U> struct EdgeInfoImpl { U data; };
-template <> struct EdgeInfoImpl<void> {};
+template <typename T, typename U> struct EdgeRecordImpl {
+  using node_type = T;
+  using data_type = U;
 
-template <typename U> decltype(auto) make_edgeinfoimpl(U &&u) {
-  return EdgeInfoImpl<U>{std::forward<U>(u)};
-}
+  T node;
+  U data;
+};
+
+template <typename T> struct EdgeRecordImpl<T, void> {
+  using node_type = T;
+
+  T node;
+};
+
+//
 
 template <typename U> struct NodeInfoImpl { U data; };
 template <> struct NodeInfoImpl<void> {};
@@ -70,8 +77,7 @@ public:
   using EdgeInfoType = EdgeInfoT;
 
 private:
-  using DependenceRecordType =
-      std::pair<NodeType *, detail::EdgeInfoImpl<EdgeInfoType>>;
+  using DependenceRecordType = detail::EdgeRecordImpl<NodeType *, EdgeInfoType>;
   using EdgeStorageType = std::vector<DependenceRecordType>;
 
   mutable unsigned DependeeCount;
@@ -152,16 +158,16 @@ public:
   template <typename U = EdgeInfoType>
   std::enable_if_t<!std::is_void<U>::value>
   addDependentNode(const NodeType *Node, U Info) {
-    Edges.emplace_back(const_cast<NodeType *>(Node),
-                       detail::make_edgeinfoimpl(std::move(Info)));
+    Edges.emplace_back(detail::EdgeRecordImpl<NodeType *, U>{
+        const_cast<NodeType *>(Node), std::move(Info)});
     Node->incrementDependeeCount();
   }
 
   template <typename U = EdgeInfoType>
   std::enable_if_t<std::is_void<U>::value>
   addDependentNode(const NodeType *Node) {
-    Edges.emplace_back(const_cast<NodeType *>(Node),
-                       detail::EdgeInfoImpl<void>{});
+    Edges.emplace_back(
+        detail::EdgeRecordImpl<NodeType *, U>{const_cast<NodeType *>(Node)});
     Node->incrementDependeeCount();
   }
 
@@ -170,9 +176,8 @@ public:
   getEdgeInfo(const NodeType *Node) const {
     auto found = getEdgeWith(Node);
 
-    return found != Edges.end()
-               ? boost::optional<const U &>((*found).second.data)
-               : boost::none;
+    return found != Edges.end() ? boost::optional<const U &>((*found).data)
+                                : boost::none;
   }
 
   template <typename U = EdgeInfoType>
@@ -184,7 +189,7 @@ public:
       return false;
     }
 
-    (*found).second.data = std::move(Info);
+    (*found).data = std::move(Info);
 
     return true;
   }
@@ -231,13 +236,13 @@ public:
   }
 
   static NodeType *nodes_iterator_map(value_type &P) {
-    assert(P.first && "Pointer to graph node is null!");
-    return P.first;
+    assert(P.node && "Pointer to graph node is null!");
+    return P.node;
   }
 
   static const NodeType *nodes_const_iterator_map(const value_type &P) {
-    assert(P.first && "Pointer to graph node is null!");
-    return P.first;
+    assert(P.node && "Pointer to graph node is null!");
+    return P.node;
   }
 
   decltype(auto)
@@ -279,10 +284,10 @@ public:
 
     llvm::SmallPtrSet<ConstUnderlyingType, 8> otherChildren;
     for (const auto &e : Other)
-      otherChildren.insert(e.first->get());
+      otherChildren.insert(e.node->get());
 
     for (const auto &e : *this)
-      if (otherChildren.count(e.first->get()) == 0) {
+      if (otherChildren.count(e.node->get()) == 0) {
         return true;
       }
 
@@ -299,12 +304,12 @@ private:
 
   const_iterator getEdgeWith(const NodeType *Node) const {
     return std::find_if(Edges.begin(), Edges.end(),
-                        [&Node](const auto &e) { return Node == e.first; });
+                        [&Node](const auto &e) { return Node == e.node; });
   }
 
   iterator getEdgeWith(const NodeType *Node) {
     return std::find_if(Edges.begin(), Edges.end(),
-                        [&Node](const auto &e) { return Node == e.first; });
+                        [&Node](const auto &e) { return Node == e.node; });
   }
 };
 
