@@ -5,6 +5,8 @@
 #ifndef PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 #define PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 
+#include "Analysis/DependenceInfo/Traits.hpp"
+
 #include "Support/Traits/DOTUnitTraits.hpp"
 
 #include "llvm/Support/DOTGraphTraits.h"
