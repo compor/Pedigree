@@ -46,17 +46,17 @@ struct GenericDependenceGraphTest : public ::testing::Test {
       DepNodes2.emplace_back(G2.getOrInsertNode(&e));
     }
 
-    DepNodes1[0]->addDependentNode(DepNodes1[1], {});
-    DepNodes1[0]->addDependentNode(DepNodes1[2], {});
-    DepNodes1[0]->addDependentNode(DepNodes1[3], {});
+    DepNodes1[0]->addDependentNode(DepNodes1[1]);
+    DepNodes1[0]->addDependentNode(DepNodes1[2]);
+    DepNodes1[0]->addDependentNode(DepNodes1[3]);
 
-    DepNodes1b[0]->addDependentNode(DepNodes1b[1], {});
-    DepNodes1b[0]->addDependentNode(DepNodes1b[2], {});
-    DepNodes1b[0]->addDependentNode(DepNodes1b[3], {});
+    DepNodes1b[0]->addDependentNode(DepNodes1b[1]);
+    DepNodes1b[0]->addDependentNode(DepNodes1b[2]);
+    DepNodes1b[0]->addDependentNode(DepNodes1b[3]);
 
-    DepNodes2[3]->addDependentNode(DepNodes2[0], {});
-    DepNodes2[3]->addDependentNode(DepNodes2[1], {});
-    DepNodes2[3]->addDependentNode(DepNodes2[2], {});
+    DepNodes2[3]->addDependentNode(DepNodes2[0]);
+    DepNodes2[3]->addDependentNode(DepNodes2[1]);
+    DepNodes2[3]->addDependentNode(DepNodes2[2]);
   }
 };
 

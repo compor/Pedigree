@@ -34,6 +34,7 @@
 #include <utility>
 // using std::move
 // using std::pair
+// using std:forward
 
 #include <functional>
 // using std::function
@@ -46,13 +47,19 @@ namespace pedigree {
 
 namespace detail {
 
+template <typename U> struct EdgeInfoImpl { U data; };
+template <> struct EdgeInfoImpl<void> {};
+
+template <typename U> decltype(auto) make_edgeinfoimpl(U &&u) {
+  return EdgeInfoImpl<U>{std::forward<U>(u)};
+}
+
 template <typename U> struct NodeInfoImpl { U data; };
 template <> struct NodeInfoImpl<void> {};
 
 } // namespace detail
 
-template <typename T, typename NodeInfoT = void,
-          typename EdgeInfoT = NoDependenceInfo>
+template <typename T, typename NodeInfoT = void, typename EdgeInfoT = void>
 class GenericDependenceNode
     : boost::equality_comparable<GenericDependenceNode<T, EdgeInfoT>> {
 public:
@@ -63,7 +70,8 @@ public:
   using EdgeInfoType = EdgeInfoT;
 
 private:
-  using DependenceRecordType = std::pair<NodeType *, EdgeInfoType>;
+  using DependenceRecordType =
+      std::pair<NodeType *, detail::EdgeInfoImpl<EdgeInfoType>>;
   using EdgeStorageType = std::vector<DependenceRecordType>;
 
   mutable unsigned DependeeCount;
@@ -141,28 +149,42 @@ public:
     return NodeInfo.data;
   }
 
-  void addDependentNode(const NodeType *Node, EdgeInfoType Info) {
-    Edges.emplace_back(const_cast<NodeType *>(Node), std::move(Info));
+  template <typename U = EdgeInfoType>
+  std::enable_if_t<!std::is_void<U>::value>
+  addDependentNode(const NodeType *Node, U Info) {
+    Edges.emplace_back(const_cast<NodeType *>(Node),
+                       detail::make_edgeinfoimpl(std::move(Info)));
     Node->incrementDependeeCount();
   }
 
-  boost::optional<const EdgeInfoType &>
+  template <typename U = EdgeInfoType>
+  std::enable_if_t<std::is_void<U>::value>
+  addDependentNode(const NodeType *Node) {
+    Edges.emplace_back(const_cast<NodeType *>(Node),
+                       detail::EdgeInfoImpl<void>{});
+    Node->incrementDependeeCount();
+  }
+
+  template <typename U = EdgeInfoType>
+  std::enable_if_t<!std::is_void<U>::value, boost::optional<const U &>>
   getEdgeInfo(const NodeType *Node) const {
     auto found = getEdgeWith(Node);
 
     return found != Edges.end()
-               ? boost::optional<const EdgeInfoType &>((*found).second)
+               ? boost::optional<const U &>((*found).second.data)
                : boost::none;
   }
 
-  bool setEdgeInfo(const NodeType *Node, EdgeInfoType Info) {
+  template <typename U = EdgeInfoType>
+  std::enable_if_t<!std::is_void<U>::value, bool>
+  setEdgeInfo(const NodeType *Node, U Info) {
     auto found = getEdgeWith(Node);
 
     if (found == Edges.end()) {
       return false;
     }
 
-    (*found).second = std::move(Info);
+    (*found).second.data = std::move(Info);
 
     return true;
   }
