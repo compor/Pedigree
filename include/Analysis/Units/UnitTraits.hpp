@@ -2,10 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_UNITTRAITS_HPP
-#define PEDIGREE_UNITTRAITS_HPP
+#ifndef PEDIGREE_UNITS_UNITTRAITS_HPP
+#define PEDIGREE_UNITS_UNITTRAITS_HPP
 
 #include "Config.hpp"
+
+#include "Units.hpp"
 
 #include "Support/Traits/TypeTraits.hpp"
 
@@ -13,19 +15,7 @@
 // using std::integral_constant
 // using std::enable_if
 
-namespace llvm {
-class Instruction;
-class BasicBlock;
-class Function;
-} // namespace llvm
-
 namespace pedigree {
-
-struct instruction_unit_tag {};
-struct basicblock_unit_tag {};
-struct function_unit_tag {};
-
-//
 
 template <typename T, typename _ = void> struct UnitTraits {
   // using unit_category = typename T::unit_category;

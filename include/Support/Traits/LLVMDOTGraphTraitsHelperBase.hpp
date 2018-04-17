@@ -7,7 +7,7 @@
 
 #include "Analysis/DependenceInfo/DOTTraits.hpp"
 
-#include "Support/Traits/DOTUnitTraits.hpp"
+#include "Analysis/Units/DOTUnitTraits.hpp"
 
 #include "llvm/Support/DOTGraphTraits.h"
 // using llvm::DOTGraphTraits

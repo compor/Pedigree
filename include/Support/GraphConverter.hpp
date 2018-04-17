@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "Support/Traits/UnitTraits.hpp"
+#include "Analysis/Units/UnitTraits.hpp"
 
 #include <memory>
 // using std::addressof
