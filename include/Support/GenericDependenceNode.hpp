@@ -179,6 +179,12 @@ public:
   }
 
   template <typename U = EdgeInfoType>
+  std::enable_if_t<std::is_void<U>::value, boost::none_t>
+  getEdgeInfo(const NodeType *Node) const {
+    return {};
+  }
+
+  template <typename U = EdgeInfoType>
   std::enable_if_t<!std::is_void<U>::value, bool>
   setEdgeInfo(const NodeType *Node, U Info) {
     auto found = getEdgeWith(Node);

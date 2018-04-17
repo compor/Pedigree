@@ -18,6 +18,14 @@ template <typename InfoT> struct DependenceInfoTraits {
   }
 };
 
+//
+
+template <> struct DependenceInfoTraits<void> {
+  template <typename U> static std::string toDOTAttributes(const U &&) {
+    return "";
+  }
+};
+
 } // namespace pedigree
 
 #endif // header
