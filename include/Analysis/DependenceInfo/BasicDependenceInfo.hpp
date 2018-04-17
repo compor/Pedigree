@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "Traits.hpp"
+#include "DOTTraits.hpp"
 
 #include "boost/operators.hpp"
 // using boost::orable
@@ -89,7 +89,7 @@ struct BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
 
 // traits
 
-template <> struct DependenceInfoTraits<BasicDependenceInfo> {
+template <> struct DependenceInfoDOTTraits<BasicDependenceInfo> {
   static std::string toDOTAttributes(const BasicDependenceInfo &I) {
     auto attr = toDOTColor(I);
 

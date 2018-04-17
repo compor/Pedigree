@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_DEPENDENCEINFO_TRAITS_HPP
-#define PEDIGREE_DEPENDENCEINFO_TRAITS_HPP
+#ifndef PEDIGREE_DEPENDENCEINFO_DOTTRAITS_HPP
+#define PEDIGREE_DEPENDENCEINFO_DOTTRAITS_HPP
 
 #include "Config.hpp"
 
@@ -12,7 +12,7 @@
 
 namespace pedigree {
 
-template <typename InfoT> struct DependenceInfoTraits {
+template <typename InfoT> struct DependenceInfoDOTTraits {
   static std::string toDOTAttributes(const InfoT &I) {
     return I.toDOTAttributes();
   }
@@ -20,7 +20,7 @@ template <typename InfoT> struct DependenceInfoTraits {
 
 //
 
-template <> struct DependenceInfoTraits<void> {
+template <> struct DependenceInfoDOTTraits<void> {
   template <typename U> static std::string toDOTAttributes(const U &&) {
     return "";
   }

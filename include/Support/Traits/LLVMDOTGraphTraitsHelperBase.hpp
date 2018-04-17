@@ -5,7 +5,7 @@
 #ifndef PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 #define PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 
-#include "Analysis/DependenceInfo/Traits.hpp"
+#include "Analysis/DependenceInfo/DOTTraits.hpp"
 
 #include "Support/Traits/DOTUnitTraits.hpp"
 
@@ -80,7 +80,8 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
   static std::string getEdgeAttributes(const NodeType *Node,
                                        typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
-    using DIT = pedigree::DependenceInfoTraits<typename NodeType::EdgeInfoType>;
+    using DIT =
+        pedigree::DependenceInfoDOTTraits<typename NodeType::EdgeInfoType>;
 
     auto info = Node->getEdgeInfo(*EI);
     std::string infoStr{};
