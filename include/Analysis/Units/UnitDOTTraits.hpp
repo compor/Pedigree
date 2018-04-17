@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_DOTUNITTRAITS_HPP
-#define PEDIGREE_DOTUNITTRAITS_HPP
+#ifndef PEDIGREE_UNITS_DOTTRAITS_HPP
+#define PEDIGREE_UNITS_DOTTRAITS_HPP
 
 #include "Config.hpp"
 
@@ -39,14 +39,14 @@ class Function;
 
 namespace pedigree {
 
-template <typename T, typename _ = void> struct DOTUnitTraits {
+template <typename T, typename _ = void> struct UnitDOTTraits {
   // static std::string name(const T &);
   // static std::string print(const T &);
 };
 
 //
 
-struct DefaultDOTUnitTraits {
+struct DefaultUnitDOTTraits {
   template <typename T> static std::string name(const T &Unit) {
     return ToObj(Unit).getName();
   }
@@ -63,10 +63,10 @@ struct DefaultDOTUnitTraits {
 //
 
 template <typename T>
-struct DOTUnitTraits<
+struct UnitDOTTraits<
     T, typename std::enable_if_t<is_unqual_same_v<llvm::Instruction, T>>>
-    : DefaultDOTUnitTraits {
-  using Base = DefaultDOTUnitTraits;
+    : DefaultUnitDOTTraits {
+  using Base = DefaultUnitDOTTraits;
 
   template <typename U> static std::string name(const U &Unit) {
     auto *term = llvm::dyn_cast<llvm::TerminatorInst>(ToPtr(Unit));
@@ -79,20 +79,20 @@ struct DOTUnitTraits<
 };
 
 template <typename T>
-struct DOTUnitTraits<
+struct UnitDOTTraits<
     T, typename std::enable_if_t<is_unqual_same_v<llvm::BasicBlock, T>>>
-    : DefaultDOTUnitTraits {
-  using Base = DefaultDOTUnitTraits;
+    : DefaultUnitDOTTraits {
+  using Base = DefaultUnitDOTTraits;
 
   using Base::name;
   using Base::print;
 };
 
 template <typename T>
-struct DOTUnitTraits<
+struct UnitDOTTraits<
     T, typename std::enable_if_t<is_unqual_same_v<llvm::Function, T>>>
-    : DefaultDOTUnitTraits {
-  using Base = DefaultDOTUnitTraits;
+    : DefaultUnitDOTTraits {
+  using Base = DefaultUnitDOTTraits;
 
   using Base::name;
   using Base::print;

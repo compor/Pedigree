@@ -5,9 +5,9 @@
 #ifndef PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 #define PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 
-#include "Analysis/DependenceInfo/DOTTraits.hpp"
+#include "Analysis/DependenceInfo/DependenceInfoDOTTraits.hpp"
 
-#include "Analysis/Units/DOTUnitTraits.hpp"
+#include "Analysis/Units/UnitDOTTraits.hpp"
 
 #include "llvm/Support/DOTGraphTraits.h"
 // using llvm::DOTGraphTraits
@@ -49,12 +49,12 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
 
   static std::string getCompleteNodeLabel(const NodeType *Node,
                                           const GraphType *Graph) {
-    return DOTUnitTraits<typename NodeType::UnderlyingType>::print(Node->get());
+    return UnitDOTTraits<typename NodeType::UnderlyingType>::print(Node->get());
   }
 
   static std::string getSimpleNodeLabel(const NodeType *Node,
                                         const GraphType *Graph) {
-    return DOTUnitTraits<typename NodeType::UnderlyingType>::name(Node->get());
+    return UnitDOTTraits<typename NodeType::UnderlyingType>::name(Node->get());
   }
 
   static std::string getNodeAttributes(const NodeType *Node,

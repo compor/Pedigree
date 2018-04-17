@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 
-#include "DOTTraits.hpp"
+#include "DependenceInfoDOTTraits.hpp"
 
 #include "boost/operators.hpp"
 // using boost::orable
