@@ -31,6 +31,7 @@
 
 #include <utility>
 // using std::move
+// using std::forward
 
 #include <functional>
 // using std::function
@@ -57,21 +58,23 @@ template <typename T> struct EdgeRecordImpl<T, void> {
   T node;
 };
 
-//
-
-template <typename U> struct NodeInfoImpl { U data; };
-template <> struct NodeInfoImpl<void> {};
-
 } // namespace detail
 
-template <typename T, typename NodeInfoT = void, typename EdgeInfoT = void>
+struct EmptyNodeInfo {
+  struct value_type {};
+};
+
+template <typename T, typename NodeInfoT = EmptyNodeInfo,
+          typename EdgeInfoT = void>
 class GenericDependenceNode
-    : boost::equality_comparable<GenericDependenceNode<T, EdgeInfoT>> {
+    : NodeInfoT::value_type,
+      boost::equality_comparable<
+          GenericDependenceNode<T, NodeInfoT, EdgeInfoT>> {
 public:
   using NodeType = GenericDependenceNode;
   using UnderlyingType = T *;
   using ConstUnderlyingType = const T *;
-  using NodeInfoType = NodeInfoT;
+  using NodeInfoType = typename NodeInfoT::value_type;
   using EdgeInfoType = EdgeInfoT;
 
 private:
@@ -80,7 +83,6 @@ private:
 
   mutable unsigned DependeeCount;
   UnderlyingType Underlying;
-  detail::NodeInfoImpl<NodeInfoType> NodeInfo;
   EdgeStorageType Edges;
 
 public:
@@ -99,9 +101,11 @@ public:
   using edges_iterator = iterator;
   using const_edges_iterator = const_iterator;
 
-  explicit GenericDependenceNode(UnderlyingType Under) noexcept
+  template <typename... Args>
+  explicit GenericDependenceNode(UnderlyingType Under, Args &&... args) noexcept
       : DependeeCount(0),
-        Underlying(Under) {}
+        Underlying(Under),
+        NodeInfoType(std::forward<Args>(args)...) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
@@ -109,48 +113,40 @@ public:
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
       are_all_nothrow_move_constructible_v<decltype(DependeeCount),
                                            decltype(Underlying),
-                                           decltype(NodeInfo), decltype(Edges)>)
+                                           decltype(Edges), NodeInfoType>)
       : DependeeCount(std::move(Other.DependeeCount)),
-        Underlying(std::move(Other.Underlying)),
-        NodeInfo(std::move(Other.NodeInfo)), Edges(std::move(Other.Edges)) {
+        Underlying(std::move(Other.Underlying)), Edges(std::move(Other.Edges)),
+        NodeInfoType::value_type(std::move(Other)) {
     Other.DependeeCount = {};
     Other.Underlying = {};
-    Other.NodeInfo = {};
     Other.Edges.clear();
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
       are_all_nothrow_move_assignable_v<decltype(DependeeCount),
-                                        decltype(Underlying),
-                                        decltype(NodeInfo), decltype(Edges)>) {
+                                        decltype(Underlying), decltype(Edges),
+                                        NodeInfoType>) {
+    NodeInfoType::operator=(std::move(Other));
+
     DependeeCount = std::move(Other.DependeeCount);
     Underlying = std::move(Other.Underlying);
-    NodeInfo = std::move(Other.NodeInfo);
     Edges = std::move(Other.Edges);
 
     Other.DependeeCount = {};
     Other.Underlying = {};
-    Other.NodeInfo = {};
     Other.Edges.clear();
 
     return *this;
   };
 
+  NodeInfoType &&info() && noexcept { return std::move(*this); }
+  NodeInfoType &info() & noexcept { return *this; }
+  const NodeInfoType &info() const &noexcept { return *this; }
+
   UnderlyingType get() const noexcept { return Underlying; }
 
   bool hasEdgeWith(const NodeType *Node) const {
     return Edges.end() != getEdgeWith(Node);
-  }
-
-  template <typename U = NodeInfoType>
-  std::enable_if_t<!std::is_void<U>::value, bool> setNodeInfo(U Info) {
-    NodeInfo.data = std::move(Info);
-    return true;
-  }
-
-  template <typename U = NodeInfoType>
-  std::enable_if_t<!std::is_void<U>::value, U> getNodeInfo() const {
-    return NodeInfo.data;
   }
 
   template <typename U = EdgeInfoType>
