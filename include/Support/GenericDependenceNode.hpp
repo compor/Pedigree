@@ -72,7 +72,7 @@ public:
   using NodeType = GenericDependenceNode;
   using UnderlyingType = T *;
   using ConstUnderlyingType = const T *;
-  using NodeInfoType = typename NodeInfoT::value_type;
+  using NodeInfoType = NodeInfoT;
   using EdgeInfoType = EdgeInfoT;
 
 private:
@@ -103,15 +103,15 @@ public:
   explicit GenericDependenceNode(UnderlyingType Under, Args &&... args) noexcept
       : DependeeCount(0),
         Underlying(Under),
-        NodeInfoType(std::forward<Args>(args)...) {}
+        NodeInfoType::value_type(std::forward<Args>(args)...) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_constructible_v<decltype(DependeeCount),
-                                           decltype(Underlying),
-                                           decltype(Edges), NodeInfoType>)
+      are_all_nothrow_move_constructible_v<
+          decltype(DependeeCount), decltype(Underlying), decltype(Edges),
+          typename NodeInfoType::value_type>)
       : DependeeCount(std::move(Other.DependeeCount)),
         Underlying(std::move(Other.Underlying)), Edges(std::move(Other.Edges)),
         NodeInfoType::value_type(std::move(Other)) {
@@ -123,8 +123,8 @@ public:
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
       are_all_nothrow_move_assignable_v<decltype(DependeeCount),
                                         decltype(Underlying), decltype(Edges),
-                                        NodeInfoType>) {
-    NodeInfoType::operator=(std::move(Other));
+                                        typename NodeInfoType::value_type>) {
+    NodeInfoType::value_type::operator=(std::move(Other));
 
     DependeeCount = std::move(Other.DependeeCount);
     Underlying = std::move(Other.Underlying);
@@ -137,9 +137,15 @@ public:
     return *this;
   };
 
-  NodeInfoType &&info() && noexcept { return std::move(*this); }
-  NodeInfoType &info() & noexcept { return *this; }
-  const NodeInfoType &info() const &noexcept { return *this; }
+  typename NodeInfoType::value_type &&info() && noexcept {
+    return std::move(*this);
+  }
+
+  const typename NodeInfoType::value_type &info() const &noexcept {
+    return *this;
+  }
+
+  typename NodeInfoType::value_type &info() & noexcept { return *this; }
 
   UnderlyingType get() const noexcept { return Underlying; }
 
