@@ -102,8 +102,7 @@ static llvm::cl::bits<PedigreePDGraphComponent> GraphComponentOption(
                      clEnumValN(PedigreePDGraphComponent::MDG, "MDG",
                                 "Memory Dependence Graph"),
                      nullptr),
-    llvm::cl::CommaSeparated,
-    llvm::cl::cat(PedigreePDGraphPassCategory));
+    llvm::cl::CommaSeparated, llvm::cl::cat(PedigreePDGraphPassCategory));
 
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>

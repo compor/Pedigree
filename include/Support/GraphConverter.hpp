@@ -28,10 +28,10 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
       typename std::remove_reference_t<decltype(From)>>>;
 
   for (const auto &node : GT::nodes(std::addressof(From))) {
-    auto src = To.getOrInsertNode(ConvertOp(node->get()));
+    auto src = To.getOrInsertNode(ConvertOp(node->wrapped()));
 
     for (const auto &child : GT::children(node)) {
-      auto converted = ConvertOp(child->get());
+      auto converted = ConvertOp(child->wrapped());
       auto dst = To.getOrInsertNode(converted);
       auto info = node->getEdgeInfo(child);
       src->addDependentNode(dst, info.value());

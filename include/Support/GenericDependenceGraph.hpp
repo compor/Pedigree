@@ -102,10 +102,10 @@ public:
     return *this;
   }
 
-  decltype(auto) getOrInsertNode(WrappedType Under) {
-    auto &node = NodeMap[Under];
+  decltype(auto) getOrInsertNode(WrappedType Wrapped) {
+    auto &node = NodeMap[Wrapped];
     if (!node) {
-      node = std::make_unique<NodeType>(Under);
+      node = std::make_unique<NodeType>(Wrapped);
     }
 
     return node.get();

@@ -100,9 +100,9 @@ public:
   using const_edges_iterator = const_iterator;
 
   template <typename... Args>
-  explicit GenericDependenceNode(WrappedType Under, Args &&... args) noexcept
+  explicit GenericDependenceNode(WrappedType Wrapped, Args &&... args) noexcept
       : DependeeCount(0),
-        Wrapped(Under),
+        Wrapped(Wrapped),
         NodeInfoType::value_type(std::forward<Args>(args)...) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
@@ -147,7 +147,7 @@ public:
 
   typename NodeInfoType::value_type &info() & noexcept { return *this; }
 
-  WrappedType get() const noexcept { return Wrapped; }
+  WrappedType wrapped() const noexcept { return Wrapped; }
 
   bool hasEdgeWith(const NodeType *Node) const {
     return Edges.end() != getEdgeWith(Node);
@@ -288,10 +288,10 @@ public:
 
     llvm::SmallPtrSet<ConstWrappedType, 8> otherChildren;
     for (const auto &e : Other)
-      otherChildren.insert(e.node->get());
+      otherChildren.insert(e.node->wrapped());
 
     for (const auto &e : *this)
-      if (otherChildren.count(e.node->get()) == 0) {
+      if (otherChildren.count(e.node->wrapped()) == 0) {
         return true;
       }
 
