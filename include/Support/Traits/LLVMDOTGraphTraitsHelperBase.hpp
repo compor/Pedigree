@@ -5,6 +5,8 @@
 #ifndef PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 #define PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 
+#include "Analysis/Info/NodeInfo/NodeInfoDOTTraits.hpp"
+
 #include "Analysis/Info/EdgeInfo/EdgeInfoDOTTraits.hpp"
 
 #include "Analysis/Units/UnitDOTTraits.hpp"
@@ -65,6 +67,9 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
       attr = "color=grey,style=filled";
     }
 
+    attr += NodeInfoDOTTraits<typename NodeType::NodeInfoType::value_type>::
+        toDOTAttributes(Node->info());
+
     return attr;
   }
 
@@ -80,7 +85,7 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
   static std::string getEdgeAttributes(const NodeType *Node,
                                        typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
-    using DIT = pedigree::EdgeInfoDOTTraits<typename NodeType::EdgeInfoType>;
+    using DIT = EdgeInfoDOTTraits<typename NodeType::EdgeInfoType>;
 
     auto info = Node->getEdgeInfo(*EI);
     std::string infoStr{};
