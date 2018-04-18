@@ -13,17 +13,7 @@
 namespace pedigree {
 
 template <typename InfoT> struct EdgeInfoDOTTraits {
-  static std::string toDOTAttributes(const InfoT &I) {
-    return I.toDOTAttributes();
-  }
-};
-
-//
-
-template <> struct EdgeInfoDOTTraits<void> {
-  template <typename U> static std::string toDOTAttributes(const U &&) {
-    return "";
-  }
+  static std::string toDOTAttributes(const InfoT &I) { return ""; }
 };
 
 } // namespace pedigree
