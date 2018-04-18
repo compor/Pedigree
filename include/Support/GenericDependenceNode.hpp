@@ -7,6 +7,8 @@
 
 #include "Support/Traits/TypeTraits.hpp"
 
+#include "Analysis/Info/NodeInfo/EmptyNodeInfo.hpp"
+
 #include "llvm/ADT/SmallPtrSet.h"
 // using llvm::SmallPtrSet
 
@@ -59,10 +61,6 @@ template <typename T> struct EdgeRecordImpl<T, void> {
 };
 
 } // namespace detail
-
-struct EmptyNodeInfo {
-  struct value_type {};
-};
 
 template <typename T, typename NodeInfoT = EmptyNodeInfo,
           typename EdgeInfoT = void>
