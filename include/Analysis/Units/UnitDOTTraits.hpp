@@ -40,8 +40,8 @@ class Function;
 namespace pedigree {
 
 template <typename T, typename _ = void> struct UnitDOTTraits {
-  // static std::string name(const T &);
-  // static std::string print(const T &);
+  static std::string name(const T &) { return ""; }
+  static std::string print(const T &) { return ""; }
 };
 
 //
