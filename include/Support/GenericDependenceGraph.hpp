@@ -49,8 +49,8 @@ public:
   using NodeType = NodeT;
 
 private:
-  using UnderlyingType = typename NodeType::UnderlyingType;
-  using NodeMapType = std::map<UnderlyingType, std::unique_ptr<NodeType>>;
+  using WrappedType = typename NodeType::WrappedType;
+  using NodeMapType = std::map<WrappedType, std::unique_ptr<NodeType>>;
 
   NodeMapType NodeMap;
 
@@ -102,7 +102,7 @@ public:
     return *this;
   }
 
-  decltype(auto) getOrInsertNode(UnderlyingType Under) {
+  decltype(auto) getOrInsertNode(WrappedType Under) {
     auto &node = NodeMap[Under];
     if (!node) {
       node = std::make_unique<NodeType>(Under);

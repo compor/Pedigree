@@ -18,10 +18,10 @@ template <typename FromNodeT, typename ToNodeT, typename ConversionOperation>
 void Convert(const GenericDependenceGraph<FromNodeT> &From,
              GenericDependenceGraph<ToNodeT> &To,
              ConversionOperation ConvertOp) {
-  using FromUnderlyingT = typename FromNodeT::UnderlyingType;
-  using ToUnderlyingT = typename ToNodeT::UnderlyingType;
+  using FromWrappedT = typename FromNodeT::WrappedType;
+  using ToWrappedT = typename ToNodeT::WrappedType;
 
-  static_assert(is_unit_convertible_v<FromUnderlyingT, ToUnderlyingT>,
+  static_assert(is_unit_convertible_v<FromWrappedT, ToWrappedT>,
                 "Graph node undelying units are not convertible!");
 
   using GT = llvm::GraphTraits<typename std::add_pointer_t<
