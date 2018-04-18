@@ -5,7 +5,7 @@
 #ifndef PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 #define PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
 
-#include "Analysis/DependenceInfo/DependenceInfoDOTTraits.hpp"
+#include "Analysis/Info/EdgeInfo/DependenceInfoDOTTraits.hpp"
 
 #include "Analysis/Units/UnitDOTTraits.hpp"
 
