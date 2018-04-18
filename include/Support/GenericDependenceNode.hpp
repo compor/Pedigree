@@ -70,8 +70,8 @@ class GenericDependenceNode
           GenericDependenceNode<T, NodeInfoT, EdgeInfoT>> {
 public:
   using NodeType = GenericDependenceNode;
-  using WrappedType = T *;
-  using ConstWrappedType = const T *;
+  using UnitType = T *;
+  using ConstUnitType = const T *;
   using NodeInfoType = NodeInfoT;
   using EdgeInfoType = EdgeInfoT;
 
@@ -80,7 +80,7 @@ private:
   using EdgeStorageType = std::vector<DependenceRecordType>;
 
   mutable unsigned DependeeCount;
-  WrappedType Wrapped;
+  UnitType Unit;
   EdgeStorageType Edges;
 
 public:
@@ -100,9 +100,9 @@ public:
   using const_edges_iterator = const_iterator;
 
   template <typename... Args>
-  explicit GenericDependenceNode(WrappedType Wrapped, Args &&... args) noexcept
+  explicit GenericDependenceNode(UnitType Unit, Args &&... args) noexcept
       : DependeeCount(0),
-        Wrapped(Wrapped),
+        Unit(Unit),
         NodeInfoType::value_type(std::forward<Args>(args)...) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
@@ -110,28 +110,28 @@ public:
 
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
       are_all_nothrow_move_constructible_v<decltype(DependeeCount),
-                                           decltype(Wrapped), decltype(Edges),
+                                           decltype(Unit), decltype(Edges),
                                            typename NodeInfoType::value_type>)
       : DependeeCount(std::move(Other.DependeeCount)),
-        Wrapped(std::move(Other.Wrapped)), Edges(std::move(Other.Edges)),
+        Unit(std::move(Other.Unit)), Edges(std::move(Other.Edges)),
         NodeInfoType::value_type(std::move(Other)) {
     Other.DependeeCount = {};
-    Other.Wrapped = {};
+    Other.Unit = {};
     Other.Edges.clear();
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
       are_all_nothrow_move_assignable_v<decltype(DependeeCount),
-                                        decltype(Wrapped), decltype(Edges),
+                                        decltype(Unit), decltype(Edges),
                                         typename NodeInfoType::value_type>) {
     NodeInfoType::value_type::operator=(std::move(Other));
 
     DependeeCount = std::move(Other.DependeeCount);
-    Wrapped = std::move(Other.Wrapped);
+    Unit = std::move(Other.Unit);
     Edges = std::move(Other.Edges);
 
     Other.DependeeCount = {};
-    Other.Wrapped = {};
+    Other.Unit = {};
     Other.Edges.clear();
 
     return *this;
@@ -147,7 +147,7 @@ public:
 
   typename NodeInfoType::value_type &info() & noexcept { return *this; }
 
-  WrappedType wrapped() const noexcept { return Wrapped; }
+  UnitType unit() const noexcept { return Unit; }
 
   bool hasEdgeWith(const NodeType *Node) const {
     return Edges.end() != getEdgeWith(Node);
@@ -286,12 +286,12 @@ public:
       return true;
     }
 
-    llvm::SmallPtrSet<ConstWrappedType, 8> otherChildren;
+    llvm::SmallPtrSet<ConstUnitType, 8> otherChildren;
     for (const auto &e : Other)
-      otherChildren.insert(e.node->wrapped());
+      otherChildren.insert(e.node->unit());
 
     for (const auto &e : *this)
-      if (otherChildren.count(e.node->wrapped()) == 0) {
+      if (otherChildren.count(e.node->unit()) == 0) {
         return true;
       }
 

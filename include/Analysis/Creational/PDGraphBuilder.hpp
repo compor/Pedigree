@@ -37,10 +37,10 @@ class PDGraphBuilder {
     using GT = llvm::GraphTraits<decltype(&FromGraph)>;
 
     for (const auto &node : GT::nodes(&FromGraph)) {
-      auto src = ToGraph.getOrInsertNode(node->wrapped());
+      auto src = ToGraph.getOrInsertNode(node->unit());
 
       for (const auto &child : GT::children(node)) {
-        auto dst = ToGraph.getOrInsertNode(child->wrapped());
+        auto dst = ToGraph.getOrInsertNode(child->unit());
 
         auto newInfo = node->getEdgeInfo(child);
 

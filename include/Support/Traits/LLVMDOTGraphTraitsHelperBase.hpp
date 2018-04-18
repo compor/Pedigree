@@ -51,13 +51,12 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
 
   static std::string getCompleteNodeLabel(const NodeType *Node,
                                           const GraphType *Graph) {
-    return UnitDOTTraits<typename NodeType::WrappedType>::print(
-        Node->wrapped());
+    return UnitDOTTraits<typename NodeType::UnitType>::print(Node->unit());
   }
 
   static std::string getSimpleNodeLabel(const NodeType *Node,
                                         const GraphType *Graph) {
-    return UnitDOTTraits<typename NodeType::WrappedType>::name(Node->wrapped());
+    return UnitDOTTraits<typename NodeType::UnitType>::name(Node->unit());
   }
 
   static std::string getNodeAttributes(const NodeType *Node,
