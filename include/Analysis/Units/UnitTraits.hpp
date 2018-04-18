@@ -18,7 +18,7 @@
 namespace pedigree {
 
 template <typename T, typename _ = void> struct UnitTraits {
-  // using unit_category = typename T::unit_category;
+  using unit_category = typename T::unit_category;
 };
 
 template <typename T>
