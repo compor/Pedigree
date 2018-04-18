@@ -12,8 +12,8 @@
 
 namespace pedigree {
 
-template <typename InfoT> struct EdgeInfoDOTTraits {
-  static std::string toDOTAttributes(const InfoT &I) { return ""; }
+template <typename T> struct EdgeInfoDOTTraits {
+  static std::string toDOTAttributes(const T &) { return ""; }
 };
 
 } // namespace pedigree
