@@ -15,6 +15,8 @@
 
 #include "Support/Traits/LLVMDOTGraphTraitsHelperBase.hpp"
 
+#include "Analysis/Info/NodeInfo/UIDInfo.hpp"
+
 #include "Analysis/Info/EdgeInfo/BasicDependenceInfo.hpp"
 
 #include "llvm/IR/Instruction.h"
@@ -28,24 +30,24 @@
 
 namespace pedigree {
 
-extern template class GenericDependenceNode<llvm::Instruction, EmptyInfo,
+extern template class GenericDependenceNode<llvm::Instruction, UIDInfo,
                                             BasicDependenceInfo>;
 
-extern template class GenericDependenceNode<llvm::BasicBlock, EmptyInfo,
+extern template class GenericDependenceNode<llvm::BasicBlock, UIDInfo,
                                             BasicDependenceInfo>;
 
 extern template class GenericDependenceGraph<
-    GenericDependenceNode<llvm::Instruction, EmptyInfo, BasicDependenceInfo>>;
+    GenericDependenceNode<llvm::Instruction, UIDInfo, BasicDependenceInfo>>;
 
 extern template class GenericDependenceGraph<
-    GenericDependenceNode<llvm::BasicBlock, EmptyInfo, BasicDependenceInfo>>;
+    GenericDependenceNode<llvm::BasicBlock, UIDInfo, BasicDependenceInfo>>;
 
 //
 // aliases for llvm::Instruction
 
 template <typename EdgeInfoT>
 using InstructionGenericDependenceNode =
-    GenericDependenceNode<llvm::Instruction, EmptyInfo, EdgeInfoT>;
+    GenericDependenceNode<llvm::Instruction, UIDInfo, EdgeInfoT>;
 
 using InstructionDependenceNode =
     InstructionGenericDependenceNode<BasicDependenceInfo>;
@@ -62,7 +64,7 @@ using InstructionDependenceGraph =
 
 template <typename EdgeInfoT>
 using BasicBlockGenericDependenceNode =
-    GenericDependenceNode<llvm::BasicBlock, EmptyInfo, EdgeInfoT>;
+    GenericDependenceNode<llvm::BasicBlock, UIDInfo, EdgeInfoT>;
 
 using BasicBlockDependenceNode =
     BasicBlockGenericDependenceNode<BasicDependenceInfo>;

@@ -64,7 +64,7 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
     std::string attr;
 
     if (Graph->getEntryNode() == Node) {
-      attr = "color=grey,style=filled";
+      attr = " color=grey,style=filled ";
     }
 
     attr += NodeInfoDOTTraits<typename NodeType::NodeInfoType::value_type>::
