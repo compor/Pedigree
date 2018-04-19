@@ -7,7 +7,7 @@
 
 #include "Support/Traits/TypeTraits.hpp"
 
-#include "Analysis/Info/NodeInfo/EmptyNodeInfo.hpp"
+#include "Analysis/Info/EmptyInfo.hpp"
 
 #include "llvm/ADT/SmallPtrSet.h"
 // using llvm::SmallPtrSet
@@ -46,10 +46,6 @@ namespace pedigree {
 
 namespace detail {
 
-struct EmptyEdgeInfo {
-  using value_type = struct {};
-};
-
 template <typename NodeT, typename InfoT>
 struct EdgeRecordImpl : private InfoT::value_type {
   using node_type = NodeT;
@@ -68,8 +64,8 @@ struct EdgeRecordImpl : private InfoT::value_type {
 
 } // namespace detail
 
-template <typename T, typename NodeInfoT = EmptyNodeInfo,
-          typename EdgeInfoT = detail::EmptyEdgeInfo>
+template <typename T, typename NodeInfoT = EmptyInfo,
+          typename EdgeInfoT = EmptyInfo>
 class GenericDependenceNode
     : NodeInfoT::value_type,
       boost::equality_comparable<

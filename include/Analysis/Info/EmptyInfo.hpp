@@ -2,12 +2,12 @@
 //
 //
 
-#ifndef PEDIGREE_INFO_EMPTYNODEINFO_HPP
-#define PEDIGREE_INFO_EMPTYNODEINFO_HPP
+#ifndef PEDIGREE_INFO_EMPTYINFO_HPP
+#define PEDIGREE_INFO_EMPTYINFO_HPP
 
 namespace pedigree {
 
-struct EmptyNodeInfo {
+struct EmptyInfo {
   struct value_type {};
 };
 
