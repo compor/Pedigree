@@ -51,6 +51,11 @@ struct EdgeRecordImpl : private InfoT::value_type {
   using node_type = NodeT;
   using info_type = InfoT;
 
+  template <typename... Args>
+  EdgeRecordImpl(node_type node, Args &&... args)
+      : node(std::move(node)),
+        info_type::value_type(std::forward<Args>(args)...) {}
+
   node_type node;
 
   typename info_type::value_type &&info() && noexcept {
@@ -157,11 +162,7 @@ public:
 
   void addDependentNode(const NodeType *Node,
                         typename EdgeInfoType::value_type Info = {}) {
-    auto record = DependenceRecordType{};
-    record.node = const_cast<NodeType *>(Node);
-    auto &info = record.info();
-    info = std::move(Info);
-    Edges.push_back(std::move(record));
+    Edges.emplace_back(const_cast<NodeType *>(Node), std::move(Info));
     Node->incrementDependeeCount();
   }
 
