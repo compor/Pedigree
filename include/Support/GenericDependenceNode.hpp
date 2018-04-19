@@ -46,24 +46,30 @@ namespace pedigree {
 
 namespace detail {
 
-template <typename T, typename U> struct EdgeRecordImpl {
-  using node_type = T;
-  using data_type = U;
-
-  T node;
-  U data;
+struct EmptyEdgeInfo {
+  using value_type = struct {};
 };
 
-template <typename T> struct EdgeRecordImpl<T, void> {
-  using node_type = T;
+template <typename NodeT, typename InfoT>
+struct EdgeRecordImpl : private InfoT::value_type {
+  using node_type = NodeT;
+  using info_type = InfoT;
 
-  T node;
+  node_type node;
+
+  typename info_type::value_type &&info() && noexcept {
+    return std::move(*this);
+  }
+
+  const typename info_type::value_type &info() const &noexcept { return *this; }
+
+  typename info_type::value_type &info() & noexcept { return *this; }
 };
 
 } // namespace detail
 
 template <typename T, typename NodeInfoT = EmptyNodeInfo,
-          typename EdgeInfoT = void>
+          typename EdgeInfoT = detail::EmptyEdgeInfo>
 class GenericDependenceNode
     : NodeInfoT::value_type,
       boost::equality_comparable<
@@ -121,8 +127,8 @@ public:
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_assignable_v<decltype(DependeeCount),
-                                        decltype(Unit), decltype(Edges),
+      are_all_nothrow_move_assignable_v<decltype(DependeeCount), decltype(Unit),
+                                        decltype(Edges),
                                         typename NodeInfoType::value_type>) {
     NodeInfoType::value_type::operator=(std::move(Other));
 
@@ -153,47 +159,36 @@ public:
     return Edges.end() != getEdgeWith(Node);
   }
 
-  template <typename U = EdgeInfoType>
-  std::enable_if_t<!std::is_void<U>::value>
-  addDependentNode(const NodeType *Node, U Info) {
-    Edges.emplace_back(detail::EdgeRecordImpl<NodeType *, U>{
-        const_cast<NodeType *>(Node), std::move(Info)});
+  void addDependentNode(const NodeType *Node,
+                        typename EdgeInfoType::value_type Info = {}) {
+    auto record = DependenceRecordType{};
+    record.node = const_cast<NodeType *>(Node);
+    auto &info = record.info();
+    info = std::move(Info);
+    Edges.push_back(std::move(record));
     Node->incrementDependeeCount();
   }
 
-  template <typename U = EdgeInfoType>
-  std::enable_if_t<std::is_void<U>::value>
-  addDependentNode(const NodeType *Node) {
-    Edges.emplace_back(
-        detail::EdgeRecordImpl<NodeType *, U>{const_cast<NodeType *>(Node)});
-    Node->incrementDependeeCount();
-  }
-
-  template <typename U = EdgeInfoType>
-  std::enable_if_t<!std::is_void<U>::value, boost::optional<const U &>>
+  boost::optional<const typename EdgeInfoType::value_type &>
   getEdgeInfo(const NodeType *Node) const {
     auto found = getEdgeWith(Node);
 
-    return found != Edges.end() ? boost::optional<const U &>((*found).data)
-                                : boost::none;
+    return found != Edges.end()
+               ? boost::optional<const typename EdgeInfoType::value_type &>(
+                     (*found).info())
+               : boost::none;
   }
 
-  template <typename U = EdgeInfoType>
-  std::enable_if_t<std::is_void<U>::value, boost::none_t>
-  getEdgeInfo(const NodeType *Node) const {
-    return {};
-  }
-
-  template <typename U = EdgeInfoType>
-  std::enable_if_t<!std::is_void<U>::value, bool>
-  setEdgeInfo(const NodeType *Node, U Info) {
+  bool setEdgeInfo(const NodeType *Node,
+                   typename EdgeInfoType::value_type Info = {}) {
     auto found = getEdgeWith(Node);
 
     if (found == Edges.end()) {
       return false;
     }
 
-    (*found).data = std::move(Info);
+    auto &info = (*found).info();
+    info = std::move(Info);
 
     return true;
   }

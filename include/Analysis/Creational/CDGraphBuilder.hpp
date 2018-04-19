@@ -33,8 +33,8 @@ namespace pedigree {
 class CDGraphBuilder {
   boost::optional<const llvm::Function &> CurUnit;
 
-  static constexpr BasicDependenceInfo info{DependenceOrigin::Control,
-                                            DependenceHazard::Unknown};
+  static constexpr BasicDependenceInfo::value_type info{
+      DependenceOrigin::Control, DependenceHazard::Unknown};
 
 public:
   CDGraphBuilder() = default;
@@ -70,7 +70,7 @@ public:
   }
 };
 
-constexpr BasicDependenceInfo CDGraphBuilder::info;
+constexpr BasicDependenceInfo::value_type CDGraphBuilder::info;
 
 } // namespace pedigree
 

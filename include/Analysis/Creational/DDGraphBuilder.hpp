@@ -33,8 +33,8 @@ class DDGraphBuilder : public llvm::InstVisitor<DDGraphBuilder> {
   boost::optional<const llvm::Function &> CurUnit;
 
   // always flow for SSA use-def chains
-  static constexpr BasicDependenceInfo info{DependenceOrigin::Data,
-                                            DependenceHazard::Flow};
+  static constexpr BasicDependenceInfo::value_type info{DependenceOrigin::Data,
+                                                        DependenceHazard::Flow};
 
 public:
   DDGraphBuilder() = default;
@@ -66,7 +66,7 @@ public:
   }
 };
 
-constexpr BasicDependenceInfo DDGraphBuilder::info;
+constexpr BasicDependenceInfo::value_type DDGraphBuilder::info;
 
 } // namespace pedigree
 

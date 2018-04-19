@@ -85,7 +85,7 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
   static std::string getEdgeAttributes(const NodeType *Node,
                                        typename GT::ChildIteratorType EI,
                                        const GraphType *Graph) {
-    using DIT = EdgeInfoDOTTraits<typename NodeType::EdgeInfoType>;
+    using DIT = EdgeInfoDOTTraits<typename NodeType::EdgeInfoType::value_type>;
 
     auto info = Node->getEdgeInfo(*EI);
     std::string infoStr{};

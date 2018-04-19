@@ -64,33 +64,33 @@ enum class DependenceOrigin : std::size_t {
   Control = 0b100,
 };
 
-struct BasicDependenceInfo : boost::orable<BasicDependenceInfo> {
-  flags::flags<DependenceOrigin> origins;
-  flags::flags<DependenceHazard> hazards;
+struct BasicDependenceInfo {
+  struct value_type : boost::orable<value_type> {
+    flags::flags<DependenceOrigin> origins;
+    flags::flags<DependenceHazard> hazards;
 
-  constexpr BasicDependenceInfo(DependenceOrigin origin,
-                                DependenceHazard hazard) noexcept
-      : origins(origin),
-        hazards(hazard) {}
+    constexpr value_type(DependenceOrigin origin,
+                         DependenceHazard hazard) noexcept : origins(origin),
+                                                             hazards(hazard) {}
 
-  constexpr BasicDependenceInfo() noexcept
-      : BasicDependenceInfo(DependenceOrigin::Unknown,
-                            DependenceHazard::Unknown) {}
+    constexpr value_type() noexcept
+        : value_type(DependenceOrigin::Unknown, DependenceHazard::Unknown) {}
 
-  constexpr BasicDependenceInfo(const BasicDependenceInfo &) = default;
+    constexpr value_type(const value_type &) = default;
 
-  BasicDependenceInfo &operator|=(const BasicDependenceInfo &Other) noexcept {
-    this->hazards = this->hazards | Other.hazards;
-    this->origins = this->origins | Other.origins;
+    value_type &operator|=(const value_type &Other) noexcept {
+      this->hazards = this->hazards | Other.hazards;
+      this->origins = this->origins | Other.origins;
 
-    return *this;
-  }
+      return *this;
+    }
+  };
 };
 
 // traits
 
-template <> struct EdgeInfoDOTTraits<BasicDependenceInfo> {
-  static std::string toDOTAttributes(const BasicDependenceInfo &I) {
+template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
+  static std::string toDOTAttributes(const BasicDependenceInfo::value_type &I) {
     auto attr = toDOTColor(I);
 
     if (I.origins & DependenceOrigin::Memory) {
@@ -100,7 +100,7 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo> {
     return attr;
   }
 
-  static std::string toDOTColor(const BasicDependenceInfo &I) {
+  static std::string toDOTColor(const BasicDependenceInfo::value_type &I) {
     std::stringstream colorAttribute{};
     std::stringstream sep{};
     std::vector<std::string> colors{};
@@ -136,7 +136,7 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo> {
     return colorAttribute.str();
   }
 
-  static std::string toDOTLabel(const BasicDependenceInfo &I) {
+  static std::string toDOTLabel(const BasicDependenceInfo::value_type &I) {
     std::string label{"label=\""};
 
     if (I.hazards.empty()) {

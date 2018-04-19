@@ -133,8 +133,8 @@ private:
   decltype(auto) determineHazard(const llvm::Instruction &Src,
                                  const llvm::Instruction &Dst,
                                  const llvm::MemDepResult &QueryResult) {
-    BasicDependenceInfo info{DependenceOrigin::Memory,
-                             DependenceHazard::Unknown};
+    BasicDependenceInfo::value_type info{DependenceOrigin::Memory,
+                                         DependenceHazard::Unknown};
 
     // TODO decide what to do when the query is unknown
     if (QueryResult.isUnknown() || CurMode.empty()) {
@@ -173,7 +173,7 @@ private:
   }
 
   void addDependenceWithInfo(llvm::Instruction &Src, llvm::Instruction &Dst,
-                             const BasicDependenceInfo &Info) {
+                             const BasicDependenceInfo::value_type &Info) {
     auto src = Graph->getOrInsertNode(&Src);
     auto dst = Graph->getOrInsertNode(&Dst);
     src->addDependentNode(dst, Info);

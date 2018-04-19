@@ -67,8 +67,8 @@ public:
       Graph = std::make_unique<MDGraph>();
       visit(const_cast<llvm::Function &>(*CurUnit));
 
-      constexpr BasicDependenceInfo info{DependenceOrigin::Memory,
-                                         DependenceHazard::Flow};
+      constexpr BasicDependenceInfo::value_type info{DependenceOrigin::Memory,
+                                                     DependenceHazard::Flow};
 
       for (auto ii = std::begin(MemInstructions),
                 ie = std::end(MemInstructions);
