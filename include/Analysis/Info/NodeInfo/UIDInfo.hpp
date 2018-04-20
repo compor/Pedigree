@@ -33,7 +33,7 @@ struct UIDInfo {
 template <> struct NodeInfoDOTTraits<UIDInfo::value_type> {
   static std::string toDOTAttributes(const UIDInfo::value_type &I) {
     std::stringstream ss{};
-    ss << " dg_uid=\"" << I.id << "\"";
+    ss << " dg_uid=\"" << I.id << "\", ";
 
     return ss.str();
   }
