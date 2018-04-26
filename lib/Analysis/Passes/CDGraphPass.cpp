@@ -2,7 +2,11 @@
 //
 //
 
-#include "Utils.hpp"
+#include "Config.hpp"
+
+#include "Debug.hpp"
+
+#include "Util.hpp"
 
 #include "Analysis/Passes/CDGraphPass.hpp"
 
@@ -81,19 +85,19 @@ static llvm::cl::opt<bool> PedigreeCDGraphConvertToInstruction(
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-cdg-debug", llvm::cl::desc("debug pedigree cdg pass"),
-          llvm::cl::location(pedigree::utility::passDebugFlag),
+          llvm::cl::location(pedigree::debug::passDebugFlag),
           llvm::cl::cat(PedigreeCDGraphPassCategory));
 
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-cdg-debug-level",
     llvm::cl::desc("debug level for pedigree cdg pass"),
-    llvm::cl::location(pedigree::utility::passLogLevel),
+    llvm::cl::location(pedigree::debug::passLogLevel),
     llvm::cl::values(
-        clEnumValN(LogLevel::info, "info", "informational messages"),
-        clEnumValN(LogLevel::notice, "notice", "significant conditions"),
-        clEnumValN(LogLevel::warning, "warning", "warning conditions"),
-        clEnumValN(LogLevel::error, "error", "error conditions"),
-        clEnumValN(LogLevel::debug, "debug", "debug messages"), nullptr),
+        clEnumValN(LogLevel::Info, "info", "informational messages"),
+        clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
+        clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
+        clEnumValN(LogLevel::Error, "error", "error conditions"),
+        clEnumValN(LogLevel::Debug, "debug", "debug messages"), nullptr),
     llvm::cl::cat(PedigreeCDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 

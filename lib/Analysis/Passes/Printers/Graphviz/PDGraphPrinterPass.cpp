@@ -4,7 +4,9 @@
 
 #include "Config.hpp"
 
-#include "Utils.hpp"
+#include "Debug.hpp"
+
+#include "Util.hpp"
 
 #include "Analysis/Passes/PDGraphPass.hpp"
 

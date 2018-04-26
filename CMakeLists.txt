@@ -1,7 +1,5 @@
 # cmake file
 
-# build tool configuration
-
 cmake_minimum_required(VERSION 3.2.0)
 
 list(APPEND CMAKE_MODULE_PATH
@@ -19,8 +17,6 @@ include(GetGitVersion)
 add_clean_all_target()
 
 option(PEDIGREE_SKIP_TESTS "Skip configuring the project tests" ON)
-
-message(STATUS "project debug: ${PEDIGREE_DEBUG}")
 
 set(PRJ_DEBUG_VALUE 0)
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
@@ -122,6 +118,7 @@ add_subdirectory(third_party/enum-flags)
 #
 
 set(LIB_SOURCES
+  lib/Debug.cpp
   lib/Analysis/Graphs/DependenceGraphs.cpp
   lib/Analysis/Passes/DDGraphPass.cpp
   lib/Analysis/Passes/CDGraphPass.cpp

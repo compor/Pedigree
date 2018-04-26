@@ -7,6 +7,9 @@
 
 #include "Config.hpp"
 
+#define DEFINE_DEBUG_LEVELS                                                    \
+  enum class LogLevel { Info, Notice, Warning, Error, Debug }
+
 #ifdef BOOST_NO_EXCEPTIONS
 
 #include <iostream>
@@ -15,9 +18,6 @@
 #include <exception>
 // using std::exception
 // using std::terminate
-#endif // BOOST_NO_EXCEPTIONS
-
-#ifdef BOOST_NO_EXCEPTIONS
 
 namespace boost {
 
@@ -32,8 +32,6 @@ namespace boost {
 #endif // BOOST_NO_EXCEPTIONS
 
 //
-
-enum class LogLevel { info, notice, warning, error, debug };
 
 #if PEDIGREE_DEBUG
 
@@ -53,37 +51,37 @@ enum class LogLevel { info, notice, warning, error, debug };
 #include <system_error>
 // using std::error_code
 
+DEFINE_DEBUG_LEVELS;
+
+namespace pedigree {
+namespace debug {
+
+extern bool passDebugFlag;
+extern LogLevel passLogLevel;
+
+} // namespace debug
+} // namespace pedigree
+
 // preprocessor stringification macros
 #define STRINGIFY_UTIL(x) #x
 #define STRINGIFY(x) STRINGIFY_UTIL(x)
 
 #define PRJ_CMDLINE_DESC(x) x " (version: " STRINGIFY(VERSION_STRING) ")"
 
-namespace pedigree {
-namespace utility {
-
-static bool passDebugFlag = false;
-static LogLevel passLogLevel = LogLevel::info;
-
-} // namespace utility
-} // namespace pedigree
-
 #define DEBUG_MSG(L, STR)                                                      \
   do {                                                                         \
-    if (pedigree::utility::passDebugFlag &&                                    \
-        L <= pedigree::utility::passLogLevel)                                  \
+    if (pedigree::debug::passDebugFlag && L <= pedigree::debug::passLogLevel)  \
       llvm::errs() << STR;                                                     \
   } while (false)
 
 #define DEBUG_CMD(L, C)                                                        \
   do {                                                                         \
-    if (pedigree::utility::passDebugFlag &&                                    \
-        L <= pedigree::utility::passLogLevel)                                  \
+    if (pedigree::debug::passDebugFlag && L <= pedigree::debug::passLogLevel)  \
       C;                                                                       \
   } while (false)
 
 namespace pedigree {
-namespace utility {
+namespace debug {
 
 static bool dumpFunction(const llvm::Function *CurFunc = nullptr) {
   if (!CurFunc)
@@ -101,7 +99,7 @@ static bool dumpFunction(const llvm::Function *CurFunc = nullptr) {
   return false;
 }
 
-} // namespace utility
+} // namespace debug
 } // namespace pedigree
 
 #else
@@ -118,14 +116,16 @@ namespace llvm {
 class Function;
 } // namespace llvm
 
+DEFINE_DEBUG_LEVELS;
+
 namespace pedigree {
-namespace utility {
+namespace debug {
 
 static constexpr bool dumpFunction(const llvm::Function *CurFunc = nullptr) {
   return true;
 }
 
-} // namespace utility
+} // namespace debug
 } // namespace pedigree
 
 #endif // PEDIGREE_DEBUG

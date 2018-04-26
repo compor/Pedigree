@@ -2,7 +2,7 @@
 //
 //
 
-#include "Utils.hpp"
+#include "Debug.hpp"
 
 #include "Analysis/Passes/DDGraphPass.hpp"
 
@@ -72,19 +72,19 @@ static llvm::cl::OptionCategory
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-ddg-debug", llvm::cl::desc("debug pedigree ddg pass"),
-          llvm::cl::location(pedigree::utility::passDebugFlag),
+          llvm::cl::location(pedigree::debug::passDebugFlag),
           llvm::cl::cat(PedigreeDDGraphPassCategory));
 
 static llvm::cl::opt<LogLevel, true> DebugLevel(
     "pedigree-ddg-debug-level",
     llvm::cl::desc("debug level for pedigree ddg pass"),
-    llvm::cl::location(pedigree::utility::passLogLevel),
+    llvm::cl::location(pedigree::debug::passLogLevel),
     llvm::cl::values(
-        clEnumValN(LogLevel::info, "info", "informational messages"),
-        clEnumValN(LogLevel::notice, "notice", "significant conditions"),
-        clEnumValN(LogLevel::warning, "warning", "warning conditions"),
-        clEnumValN(LogLevel::error, "error", "error conditions"),
-        clEnumValN(LogLevel::debug, "debug", "debug messages"), nullptr),
+        clEnumValN(LogLevel::Info, "info", "informational messages"),
+        clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
+        clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
+        clEnumValN(LogLevel::Error, "error", "error conditions"),
+        clEnumValN(LogLevel::Debug, "debug", "debug messages"), nullptr),
     llvm::cl::cat(PedigreeDDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 
