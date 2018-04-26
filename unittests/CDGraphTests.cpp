@@ -63,7 +63,7 @@ TEST_P(CDGraphConstructionTest, CDGraphConstruction) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
-  auto *curFunc = m_Module->getFunction("foo");
+  auto *curFunc = module().getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
   CDGraphBuilder cdgBuilder{};
@@ -77,7 +77,7 @@ TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
-  auto *curFunc = m_Module->getFunction("foo");
+  auto *curFunc = module().getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
   CDGraphBuilder cdgBuilder{};
@@ -99,6 +99,6 @@ std::array<CDGraphTestData, 5> testData1 = {{{"whalebook_fig81.ll", 4, 3},
 INSTANTIATE_TEST_CASE_P(DefaultInstance, CDGraphConstructionTest,
                         ::testing::ValuesIn(testData1));
 
-} // unnamed namespace end
-} // namespace testing end
-} // namespace pedigree end
+} // unnamed namespace
+} // namespace testing
+} // namespace pedigree

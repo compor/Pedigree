@@ -59,7 +59,7 @@ static llvm::LoopInfo calculateLoopInfo(llvm::Function &Func) {
   return LI;
 }
 
-} // namespace testing end
-} // namespace pedigree end
+} // namespace testing
+} // namespace pedigree
 
 #endif // header

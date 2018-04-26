@@ -53,7 +53,7 @@ TEST_P(DDGraphConstructionTest, DDGraphConstruction) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
-  auto *curFunc = m_Module->getFunction("foo");
+  auto *curFunc = module().getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
   DDGraphBuilder ddgBuilder{};
@@ -70,6 +70,6 @@ std::array<DDGraphTestData, 3> testData1 = {"whalebook_fig81.ll",  10, 9,
 INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGraphConstructionTest,
                         ::testing::ValuesIn(testData1));
 
-} // unnamed namespace end
-} // namespace testing end
-} // namespace pedigree end
+} // unnamed namespace
+} // namespace testing
+} // namespace pedigree

@@ -78,7 +78,7 @@ TEST_P(PDFTraversalTest, DFSPostOrderTraversal) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
-  auto *curFunc = m_Module->getFunction("foo");
+  auto *curFunc = module().getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
   llvm::PostDominatorTree curPDT;
@@ -145,7 +145,7 @@ TEST_P(PDFConstructionTest, PDFConstruction) {
   auto td = GetParam();
 
   parseAssemblyFile(td.assemblyFile);
-  auto *curFunc = m_Module->getFunction("foo");
+  auto *curFunc = module().getFunction("foo");
   ASSERT_FALSE(nullptr == curFunc);
 
   llvm::PostDominatorTree curPDT;
@@ -179,6 +179,6 @@ std::array<PDFConstructionTestData, 5> testData2 = {
 INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
                         ::testing::ValuesIn(testData2));
 
-} // unnamed namespace end
-} // namespace testing end
-} // namespace pedigree end
+} // unnamed namespace
+} // namespace testing
+} // namespace pedigree

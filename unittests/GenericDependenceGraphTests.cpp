@@ -89,6 +89,6 @@ TEST_F(GenericDependenceGraphTest, IterateGraphEdges) {
   EXPECT_EQ(3, n);
 }
 
-} // unnamed namespace end
-} // namespace testing end
-} // namespace pedigree end
+} // unnamed namespace
+} // namespace testing
+} // namespace pedigree
