@@ -11,6 +11,9 @@
 
 #include "Analysis/PostDominanceFrontier.hpp"
 
+#include "llvm/Config/llvm-config.h"
+// version macros
+
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
@@ -51,10 +54,15 @@ public:
     }
 
     llvm::PostDominatorTree curPDT;
-    curPDT.DT->recalculate(const_cast<llvm::Function &>(*CurUnit));
-
     PostDominanceFrontierBase<llvm::BasicBlock> pdf;
+
+#if (LLVM_VERSION_MAJOR >= 5)
+    curPDT.recalculate(const_cast<llvm::Function &>(*CurUnit));
+    pdf.analyze(curPDT);
+#else
+    curPDT.DT->recalculate(const_cast<llvm::Function &>(*CurUnit));
     pdf.analyze(*curPDT.DT);
+#endif
 
     auto Graph = std::make_unique<CDGraph>();
 

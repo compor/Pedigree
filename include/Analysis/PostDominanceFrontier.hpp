@@ -31,6 +31,9 @@
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
 
+#include <algorithm>
+// using std::copy
+
 #include <cassert>
 // using assert
 
@@ -63,13 +66,19 @@ public:
   using DomSetType = typename Base::DomSetType;
   using DomSetMapType = typename Base::DomSetMapType;
 
+#if (LLVM_VERSION_MAJOR >= 5)
+  PostDominanceFrontierBase() : Base() {}
+#else
   PostDominanceFrontierBase() : Base(true) {}
+#endif
 
   void analyze(DomTreeT &DT) {
-    this->Roots = DT.getRoots();
-    assert(this->Roots.size() == 1 &&
-           "Only one entry block for post domfronts!");
+    const auto &roots = DT.getRoots();
 
+    assert(roots.size() == 1 && "Only one entry block for post domfronts!");
+
+    this->Roots.resize(roots.size());
+    std::copy(roots.begin(), roots.end(), this->Roots.begin());
     calculate(DT, DT[this->Roots[0]]);
   }
 
