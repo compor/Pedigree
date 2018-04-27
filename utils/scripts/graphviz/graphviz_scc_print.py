@@ -16,7 +16,7 @@ from networkx.drawing.nx_agraph import read_dot
 from networkx.drawing.nx_agraph import to_agraph
 
 
-def gv_dot_iterator_colorize(infile, outfile):
+def scc_print(infile, outfile):
     if os.path.exists(outfile):
         raise ValueError("Output file already exists")
 
@@ -42,4 +42,4 @@ if __name__ == '__main__':
             file=sys.stderr)
         exit(1)
 
-    gv_dot_iterator_colorize(sys.argv[1], sys.argv[2])
+    scc_print(sys.argv[1], sys.argv[2])
