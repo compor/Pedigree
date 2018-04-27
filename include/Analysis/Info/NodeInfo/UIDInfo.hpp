@@ -22,7 +22,8 @@ namespace pedigree {
 
 struct UIDInfo {
   struct value_type {
-    std::uint64_t id;
+    using IDTy = std::uint64_t;
+    IDTy id;
 
     constexpr value_type() noexcept : id(0) {}
   };
