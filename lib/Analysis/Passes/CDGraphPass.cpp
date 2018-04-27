@@ -16,6 +16,9 @@
 
 #include "Support/Utils/UnitConverters.hpp"
 
+#include "llvm/Config/llvm-config.h"
+// version macros
+
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -97,7 +100,13 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
         clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
         clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
         clEnumValN(LogLevel::Error, "error", "error conditions"),
-        clEnumValN(LogLevel::Debug, "debug", "debug messages"), nullptr),
+        clEnumValN(LogLevel::Debug, "debug", "debug messages")
+// clang-format off
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
+                                , clEnumValEnd
+#endif
+        // clang-format on
+        ),
     llvm::cl::cat(PedigreeCDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 

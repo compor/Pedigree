@@ -17,6 +17,7 @@
 #include "Analysis/Creational/DAMDGraphBuilder.hpp"
 
 #include "llvm/Config/llvm-config.h"
+// version macros
 
 #include "llvm/Analysis/MemoryDependenceAnalysis.h"
 // using llvm::MemoryDependenceAnalysis
@@ -105,8 +106,13 @@ static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
                                 "Memory Dependence Analysis"),
                      clEnumValN(AnalysisBackendType::DA, "da",
                                 "Dependence Analysis"),
-                     clEnumValN(AnalysisBackendType::MemorySSA, "memssa", ""),
-                     nullptr),
+                     clEnumValN(AnalysisBackendType::MemorySSA, "memssa", "")
+// clang-format off
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
+                                , clEnumValEnd
+#endif
+                     // clang-format on
+                     ),
     llvm::cl::init(AnalysisBackendType::MDA),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
@@ -116,8 +122,13 @@ static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
         clEnumValN(pedigree::AnalysisScope::Block, "block", "basic block"),
         clEnumValN(pedigree::AnalysisScope::Function, "function", "function"),
         clEnumValN(pedigree::AnalysisScope::Interprocedural, "interprocedural",
-                   "interprocedural"),
-        nullptr),
+                   "interprocedural")
+// clang-format off
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
+                                , clEnumValEnd
+#endif
+        // clang-format on
+        ),
     llvm::cl::init(pedigree::AnalysisScope::Block),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
@@ -126,8 +137,13 @@ static llvm::cl::bits<pedigree::AnalysisMode> AnalysisBackendModeOption(
     llvm::cl::values(clEnumValN(pedigree::AnalysisMode::MemDefs, "mem defs",
                                 "mem defs"),
                      clEnumValN(pedigree::AnalysisMode::MemClobbers,
-                                "mem clobbers", "mem clobbers"),
-                     nullptr),
+                                "mem clobbers", "mem clobbers")
+// clang-format off
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
+                                , clEnumValEnd
+#endif
+                     // clang-format on
+                     ),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
 #if PEDIGREE_DEBUG
@@ -145,7 +161,13 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
         clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
         clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
         clEnumValN(LogLevel::Error, "error", "error conditions"),
-        clEnumValN(LogLevel::Debug, "debug", "debug messages"), nullptr),
+        clEnumValN(LogLevel::Debug, "debug", "debug messages")
+// clang-format off
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
+                                , clEnumValEnd
+#endif
+        // clang-format on
+        ),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 

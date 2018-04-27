@@ -22,6 +22,9 @@
 
 #include "Support/Utils/UnitConverters.hpp"
 
+#include "llvm/Config/llvm-config.h"
+// version macros
+
 #include "llvm/IR/Type.h"
 // using llvm::Type
 
@@ -102,8 +105,13 @@ static llvm::cl::bits<PedigreePDGraphComponent> GraphComponentOption(
                      clEnumValN(PedigreePDGraphComponent::DDG, "DDG",
                                 "Data Dependence Graph"),
                      clEnumValN(PedigreePDGraphComponent::MDG, "MDG",
-                                "Memory Dependence Graph"),
-                     nullptr),
+                                "Memory Dependence Graph")
+// clang-format off
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
+                                , clEnumValEnd
+#endif
+                     // clang-format on
+                     ),
     llvm::cl::CommaSeparated, llvm::cl::cat(PedigreePDGraphPassCategory));
 
 #if PEDIGREE_DEBUG
@@ -121,7 +129,13 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
         clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
         clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
         clEnumValN(LogLevel::Error, "error", "error conditions"),
-        clEnumValN(LogLevel::Debug, "debug", "debug messages"), nullptr),
+        clEnumValN(LogLevel::Debug, "debug", "debug messages")
+// clang-format off
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
+                                , clEnumValEnd
+#endif
+        // clang-format on
+        ),
     llvm::cl::cat(PedigreePDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 
