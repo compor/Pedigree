@@ -5,6 +5,8 @@
 # strongly connected components displayed as clusters
 #
 
+from __future__ import print_function
+
 import sys
 import os
 
@@ -36,6 +38,9 @@ def gv_dot_iterator_colorize(infile, outfile):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        sys.stderr.write("Usage: %s [infile] [outfile]\n" % sys.argv[0])
+        print(
+            'Usage: {} [infile] [outfile]\n'.format(sys.argv[0]),
+            file=sys.stderr)
+        exit(1)
 
     gv_dot_iterator_colorize(sys.argv[1], sys.argv[2])
