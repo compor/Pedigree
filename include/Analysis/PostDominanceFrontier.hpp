@@ -5,6 +5,9 @@
 #ifndef PEDIGREE_POSTDOMINANCEFRONTIER_HPP
 #define PEDIGREE_POSTDOMINANCEFRONTIER_HPP
 
+#include "llvm/Config/llvm-config.h"
+// version macros
+
 #include "llvm/ADT/GraphTraits.h"
 // using llvm::GraphTraits
 // using llvm::Inverse
@@ -34,7 +37,13 @@
 namespace pedigree {
 
 template <typename BlockT>
-class PostDominanceFrontierBase : public llvm::DominanceFrontierBase<BlockT> {
+class PostDominanceFrontierBase
+#if (LLVM_VERSION_MAJOR >= 5)
+    : public llvm::DominanceFrontierBase<BlockT, true>
+#else
+    : public llvm::DominanceFrontierBase<BlockT>
+#endif
+{
   using BlockTraits = llvm::GraphTraits<llvm::Inverse<BlockT *>>;
 
   auto graph_children(BlockT *BB) const {
@@ -43,8 +52,13 @@ class PostDominanceFrontierBase : public llvm::DominanceFrontierBase<BlockT> {
   }
 
 public:
+#if (LLVM_VERSION_MAJOR >= 5)
+  using Base = llvm::DominanceFrontierBase<BlockT, true>;
+  using DomTreeT = llvm::DominatorTreeBase<BlockT, true>;
+#else
   using Base = llvm::DominanceFrontierBase<BlockT>;
   using DomTreeT = llvm::DominatorTreeBase<BlockT>;
+#endif
   using DomTreeNodeT = llvm::DomTreeNodeBase<BlockT>;
   using DomSetType = typename Base::DomSetType;
   using DomSetMapType = typename Base::DomSetMapType;
