@@ -21,6 +21,9 @@
 // using std::unique_ptr
 // using std::make_unique
 
+#include <cassert>
+// using assert
+
 namespace pedigree {
 
 class PDGraphBuilder {
