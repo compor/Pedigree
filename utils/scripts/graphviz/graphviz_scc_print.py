@@ -24,7 +24,8 @@ def gv_dot_iterator_colorize(infile, outfile):
     scc_gen = nx.strongly_connected_components(dot_graph)
 
     for i, scc in enumerate(scc_gen):
-        scc_graph.subgraph(list(scc), 'cluster_scc_' + str(i))
+        scc_subgraph = scc_graph.subgraph(list(scc), 'cluster_scc_' + str(i))
+        scc_subgraph.graph_attr.update(label='')
 
     scc_graph.write(outfile)
 
