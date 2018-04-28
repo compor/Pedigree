@@ -18,7 +18,7 @@ from networkx.drawing.nx_agraph import read_dot
 from networkx.drawing.nx_agraph import to_agraph
 
 
-def scc_print(infile, outfile):
+def create_scc_subgraphs(infile, outfile):
     """ Create the strongly connected components (SCC's) as subgraphs of a
     GraphViz DOT digraph.
 
@@ -61,4 +61,4 @@ if __name__ == '__main__':
     if os.path.exists(sys.argv[2]):
         raise ValueError("Output file already exists")
 
-    scc_print(sys.argv[1], sys.argv[2])
+    create_scc_subgraphs(sys.argv[1], sys.argv[2])
