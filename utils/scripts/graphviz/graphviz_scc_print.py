@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+""" A command line utility that outputs the strongly connected components
+(SCC's) subgraphs of a digraph as GraphViz DOT clusters.
 
-#
-# input graph from graphviz file and generate another graphviz file with
-# strongly connected components displayed as clusters
-#
+The utility accepts the name of a file containing a GraphViz DOT digraph and
+outputs a file with the given name of a digraph in the same format with all the
+SCC's containing more than 1 nodes grouped as subgraph clusters.
+"""
 
 from __future__ import print_function
 
@@ -17,6 +19,20 @@ from networkx.drawing.nx_agraph import to_agraph
 
 
 def scc_print(infile, outfile):
+    """ Create the strongly connected components (SCC's) as subgraphs of a
+    GraphViz DOT digraph.
+
+    It finds the SCC's of a GrahViz digraph and groups them as subgraph
+    clusters in this format.
+
+    Args:
+        infile: A string of the input file name expected to contain a GraphViz
+        DOT digraph.
+
+        outfile: A string of the output file name to be created containing a
+        GraphViz DOT digraph.
+    """
+
     if os.path.exists(outfile):
         raise ValueError("Output file already exists")
 
