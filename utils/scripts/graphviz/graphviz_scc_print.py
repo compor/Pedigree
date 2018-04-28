@@ -33,9 +33,6 @@ def scc_print(infile, outfile):
         GraphViz DOT digraph.
     """
 
-    if os.path.exists(outfile):
-        raise ValueError("Output file already exists")
-
     dot_graph = read_dot(infile)
     scc_graph = to_agraph(dot_graph)
 
@@ -57,5 +54,11 @@ if __name__ == '__main__':
             'Usage: {} [infile] [outfile]\n'.format(sys.argv[0]),
             file=sys.stderr)
         exit(1)
+
+    if not os.path.exists(sys.argv[1]):
+        raise ValueError("Input file does not exist")
+
+    if os.path.exists(sys.argv[2]):
+        raise ValueError("Output file already exists")
 
     scc_print(sys.argv[1], sys.argv[2])
