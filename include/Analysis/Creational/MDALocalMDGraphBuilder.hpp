@@ -67,7 +67,12 @@ class MDALocalMDGraphBuilder
 private:
   std::unique_ptr<MDGraph> Graph;
   boost::optional<const llvm::Function &> CurUnit;
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   boost::optional<llvm::MemoryDependenceAnalysis &> CurAnalysis;
+#else
+  boost::optional<llvm::MemoryDependenceResults &> CurAnalysis;
+#endif
+
   AnalysisScope CurScope;
   flags::flags<AnalysisMode> CurMode;
 
@@ -75,12 +80,21 @@ public:
   MDALocalMDGraphBuilder()
       : CurScope(AnalysisScope::Block), CurMode(AnalysisMode::MemDefs) {}
 
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   MDALocalMDGraphBuilder &
   setAnalysis(llvm::MemoryDependenceAnalysis &Analysis) {
     CurAnalysis = const_cast<llvm::MemoryDependenceAnalysis &>(Analysis);
 
     return *this;
   }
+#else
+  MDALocalMDGraphBuilder &
+  setAnalysis(llvm::MemoryDependenceResults &Analysis) {
+    CurAnalysis = const_cast<llvm::MemoryDependenceResults &>(Analysis);
+
+    return *this;
+  }
+#endif
 
   MDALocalMDGraphBuilder &setUnit(const llvm::Function &Unit) {
     CurUnit.emplace(Unit);

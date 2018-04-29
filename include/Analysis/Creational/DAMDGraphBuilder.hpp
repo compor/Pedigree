@@ -9,6 +9,9 @@
 
 #include "Analysis/Graphs/MDGraph.hpp"
 
+#include "llvm/Config/llvm-config.h"
+// version macros
+
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
@@ -39,7 +42,11 @@ namespace pedigree {
 
 class DAMDGraphBuilder : public llvm::InstVisitor<DAMDGraphBuilder> {
   std::unique_ptr<MDGraph> Graph;
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   boost::optional<llvm::DependenceAnalysis &> CurAnalysis;
+#else
+  boost::optional<llvm::DependenceInfo &> CurAnalysis;
+#endif
   boost::optional<const llvm::Function &> CurUnit;
   std::vector<llvm::Instruction *> MemInstructions;
 
@@ -50,11 +57,19 @@ class DAMDGraphBuilder : public llvm::InstVisitor<DAMDGraphBuilder> {
 public:
   DAMDGraphBuilder() = default;
 
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   DAMDGraphBuilder &setAnalysis(llvm::DependenceAnalysis &Analysis) {
     CurAnalysis = const_cast<llvm::DependenceAnalysis &>(Analysis);
 
     return *this;
   }
+#else
+  DAMDGraphBuilder &setAnalysis(llvm::DependenceInfo &Analysis) {
+    CurAnalysis = const_cast<llvm::DependenceInfo &>(Analysis);
+
+    return *this;
+  }
+#endif
 
   DAMDGraphBuilder &setUnit(const llvm::Function &Unit) {
     CurUnit.emplace(Unit);

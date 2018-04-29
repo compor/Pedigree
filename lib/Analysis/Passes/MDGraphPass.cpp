@@ -190,8 +190,13 @@ namespace pedigree {
 
 void MDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.addRequiredTransitive<llvm::AliasAnalysis>();
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   AU.addRequiredTransitive<llvm::MemoryDependenceAnalysis>();
   AU.addRequiredTransitive<llvm::DependenceAnalysis>();
+#else
+  AU.addRequiredTransitive<llvm::MemoryDependenceWrapperPass>();
+  AU.addRequiredTransitive<llvm::DependenceAnalysisWrapperPass>();
+#endif
   AU.setPreservesAll();
 }
 
@@ -201,12 +206,22 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   Graph = std::make_unique<MDGraph>();
 
   if (AnalysisBackendType::DA == AnalysisBackendOption) {
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
     auto &da = getAnalysis<llvm::DependenceAnalysis>();
+#else
+    auto &da = getAnalysis<llvm::DependenceAnalysisWrapperPass>().getDI();
+#endif
+
     DAMDGraphBuilder builder{};
 
     Graph = builder.setAnalysis(da).setUnit(CurFunc).build();
   } else {
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
+#else
+    auto &mda = getAnalysis<llvm::MemoryDependenceWrapperPass>().getMemDep();
+#endif
+
     MDALocalMDGraphBuilder builder{};
 
     if (AnalysisBackendModeOption.isSet(AnalysisMode::MemDefs)) {
