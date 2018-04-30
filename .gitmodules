@@ -5,3 +5,6 @@
 	path = third_party/enum-flags
 	url = https://github.com/compor/enum-flags.git
 	branch = cmake-based
+[submodule "cmake/sanitizers-cmake"]
+	path = cmake/sanitizers-cmake
+	url = git://github.com/arsenm/sanitizers-cmake.git
