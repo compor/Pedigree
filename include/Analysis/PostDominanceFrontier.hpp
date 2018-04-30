@@ -95,16 +95,17 @@ public:
 
     while (!workList.empty()) {
       auto &top = *workList.rbegin();
-      if (!visited.count(top)) {
+
+      if (visited.count(top)) {
+        Traversal.push_back(top);
+        workList.pop_back();
+      } else {
         visited.insert(top);
         for (const auto &c : detail::graph_parents(top)) {
           if (!visited.count(c)) {
             workList.push_back(c);
           }
         }
-      } else {
-        Traversal.push_back(top);
-        workList.pop_back();
       }
     }
   }
