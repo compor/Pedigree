@@ -39,6 +39,15 @@
 
 namespace pedigree {
 
+namespace detail {
+
+template <typename NodeT> decltype(auto) graph_parents(NodeT *BB) {
+  using IGT = llvm::GraphTraits<llvm::Inverse<NodeT *>>;
+  return llvm::make_range(IGT::child_begin(BB), IGT::child_end(BB));
+}
+
+} // namespace detail
+
 template <typename BlockT>
 class PostDominanceFrontierBase
 #if (LLVM_VERSION_MAJOR >= 5)
@@ -47,13 +56,6 @@ class PostDominanceFrontierBase
     : public llvm::DominanceFrontierBase<BlockT>
 #endif
 {
-  using BlockTraits = llvm::GraphTraits<llvm::Inverse<BlockT *>>;
-
-  decltype(auto) graph_children(BlockT *BB) const {
-    return llvm::make_range(BlockTraits::child_begin(BB),
-                            BlockTraits::child_end(BB));
-  }
-
 public:
 #if (LLVM_VERSION_MAJOR >= 5)
   using Base = llvm::DominanceFrontierBase<BlockT, true>;
@@ -95,7 +97,7 @@ public:
       auto &top = *workList.rbegin();
       if (!visited.count(top)) {
         visited.insert(top);
-        for (const auto &c : graph_children(top)) {
+        for (const auto &c : detail::graph_parents(top)) {
           if (!visited.count(c)) {
             workList.push_back(c);
           }
@@ -120,7 +122,7 @@ protected:
 
     for (auto &e : traversal) {
       // DF-local
-      for (const auto &c : graph_children(e))
+      for (const auto &c : detail::graph_parents(e))
         if (DT[c]->getIDom()->getBlock() != e)
           this->Frontiers[e].insert(c);
 
