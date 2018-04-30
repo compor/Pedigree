@@ -62,7 +62,6 @@ public:
   void parseAssemblyFile(llvm::StringRef AssemblyHolder) {
     TestModule = llvm::parseAssemblyFile((TestDataDir + AssemblyHolder).str(),
                                          TestDiagnostic, *TestContext);
-
     report();
   }
 
@@ -79,11 +78,11 @@ protected:
     llvm::raw_string_ostream os(msg);
     TestDiagnostic.print("", os);
 
-    if (m_shouldVerify && llvm::verifyModule(*TestModule, &(llvm::errs())))
-      llvm::report_fatal_error("module verification failed\n");
-
     if (!TestModule)
       llvm::report_fatal_error(os.str().c_str());
+
+    if (m_shouldVerify && llvm::verifyModule(*TestModule, &(llvm::errs())))
+      llvm::report_fatal_error("module verification failed\n");
   }
 
 #if (LLVM_VERSION_MAJOR >= 4) ||                                               \
