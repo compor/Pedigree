@@ -26,53 +26,55 @@ template <typename DependenceNodeT> struct LLVMDependenceNodeTraitsHelperBase {
 template <typename DependenceNodeT>
 struct LLVMDependenceNodeTraitsHelperBase<DependenceNodeT *> {
   using NodeType = DependenceNodeT;
+  using NodeRef = NodeType *;
 
-  static NodeType *getEntryNode(NodeType *G) { return G; }
-  static unsigned size(NodeType *G) { return G->size(); }
+  static NodeRef getEntryNode(NodeRef G) { return G; }
+  static unsigned size(NodeRef G) { return G->size(); }
 
   using ChildIteratorType = typename NodeType::nodes_iterator;
-  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
+  static decltype(auto) child_begin(NodeRef G) { return G->nodes_begin(); }
+  static decltype(auto) child_end(NodeRef G) { return G->nodes_end(); }
 
-  static decltype(auto) children(NodeType *G) { return G->nodes(); }
+  static decltype(auto) children(NodeRef G) { return G->nodes(); }
 
   using nodes_iterator = typename NodeType::nodes_iterator;
-  static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
+  static decltype(auto) nodes_begin(NodeRef G) { return G->nodes_begin(); }
+  static decltype(auto) nodes_end(NodeRef G) { return G->nodes_end(); }
 
-  static decltype(auto) nodes(NodeType *G) { return G->nodes(); }
+  static decltype(auto) nodes(NodeRef G) { return G->nodes(); }
 
   using edges_iterator = typename NodeType::edges_iterator;
-  static decltype(auto) edges_begin(NodeType *G) { return G->edges_begin(); }
-  static decltype(auto) edges_end(NodeType *G) { return G->edges_end(); }
+  static decltype(auto) edges_begin(NodeRef G) { return G->edges_begin(); }
+  static decltype(auto) edges_end(NodeRef G) { return G->edges_end(); }
 
-  static decltype(auto) edges(NodeType *G) { return G->edges(); }
+  static decltype(auto) edges(NodeRef G) { return G->edges(); }
 };
 
 template <typename DependenceNodeT>
 struct LLVMDependenceNodeTraitsHelperBase<const DependenceNodeT *> {
   using NodeType = const DependenceNodeT;
+  using NodeRef = NodeType *;
 
-  static NodeType *getEntryNode(NodeType *G) { return G; }
-  static unsigned size(NodeType *G) { return G->size(); }
+  static NodeRef getEntryNode(NodeRef G) { return G; }
+  static unsigned size(NodeRef G) { return G->size(); }
 
   using ChildIteratorType = typename NodeType::const_nodes_iterator;
-  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
+  static decltype(auto) child_begin(NodeRef G) { return G->nodes_begin(); }
+  static decltype(auto) child_end(NodeRef G) { return G->nodes_end(); }
 
-  static decltype(auto) children(NodeType *G) { return G->nodes(); }
+  static decltype(auto) children(NodeRef G) { return G->nodes(); }
 
   using nodes_iterator = typename NodeType::const_nodes_iterator;
-  static decltype(auto) nodes_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) nodes_end(NodeType *G) { return G->nodes_end(); }
+  static decltype(auto) nodes_begin(NodeRef G) { return G->nodes_begin(); }
+  static decltype(auto) nodes_end(NodeRef G) { return G->nodes_end(); }
 
-  static decltype(auto) nodes(NodeType *G) { return G->nodes(); }
+  static decltype(auto) nodes(NodeRef G) { return G->nodes(); }
 
   using edges_iterator = typename NodeType::const_edges_iterator;
-  static decltype(auto) edges_begin(NodeType *G) { return G->edges_begin(); }
-  static decltype(auto) edges_end(NodeType *G) { return G->edges_end(); }
+  static decltype(auto) edges_begin(NodeRef G) { return G->edges_begin(); }
+  static decltype(auto) edges_end(NodeRef G) { return G->edges_end(); }
 
-  static decltype(auto) edges(NodeType *G) { return G->edges(); }
+  static decltype(auto) edges(NodeRef G) { return G->edges(); }
 };
 
 // generic base for easing the task of creating graph traits for graphs
@@ -87,15 +89,16 @@ template <typename GraphT> struct LLVMDependenceGraphTraitsHelperBase {
 template <typename GraphT>
 struct LLVMDependenceGraphTraitsHelperBase<GraphT *> {
   using NodeType = typename GraphT::NodeType;
+  using NodeRef = NodeType *;
 
-  static NodeType *getEntryNode(NodeType *G) { return G->getEntryNode(); }
-  static unsigned size(NodeType *G) { return G->size(); }
+  static NodeRef getEntryNode(NodeRef G) { return G->getEntryNode(); }
+  static unsigned size(NodeRef G) { return G->size(); }
 
   using ChildIteratorType = typename NodeType::nodes_iterator;
-  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
+  static decltype(auto) child_begin(NodeRef G) { return G->nodes_begin(); }
+  static decltype(auto) child_end(NodeRef G) { return G->nodes_end(); }
 
-  static decltype(auto) children(NodeType *G) { return G->nodes(); }
+  static decltype(auto) children(NodeRef G) { return G->nodes(); }
 
   using nodes_iterator = typename GraphT::nodes_iterator;
   static decltype(auto) nodes_begin(GraphT *G) { return G->nodes_begin(); }
@@ -107,15 +110,16 @@ struct LLVMDependenceGraphTraitsHelperBase<GraphT *> {
 template <typename GraphT>
 struct LLVMDependenceGraphTraitsHelperBase<const GraphT *> {
   using NodeType = const typename GraphT::NodeType;
+  using NodeRef = NodeType *;
 
-  static const NodeType *getEntryNode(NodeType *G) { return G->getEntryNode(); }
-  static unsigned size(NodeType *G) { return G->size(); }
+  static const NodeRef getEntryNode(NodeRef G) { return G->getEntryNode(); }
+  static unsigned size(NodeRef G) { return G->size(); }
 
   using ChildIteratorType = typename NodeType::const_nodes_iterator;
-  static decltype(auto) child_begin(NodeType *G) { return G->nodes_begin(); }
-  static decltype(auto) child_end(NodeType *G) { return G->nodes_end(); }
+  static decltype(auto) child_begin(NodeRef G) { return G->nodes_begin(); }
+  static decltype(auto) child_end(NodeRef G) { return G->nodes_end(); }
 
-  static decltype(auto) children(NodeType *G) { return G->nodes(); }
+  static decltype(auto) children(NodeRef G) { return G->nodes(); }
 
   using nodes_iterator = typename GraphT::const_nodes_iterator;
   static decltype(auto) nodes_begin(const GraphT *G) {

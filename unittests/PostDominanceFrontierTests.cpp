@@ -8,6 +8,9 @@
 
 #include "Analysis/PostDominanceFrontier.hpp"
 
+#include "llvm/Config/llvm-config.h"
+// version macros
+
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock
 
@@ -82,12 +85,16 @@ TEST_P(PDFTraversalTest, DFSPostOrderTraversal) {
   ASSERT_FALSE(nullptr == curFunc);
 
   llvm::PostDominatorTree curPDT;
-  curPDT.DT->recalculate(*curFunc);
-
   PostDominanceFrontierBase<llvm::BasicBlock> pdf;
-
   llvm::SmallVector<llvm::BasicBlock *, 32> traversal;
+
+#if (LLVM_VERSION_MAJOR >= 5)
+  curPDT.recalculate(*curFunc);
+  pdf.traverseDFSPostOrder(traversal, curPDT, curPDT.getRootNode());
+#else
+  curPDT.DT->recalculate(*curFunc);
   pdf.traverseDFSPostOrder(traversal, *curPDT.DT, curPDT.DT->getRootNode());
+#endif
 
   decltype(td.traversal) traversalNames;
   std::for_each(traversal.begin(), traversal.end(),
@@ -149,10 +156,15 @@ TEST_P(PDFConstructionTest, PDFConstruction) {
   ASSERT_FALSE(nullptr == curFunc);
 
   llvm::PostDominatorTree curPDT;
-  curPDT.DT->recalculate(*curFunc);
-
   PostDominanceFrontierBase<llvm::BasicBlock> pdf;
+
+#if (LLVM_VERSION_MAJOR >= 5)
+  curPDT.recalculate(*curFunc);
+  pdf.analyze(curPDT);
+#else
+  curPDT.DT->recalculate(*curFunc);
   pdf.analyze(*curPDT.DT);
+#endif
 
   auto found =
       std::find_if(std::begin(*curFunc), std::end(*curFunc),
