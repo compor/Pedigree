@@ -21,6 +21,7 @@ export GTEST_ROOT=/usr/local/gtest-libstdcxx
 export BOOST_ROOT=/bulk/workbench/boost/015900/install/
 
 export CXX_FLAGS=
+export CXX_FLAGS="${CXX_FLAGS} -O1"
 
 export LINKER_FLAGS=
 

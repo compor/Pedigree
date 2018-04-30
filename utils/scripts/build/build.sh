@@ -6,6 +6,8 @@ INSTALL_DIR=${2:-../install/}
 
 #
 
+# Note: we require word splitting in CMAKE_OPTIONS, so leave it unquoted
+
 cmake \
   -G Ninja \
   -DCMAKE_EXPORT_COMPILE_COMMANDS=On \

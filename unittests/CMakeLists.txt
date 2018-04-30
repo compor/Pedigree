@@ -19,6 +19,7 @@ if(NOT GTEST_FOUND)
 endif()
 
 find_package(Threads REQUIRED)
+find_package(Sanitizers)
 
 # configuration
 
@@ -35,6 +36,7 @@ set(TEST_SOURCES
   CDGraphTests.cpp)
 
 add_executable(${PRJ_TEST_NAME} ${TEST_SOURCES})
+add_sanitizers(${PRJ_TEST_NAME})
 
 if(NOT LLVM_ENABLE_EH)
   target_compile_definitions(${PRJ_TEST_NAME} PUBLIC BOOST_NO_EXCEPTIONS)

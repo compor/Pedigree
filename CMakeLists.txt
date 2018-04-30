@@ -4,7 +4,8 @@ cmake_minimum_required(VERSION 3.2.0)
 
 list(APPEND CMAKE_MODULE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake-utils/general"
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake-utils/modules")
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake-utils/modules"
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/sanitizers-cmake/cmake")
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
