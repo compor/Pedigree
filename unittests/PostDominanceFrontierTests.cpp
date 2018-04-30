@@ -63,8 +63,9 @@ std::ostream &operator<<(std::ostream &os, const PDFTraversalTestData &td) {
   ss << delim << "assembly file: " << td.assemblyFile << delim;
 
   ss << "block names: ";
-  for (const auto &e : td.traversal)
+  for (const auto &e : td.traversal) {
     ss << e << delim;
+  }
 
   return os << ss.str();
 }
@@ -90,10 +91,10 @@ TEST_P(PDFTraversalTest, DFSPostOrderTraversal) {
 
 #if (LLVM_VERSION_MAJOR >= 5)
   curPDT.recalculate(*curFunc);
-  pdf.traverseDFSPostOrder(traversal, curPDT, curPDT.getRootNode());
+  pdf.traverseDFSPostOrder(traversal, curPDT);
 #else
   curPDT.DT->recalculate(*curFunc);
-  pdf.traverseDFSPostOrder(traversal, *curPDT.DT, curPDT.DT->getRootNode());
+  pdf.traverseDFSPostOrder(traversal, *curPDT.DT);
 #endif
 
   decltype(td.traversal) traversalNames;
@@ -134,8 +135,9 @@ std::ostream &operator<<(std::ostream &os, const PDFConstructionTestData &td) {
      << "node: " << td.node << delim;
 
   ss << "frontier: ";
-  for (const auto &e : td.frontier)
+  for (const auto &e : td.frontier) {
     ss << e << delim;
+  }
 
   return os << ss.str();
 }

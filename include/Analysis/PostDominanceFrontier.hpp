@@ -49,7 +49,7 @@ class PostDominanceFrontierBase
 {
   using BlockTraits = llvm::GraphTraits<llvm::Inverse<BlockT *>>;
 
-  auto graph_children(BlockT *BB) const {
+  decltype(auto) graph_children(BlockT *BB) const {
     return llvm::make_range(BlockTraits::child_begin(BB),
                             BlockTraits::child_end(BB));
   }
@@ -79,25 +79,27 @@ public:
 
     this->Roots.resize(roots.size());
     std::copy(roots.begin(), roots.end(), this->Roots.begin());
-    calculate(DT, DT[this->Roots[0]]);
+    calculate(DT);
   }
 
   void traverseDFSPostOrder(llvm::SmallVectorImpl<BlockT *> &Traversal,
-                            const DomTreeT &DT,
-                            const DomTreeNodeT *Node) const {
+                            const DomTreeT &DT) const {
     constexpr size_t N = 32;
     llvm::SmallVector<BlockT *, N> workList;
     llvm::SmallPtrSet<BlockT *, N> visited;
 
-    workList.push_back(Node->getBlock());
+    for (auto &e : DT.getRoots())
+      workList.push_back(e);
 
     while (!workList.empty()) {
       auto &top = *workList.rbegin();
       if (!visited.count(top)) {
         visited.insert(top);
-        for (const auto &c : graph_children(top))
-          if (!visited.count(c))
+        for (const auto &c : graph_children(top)) {
+          if (!visited.count(c)) {
             workList.push_back(c);
+          }
+        }
       } else {
         Traversal.push_back(top);
         workList.pop_back();
@@ -105,11 +107,13 @@ public:
     }
   }
 
-  const DomSetType &calculate(const DomTreeT &DT, const DomTreeNodeT *Node) {
+protected:
+  const DomSetType &calculate(const DomTreeT &DT) {
     this->Frontiers.clear();
+    auto *Root = DT[this->Roots[0]];
 
     llvm::SmallVector<BlockT *, 32> traversal;
-    traverseDFSPostOrder(traversal, DT, Node);
+    traverseDFSPostOrder(traversal, DT);
 
     for (auto &e : traversal)
       this->Frontiers[e] = {};
@@ -127,7 +131,7 @@ public:
             this->Frontiers[e].insert(f);
     }
 
-    return this->Frontiers[Node->getBlock()];
+    return this->Frontiers[Root->getBlock()];
   }
 };
 
