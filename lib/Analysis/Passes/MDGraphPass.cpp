@@ -30,9 +30,6 @@
 #include "llvm/Analysis/MemorySSAUpdater.h"
 #endif
 
-#include "llvm/Analysis/AliasAnalysis.h"
-// using llvm::AliasAnalysis
-
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -189,7 +186,6 @@ static void checkCmdLineOptions() {
 namespace pedigree {
 
 void MDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
-  AU.addRequiredTransitive<llvm::AliasAnalysis>();
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   AU.addRequiredTransitive<llvm::MemoryDependenceAnalysis>();
   AU.addRequiredTransitive<llvm::DependenceAnalysis>();
