@@ -19,7 +19,6 @@ if(NOT GTEST_FOUND)
 endif()
 
 find_package(Threads REQUIRED)
-find_package(Sanitizers)
 
 # configuration
 

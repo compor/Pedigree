@@ -112,6 +112,7 @@ set(CMAKE_MODULE_LINKER_FLAGS
 # dependencies
 
 find_package(Boost REQUIRED)
+find_package(Sanitizers)
 
 add_subdirectory(third_party/enum-flags)
 
@@ -174,6 +175,8 @@ target_include_directories(${OBJ_LIB_NAME} PUBLIC
 
 target_link_libraries(${LIB_NAME} INTERFACE enum-flags::enum-flags)
 target_link_libraries(${TEST_LIB_NAME} INTERFACE enum-flags::enum-flags)
+
+add_sanitizers(${OBJ_LIB_NAME})
 
 # according to http://llvm.org/docs/CMake.html
 # we do not need the below library dependencies since the plugin will be loaded
