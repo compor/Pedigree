@@ -71,6 +71,18 @@ add_custom_command(TARGET unittests PRE_BUILD COMMAND
   ${CMAKE_COMMAND} -E copy_directory
   ${CMAKE_CURRENT_SOURCE_DIR}/data/ ${TEST_DATA_DIR})
 
+# setup scripts
+
+# setup valgrind script
+
+set(VALGRIND_SCRIPT "run_unittests_with_valgrind.sh")
+configure_file(
+  "${CMAKE_SOURCE_DIR}/utils/scripts/${VALGRIND_SCRIPT}.in"
+  "${CMAKE_BINARY_DIR}/${VALGRIND_SCRIPT}"
+  @ONLY)
+
+# setup sanitize scripts
+
 set(SANITIZE_SCRIPTS_DIR "${CMAKE_SOURCE_DIR}/utils/scripts/sanitizers/")
 
 if(SANITIZE_ADDRESS)

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+valgrind --leak-check=full ./unittests/@PRJ_TEST_NAME@
+
