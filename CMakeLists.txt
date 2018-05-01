@@ -83,6 +83,9 @@ endif()
 
 message(STATUS "EH support: ${LLVM_ENABLE_EH}")
 
+if(SANITIZE_ADDRESS)
+  message(STATUS "ASAN enabled")
+endif()
 
 # when we are building the project as standalone, we'd like to leave the install
 # RPATH empty so that potentially we can dynamically link against other
