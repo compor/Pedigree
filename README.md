@@ -1,4 +1,4 @@
-# pedigree - Program Dependence Graph pass
+# PeDiGree - Program Dependence Graph pass
 
 ## Introduction
 
