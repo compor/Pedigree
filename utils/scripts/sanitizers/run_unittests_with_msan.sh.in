@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+./unittests/@PRJ_TEST_NAME@
+

@@ -80,3 +80,12 @@ if(SANITIZE_ADDRESS)
     "${CMAKE_BINARY_DIR}/${ASAN_SCRIPT}"
     @ONLY)
 endif()
+
+if(SANITIZE_MEMORY)
+  set(ASAN_SCRIPT "run_unittests_with_msan.sh")
+  configure_file(
+    "${SANITIZE_SCRIPTS_DIR}/${ASAN_SCRIPT}.in"
+    "${CMAKE_BINARY_DIR}/${ASAN_SCRIPT}"
+    @ONLY)
+endif()
+

@@ -87,6 +87,10 @@ if(SANITIZE_ADDRESS)
   message(STATUS "ASAN enabled")
 endif()
 
+if(SANITIZE_MEMORY)
+  message(STATUS "MSAN enabled")
+endif()
+
 # when we are building the project as standalone, we'd like to leave the install
 # RPATH empty so that potentially we can dynamically link against other
 # installed LLVM toolchains
