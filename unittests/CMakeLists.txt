@@ -71,3 +71,12 @@ add_custom_command(TARGET unittests PRE_BUILD COMMAND
   ${CMAKE_COMMAND} -E copy_directory
   ${CMAKE_CURRENT_SOURCE_DIR}/data/ ${TEST_DATA_DIR})
 
+set(SANITIZE_SCRIPTS_DIR "${CMAKE_SOURCE_DIR}/utils/scripts/sanitizers/")
+
+if(SANITIZE_ADDRESS)
+  set(ASAN_SCRIPT "run_unittests_with_asan.sh")
+  configure_file(
+    "${SANITIZE_SCRIPTS_DIR}/${ASAN_SCRIPT}.in"
+    "${CMAKE_BINARY_DIR}/${ASAN_SCRIPT}"
+    @ONLY)
+endif()
