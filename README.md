@@ -15,14 +15,14 @@ This is a `LLVM` [`opt`][1] pass for creating Program Dependence Graphs.
 -   C++ compilers:
     -   [LLVM][3]  
         tested with:
-        -   3.7
-        -   3.8
-        -   6.0.0 (trunk)
+        -   3.7.x
+        -   6.0.0
     -   [GCC][4]  
         tested with:
         -   5.4.1
-            tested with:
-    -   1.59
+    -   Boost
+        tested with:
+        -   1.59
 -   [googletest][6]  
     tested with:
     -   1.8.0
@@ -33,6 +33,9 @@ This is a `LLVM` [`opt`][1] pass for creating Program Dependence Graphs.
 
 -   [cmake-utils][9]  
     Used for supporting the `cmake`-based build system. Using `git clone --recursive` should take care of everything.
+-   [sanitizers-cmake][12]
+    Used to provide support for sanitizers. Although the subproject is required for successful configuration, its use is
+    optional.
 
 ### Optional
 
@@ -129,3 +132,5 @@ When the build script uses `LLVM` `cmake` [utility][8] functions the `lib` share
 [10]: https://libcxx.llvm.org/docs/
 
 [11]: https://gcc.gnu.org/wiki/Libstdc++
+
+[12]: https://github.com/arsenm/sanitizers-cmake

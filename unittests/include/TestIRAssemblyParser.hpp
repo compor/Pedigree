@@ -62,6 +62,7 @@ public:
   void parseAssemblyFile(llvm::StringRef AssemblyHolder) {
     TestModule = llvm::parseAssemblyFile((TestDataDir + AssemblyHolder).str(),
                                          TestDiagnostic, *TestContext);
+
     report();
   }
 
