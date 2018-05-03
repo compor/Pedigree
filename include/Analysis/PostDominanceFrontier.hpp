@@ -22,11 +22,8 @@
 #include "llvm/Analysis/DominanceFrontier.h"
 // using llvm::DominanceFrontierBase
 
-#include "llvm/ADT/SmallVector.h"
-// using llvm::SmallVector
-
-#include "llvm/ADT/SmallPtrSet.h"
-// using llvm::SmallPtrSet
+#include "llvm/ADT/PostOrderIterator.h"
+// using llvm::post_order
 
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
@@ -84,57 +81,31 @@ public:
     calculate(DT);
   }
 
-  void traverseDFSPostOrder(llvm::SmallVectorImpl<BlockT *> &Traversal,
-                            const DomTreeT &DT) const {
-    constexpr size_t N = 32;
-    llvm::SmallVector<BlockT *, N> workList;
-    llvm::SmallPtrSet<BlockT *, N> visited;
-
-    for (auto &e : DT.getRoots())
-      workList.push_back(e);
-
-    while (!workList.empty()) {
-      auto &top = *workList.rbegin();
-
-      if (visited.count(top)) {
-        Traversal.push_back(top);
-        workList.pop_back();
-      } else {
-        visited.insert(top);
-        for (const auto &c : detail::graph_parents(top)) {
-          if (!visited.count(c)) {
-            workList.push_back(c);
-          }
-        }
-      }
-    }
-  }
-
 protected:
   const DomSetType &calculate(const DomTreeT &DT) {
     this->Frontiers.clear();
-    auto *Root = DT[this->Roots[0]];
+    auto *root = DT[this->Roots[0]];
+    const auto &traversal = llvm::post_order(root);
 
-    llvm::SmallVector<BlockT *, 32> traversal;
-    traverseDFSPostOrder(traversal, DT);
+    for (const auto &e : traversal)
+      this->Frontiers[e->getBlock()] = {};
 
-    for (auto &e : traversal)
-      this->Frontiers[e] = {};
+    for (const auto &e : traversal) {
+      const auto &curBlock = e->getBlock();
 
-    for (auto &e : traversal) {
       // DF-local
-      for (const auto &c : detail::graph_parents(e))
-        if (DT[c]->getIDom()->getBlock() != e)
-          this->Frontiers[e].insert(c);
+      for (const auto &c : detail::graph_parents(curBlock))
+        if (DT[c]->getIDom()->getBlock() != curBlock)
+          this->Frontiers[curBlock].insert(c);
 
       // DF-up
-      for (auto &d : *DT[e])
-        for (auto &f : this->Frontiers[d->getBlock()])
-          if (DT[f]->getIDom()->getBlock() != e)
-            this->Frontiers[e].insert(f);
+      for (const auto &d : *DT[curBlock])
+        for (const auto &f : this->Frontiers[d->getBlock()])
+          if (DT[f]->getIDom()->getBlock() != curBlock)
+            this->Frontiers[curBlock].insert(f);
     }
 
-    return this->Frontiers[Root->getBlock()];
+    return this->Frontiers[root->getBlock()];
   }
 };
 
