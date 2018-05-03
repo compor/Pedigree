@@ -183,6 +183,10 @@ target_include_directories(${OBJ_LIB_NAME} PUBLIC
 target_link_libraries(${LIB_NAME} INTERFACE enum-flags::enum-flags)
 target_link_libraries(${TEST_LIB_NAME} INTERFACE enum-flags::enum-flags)
 
+if(SANITIZE_MEMORY)
+  target_compile_options(${TEST_LIB_NAME} PUBLIC "-fPIC")
+endif()
+
 add_sanitizers(${OBJ_LIB_NAME})
 
 # according to http://llvm.org/docs/CMake.html

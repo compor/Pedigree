@@ -41,11 +41,20 @@ if(NOT LLVM_ENABLE_EH)
   target_compile_definitions(${PRJ_TEST_NAME} PUBLIC BOOST_NO_EXCEPTIONS)
 endif()
 
+if(SANITIZE_MEMORY)
+  target_compile_options(${PRJ_TEST_NAME} PUBLIC "-fPIE")
+endif()
+
 target_include_directories(${PRJ_TEST_NAME} PUBLIC include)
 target_include_directories(${PRJ_TEST_NAME} PUBLIC ${GTEST_INCLUDE_DIRS})
 target_include_directories(${PRJ_TEST_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+
 target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${GTEST_BOTH_LIBRARIES})
 target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
+
+if(SANITIZE_MEMORY)
+  target_link_libraries(${PRJ_TEST_NAME} PUBLIC "-pie")
+endif()
 
 llvm_map_components_to_libnames(UNIT_LLVM_LIBS asmparser)
 
