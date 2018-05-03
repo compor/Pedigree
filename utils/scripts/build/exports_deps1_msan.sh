@@ -29,9 +29,12 @@ MSAN_COMPILE_FLAGS="${MSAN_COMPILE_FLAGS} -I${LIBCXX_MSAN_ROOT}/include/c++/v1"
 
 export CXX_FLAGS=
 export CXX_FLAGS="${CXX_FLAGS} -O1"
-export CXX_FLAGS="${CXX_FLAGS} -stdlib=libc++"
 export CXX_FLAGS="${CXX_FLAGS} -nostdinc++"
 export CXX_FLAGS="${CXX_FLAGS} ${MSAN_COMPILE_FLAGS}"
+
+# this causes feature test error when used in combination with nostdinc++
+# the compiler complains with an "argument unused" error
+#export CXX_FLAGS="${CXX_FLAGS} -stdlib=libc++"
 
 MSAN_LINKER_FLAGS=
 MSAN_LINKER_FLAGS="${MSAN_LINKER_FLAGS} -Wl,-L${LIBCXX_MSAN_ROOT}/lib"
