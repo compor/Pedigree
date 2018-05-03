@@ -25,6 +25,7 @@ LIBCXX_MSAN_ROOT=/bulk/workbench/llvm/6.0/libcxx-msan/
 MSAN_COMPILE_FLAGS=""
 MSAN_COMPILE_FLAGS="${MSAN_COMPILE_FLAGS} -fsanitize=memory"
 MSAN_COMPILE_FLAGS="${MSAN_COMPILE_FLAGS} -fsanitize-memory-track-origins"
+MSAN_COMPILE_FLAGS="${MSAN_COMPILE_FLAGS} -fno-omit-frame-pointer"
 MSAN_COMPILE_FLAGS="${MSAN_COMPILE_FLAGS} -I${LIBCXX_MSAN_ROOT}/include"
 MSAN_COMPILE_FLAGS="${MSAN_COMPILE_FLAGS} -I${LIBCXX_MSAN_ROOT}/include/c++/v1"
 
