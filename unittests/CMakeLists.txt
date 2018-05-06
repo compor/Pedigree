@@ -40,6 +40,7 @@ add_sanitizers(${PRJ_TEST_NAME})
 target_compile_options(${PRJ_TEST_NAME} PRIVATE "-pedantic")
 target_compile_options(${PRJ_TEST_NAME} PRIVATE "-Wall")
 target_compile_options(${PRJ_TEST_NAME} PRIVATE "-Wextra")
+target_compile_options(${PRJ_TEST_NAME} PRIVATE "-Wno-unused")
 
 if(SANITIZE_MEMORY)
   target_compile_options(${PRJ_TEST_NAME} PUBLIC "-fPIE")
