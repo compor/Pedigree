@@ -157,6 +157,10 @@ foreach(PRJ_LIB ${PRJ_LIB_NAMES})
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF)
 
+  target_compile_options(${PRJ_LIB} PRIVATE "-pedantic")
+  target_compile_options(${PRJ_LIB} PRIVATE "-Wall")
+  target_compile_options(${PRJ_LIB} PRIVATE "-Wextra")
+
   target_compile_definitions(${PRJ_LIB} PUBLIC ${LLVM_DEFINITIONS})
   target_compile_definitions(${PRJ_LIB}
     PRIVATE VERSION_STRING=${PRJ_VERSION})

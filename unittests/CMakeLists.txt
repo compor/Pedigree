@@ -37,12 +37,16 @@ set(TEST_SOURCES
 add_executable(${PRJ_TEST_NAME} ${TEST_SOURCES})
 add_sanitizers(${PRJ_TEST_NAME})
 
-if(NOT LLVM_ENABLE_EH)
-  target_compile_definitions(${PRJ_TEST_NAME} PUBLIC BOOST_NO_EXCEPTIONS)
-endif()
+target_compile_options(${PRJ_TEST_NAME} PRIVATE "-pedantic")
+target_compile_options(${PRJ_TEST_NAME} PRIVATE "-Wall")
+target_compile_options(${PRJ_TEST_NAME} PRIVATE "-Wextra")
 
 if(SANITIZE_MEMORY)
   target_compile_options(${PRJ_TEST_NAME} PUBLIC "-fPIE")
+endif()
+
+if(NOT LLVM_ENABLE_EH)
+  target_compile_definitions(${PRJ_TEST_NAME} PUBLIC BOOST_NO_EXCEPTIONS)
 endif()
 
 target_include_directories(${PRJ_TEST_NAME} PUBLIC include)
