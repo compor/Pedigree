@@ -160,7 +160,8 @@ foreach(PRJ_LIB ${PRJ_LIB_NAMES})
   target_compile_options(${PRJ_LIB} PRIVATE "-pedantic")
   target_compile_options(${PRJ_LIB} PRIVATE "-Wall")
   target_compile_options(${PRJ_LIB} PRIVATE "-Wextra")
-  target_compile_options(${PRJ_LIB} PRIVATE "-Wno-unused")
+  target_compile_options(${PRJ_LIB} PRIVATE "-Wno-unused-parameter")
+  target_compile_options(${PRJ_LIB} PRIVATE "-Wno-unused-function")
 
   target_compile_definitions(${PRJ_LIB} PUBLIC ${LLVM_DEFINITIONS})
   target_compile_definitions(${PRJ_LIB}
