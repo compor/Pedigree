@@ -50,13 +50,12 @@ template <typename NodeT, typename InfoT>
 struct EdgeRecordImpl : private InfoT::value_type {
   using node_type = NodeT;
   using info_type = InfoT;
+  node_type node;
 
   template <typename... Args>
   EdgeRecordImpl(node_type node, Args &&... args)
-      : node(std::move(node)),
-        info_type::value_type(std::forward<Args>(args)...) {}
-
-  node_type node;
+      : info_type::value_type(std::forward<Args>(args)...),
+        node(std::move(node)) {}
 
   typename info_type::value_type &&info() && noexcept {
     return std::move(*this);
@@ -108,9 +107,9 @@ public:
 
   template <typename... Args>
   explicit GenericDependenceNode(UnitType Unit, Args &&... args) noexcept
-      : DependeeCount(0),
-        Unit(Unit),
-        NodeInfoType::value_type(std::forward<Args>(args)...) {}
+      : NodeInfoType::value_type(std::forward<Args>(args)...),
+        DependeeCount(0),
+        Unit(Unit) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
@@ -119,9 +118,9 @@ public:
       are_all_nothrow_move_constructible_v<decltype(DependeeCount),
                                            decltype(Unit), decltype(Edges),
                                            typename NodeInfoType::value_type>)
-      : DependeeCount(std::move(Other.DependeeCount)),
-        Unit(std::move(Other.Unit)), Edges(std::move(Other.Edges)),
-        NodeInfoType::value_type(std::move(Other)) {
+      : NodeInfoType::value_type(std::move(Other)),
+        DependeeCount(std::move(Other.DependeeCount)),
+        Unit(std::move(Other.Unit)), Edges(std::move(Other.Edges)) {
     Other.DependeeCount = {};
     Other.Unit = {};
     Other.Edges.clear();

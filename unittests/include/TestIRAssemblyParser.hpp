@@ -42,7 +42,7 @@ class TestIRAssemblyParser {
 public:
   TestIRAssemblyParser(bool shouldVerify = true,
                        llvm::StringRef dataDir = "./unittests/data/")
-      : TestModule{nullptr}, m_shouldVerify(shouldVerify),
+      : m_shouldVerify(shouldVerify), TestModule{nullptr},
         TestDataDir{dataDir} {
 #if (LLVM_VERSION_MAJOR >= 4) ||                                               \
     (LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9)
