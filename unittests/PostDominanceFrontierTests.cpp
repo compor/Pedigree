@@ -113,7 +113,7 @@ std::array<PDFConstructionTestData, 5> testData1{
      {"hpc4pc_book_fig37.ll", "while.cond.1", {"while.cond.1", "while.cond"}}}};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
-                        ::testing::ValuesIn(testData1));
+                        ::testing::ValuesIn(testData1), );
 
 } // unnamed namespace
 } // namespace testing
