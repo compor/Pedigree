@@ -31,7 +31,7 @@ namespace {
 
 struct GenericDependenceGraphTest : public ::testing::Test {
   using TestNodeTy = GenericDependenceNode<int>;
-  std::array<int, 4> TestNodes{1, 3, 5, 7};
+  std::array<int, 4> TestNodes{{1, 3, 5, 7}};
 
   std::vector<TestNodeTy *> DepNodes1;
   std::vector<TestNodeTy *> DepNodes1b;

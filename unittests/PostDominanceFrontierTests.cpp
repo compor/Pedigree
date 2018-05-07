@@ -43,8 +43,6 @@ namespace testing {
 namespace {
 
 struct PDFConstructionTestData {
-  PDFConstructionTestData() = delete;
-
   std::string assemblyFile;
   std::string node;
   std::set<std::string> frontier;
@@ -107,15 +105,15 @@ TEST_P(PDFConstructionTest, PDFConstruction) {
   EXPECT_EQ(td.frontier, frontierNames);
 }
 
-std::array<PDFConstructionTestData, 5> testData2 = {
-    "hpc4pc_book_fig37.ll", "j_label",      {},
-    "hpc4pc_book_fig37.ll", "i_label",      {},
-    "hpc4pc_book_fig37.ll", "if.then",      {"while.body.3"},
-    "hpc4pc_book_fig37.ll", "while.cond",   {"while.cond"},
-    "hpc4pc_book_fig37.ll", "while.cond.1", {"while.cond.1", "while.cond"}};
+std::array<PDFConstructionTestData, 5> testData1{
+    {{"hpc4pc_book_fig37.ll", "j_label", {}},
+     {"hpc4pc_book_fig37.ll", "i_label", {}},
+     {"hpc4pc_book_fig37.ll", "if.then", {"while.body.3"}},
+     {"hpc4pc_book_fig37.ll", "while.cond", {"while.cond"}},
+     {"hpc4pc_book_fig37.ll", "while.cond.1", {"while.cond.1", "while.cond"}}}};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
-                        ::testing::ValuesIn(testData2));
+                        ::testing::ValuesIn(testData1));
 
 } // unnamed namespace
 } // namespace testing
