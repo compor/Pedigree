@@ -10,7 +10,6 @@ INSTALL_DIR=${2:-../install/}
 
 cmake \
   -G Ninja \
-  --debug-trycompile \
   -DCMAKE_EXPORT_COMPILE_COMMANDS=On \
   -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
   -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" \
