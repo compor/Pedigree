@@ -46,7 +46,9 @@ template <typename T, typename _ = void> struct UnitDOTTraits {
 
 //
 
-struct DefaultUnitDOTTraits {
+namespace detail {
+
+struct DefaultUnitDOTTraitsImpl {
   template <typename T> static std::string name(const T &Unit) {
     return ToObj(Unit).getName();
   }
@@ -60,13 +62,13 @@ struct DefaultUnitDOTTraits {
   }
 };
 
-//
+} // namespace detail
 
 template <typename T>
 struct UnitDOTTraits<
     T, typename std::enable_if_t<is_unqual_same_v<llvm::Instruction, T>>>
-    : DefaultUnitDOTTraits {
-  using Base = DefaultUnitDOTTraits;
+    : detail::DefaultUnitDOTTraitsImpl {
+  using Base = detail::DefaultUnitDOTTraitsImpl;
 
   template <typename U> static std::string name(const U &Unit) {
     auto *term = llvm::dyn_cast<llvm::TerminatorInst>(ToPtr(Unit));
@@ -81,8 +83,8 @@ struct UnitDOTTraits<
 template <typename T>
 struct UnitDOTTraits<
     T, typename std::enable_if_t<is_unqual_same_v<llvm::BasicBlock, T>>>
-    : DefaultUnitDOTTraits {
-  using Base = DefaultUnitDOTTraits;
+    : detail::DefaultUnitDOTTraitsImpl {
+  using Base = detail::DefaultUnitDOTTraitsImpl;
 
   using Base::name;
   using Base::print;
@@ -91,8 +93,8 @@ struct UnitDOTTraits<
 template <typename T>
 struct UnitDOTTraits<
     T, typename std::enable_if_t<is_unqual_same_v<llvm::Function, T>>>
-    : DefaultUnitDOTTraits {
-  using Base = DefaultUnitDOTTraits;
+    : detail::DefaultUnitDOTTraitsImpl {
+  using Base = detail::DefaultUnitDOTTraitsImpl;
 
   using Base::name;
   using Base::print;
