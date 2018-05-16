@@ -88,8 +88,7 @@ public:
     return *this;
   }
 #else
-  MDALocalMDGraphBuilder &
-  setAnalysis(llvm::MemoryDependenceResults &Analysis) {
+  MDALocalMDGraphBuilder &setAnalysis(llvm::MemoryDependenceResults &Analysis) {
     CurAnalysis = const_cast<llvm::MemoryDependenceResults &>(Analysis);
 
     return *this;
@@ -115,6 +114,8 @@ public:
   }
 
   std::unique_ptr<MDGraph> build() {
+    assert(!CurMode.empty() && "Analysis mode is empty!");
+
     if (CurUnit && CurAnalysis) {
       Graph = std::make_unique<MDGraph>();
       visit(const_cast<llvm::Function &>(*CurUnit));
@@ -151,7 +152,7 @@ private:
                                          DependenceHazard::Unknown};
 
     // TODO decide what to do when the query is unknown
-    if (QueryResult.isUnknown() || CurMode.empty()) {
+    if (QueryResult.isUnknown()) {
       return info;
     }
 
