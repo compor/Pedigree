@@ -137,10 +137,12 @@ private:
       return;
     }
 
-    if (query.isNonLocal()) {
+    if (query.isNonFuncLocal()) {
       if (CurScope >= AnalysisScope::Interprocedural) {
         getInterproceduralDependees(llvm::CallSite(&CurInstruction));
-      } else if (CurScope >= AnalysisScope::Function) {
+      }
+    } else if (query.isNonLocal()) {
+      if (CurScope >= AnalysisScope::Function) {
         getFunctionLocalDependees(CurInstruction);
       }
     } else {
@@ -203,7 +205,7 @@ private:
 
     for (auto &e : results) {
       auto &queryResult = e.getResult();
-      auto src = queryResult.getInst();
+      auto *src = queryResult.getInst();
       auto info = determineHazard(*src, *dst, queryResult);
 
       addDependenceWithInfo(*src, *dst, info);
@@ -216,7 +218,7 @@ private:
 
     for (const auto &e : results) {
       auto &queryResult = e.getResult();
-      auto src = queryResult.getInst();
+      auto *src = queryResult.getInst();
       auto info = determineHazard(*src, Dst, queryResult);
 
       addDependenceWithInfo(*src, Dst, info);
