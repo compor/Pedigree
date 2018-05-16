@@ -133,6 +133,10 @@ private:
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
     auto query = CurAnalysis->getDependency(&CurInstruction);
 
+    if (query.isUnknown()) {
+      return;
+    }
+
     if (query.isNonLocal()) {
       if (CurScope >= AnalysisScope::Interprocedural) {
         getInterproceduralDependees(llvm::CallSite(&CurInstruction));
@@ -150,11 +154,6 @@ private:
                                  const llvm::MemDepResult &QueryResult) {
     BasicDependenceInfo::value_type info{DependenceOrigin::Memory,
                                          DependenceHazard::Unknown};
-
-    // TODO decide what to do when the query is unknown
-    if (QueryResult.isUnknown()) {
-      return info;
-    }
 
     if (QueryResult.isDef() && (CurMode & AnalysisMode::MemDefs)) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
@@ -226,7 +225,7 @@ private:
 
   void getBlockLocalDependees(llvm::MemDepResult &QueryResult,
                               llvm::Instruction &Dst) {
-    auto src = QueryResult.getInst();
+    auto *src = QueryResult.getInst();
     auto info = determineHazard(*src, Dst, QueryResult);
 
     addDependenceWithInfo(*src, Dst, info);
