@@ -165,7 +165,7 @@ private:
       } else if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Out;
       } else {
-        assert(false && "No appropriate hazard was found!");
+        DEBUG_MSG(LogLevel::Info, "No appropriate hazard was found!");
       }
     } else if (QueryResult.isClobber() &&
                (CurMode & AnalysisMode::MemClobbers)) {
@@ -174,7 +174,7 @@ private:
       } else if (Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Out;
       } else {
-        assert(false && "No appropriate hazard was found!");
+        DEBUG_MSG(LogLevel::Info, "No appropriate hazard was found!");
       }
     }
 
