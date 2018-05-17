@@ -1,4 +1,4 @@
-; RUN: opt -load %bindir/%testeelib -pedigree-mdg-dot < %s --disable-output 
+; RUN: opt -load %bindir/%testeelib -pedigree-mdg-dot < %s --disable-output
 ; RUN: %checkgraphiso %bindir/mdg.foo.dot %outputdatadir/mdamdgbuilder_scope_bug01.dot | FileCheck %s
 ; CHECK: OK
 

@@ -45,10 +45,10 @@ if __name__ == '__main__':
         exit(1)
 
     if not os.path.exists(sys.argv[1]):
-        raise ValueError("Input file does not exist")
+        raise ValueError('Input file: {} does not exist'.format(sys.argv[1]))
 
     if not os.path.exists(sys.argv[2]):
-        raise ValueError("Input file does not exist")
+        raise ValueError('Input file: {} does not exist'.format(sys.argv[2]))
 
     if check_graph_iso(sys.argv[1], sys.argv[2]):
         print('OK')
