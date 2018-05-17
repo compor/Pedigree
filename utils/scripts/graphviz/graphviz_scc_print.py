@@ -26,10 +26,10 @@ def create_scc_subgraphs(infile, outfile):
     clusters in this format.
 
     Args:
-        infile: A string of the input file name expected to contain a GraphViz
-        DOT digraph.
+        infile (string): The input file name expected to contain a GraphViz DOT
+        digraph.
 
-        outfile: A string of the output file name to be created containing a
+        outfile (string): The output file name to be created containing a
         GraphViz DOT digraph.
     """
 
@@ -56,9 +56,9 @@ if __name__ == '__main__':
         exit(1)
 
     if not os.path.exists(sys.argv[1]):
-        raise ValueError("Input file does not exist")
+        raise ValueError('Input file: {} does not exist'.format(sys.argv[1]))
 
     if os.path.exists(sys.argv[2]):
-        raise ValueError("Output file already exists")
+        raise ValueError('Output file: {} does not exist'.format(sys.argv[2]))
 
     create_scc_subgraphs(sys.argv[1], sys.argv[2])
