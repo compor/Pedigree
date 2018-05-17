@@ -11,6 +11,9 @@
 
 #include "Analysis/AnalysisScope.hpp"
 
+#include "llvm/Config/llvm-config.h"
+// version macros
+
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
@@ -58,9 +61,6 @@ enum class AnalysisMode : uint8_t {
   MemDefs = 0b01,
   MemClobbers = 0b10,
 };
-
-// TODO maybe we should consider providing an option for not including nodes
-// in the graph unless they have an edge
 
 class MDAMDGraphBuilder : public llvm::InstVisitor<MDAMDGraphBuilder> {
 private:
@@ -157,7 +157,6 @@ private:
 
     if (QueryResult.isDef() && (CurMode & AnalysisMode::MemDefs)) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
-        // TODO decide how to handle these cases (if any) better
         assert(false && "A RAW hazard was reported!");
       }
 
