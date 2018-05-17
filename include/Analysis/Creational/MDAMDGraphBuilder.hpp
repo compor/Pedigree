@@ -62,8 +62,7 @@ enum class AnalysisMode : uint8_t {
 // TODO maybe we should consider providing an option for not including nodes
 // in the graph unless they have an edge
 
-class MDALocalMDGraphBuilder
-    : public llvm::InstVisitor<MDALocalMDGraphBuilder> {
+class MDAMDGraphBuilder : public llvm::InstVisitor<MDAMDGraphBuilder> {
 private:
   std::unique_ptr<MDGraph> Graph;
   boost::optional<const llvm::Function &> CurUnit;
@@ -77,37 +76,36 @@ private:
   flags::flags<AnalysisMode> CurMode;
 
 public:
-  MDALocalMDGraphBuilder()
+  MDAMDGraphBuilder()
       : CurScope(AnalysisScope::Block), CurMode(AnalysisMode::MemDefs) {}
 
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
-  MDALocalMDGraphBuilder &
-  setAnalysis(llvm::MemoryDependenceAnalysis &Analysis) {
+  MDAMDGraphBuilder &setAnalysis(llvm::MemoryDependenceAnalysis &Analysis) {
     CurAnalysis = const_cast<llvm::MemoryDependenceAnalysis &>(Analysis);
 
     return *this;
   }
 #else
-  MDALocalMDGraphBuilder &setAnalysis(llvm::MemoryDependenceResults &Analysis) {
+  MDAMDGraphBuilder &setAnalysis(llvm::MemoryDependenceResults &Analysis) {
     CurAnalysis = const_cast<llvm::MemoryDependenceResults &>(Analysis);
 
     return *this;
   }
 #endif
 
-  MDALocalMDGraphBuilder &setUnit(const llvm::Function &Unit) {
+  MDAMDGraphBuilder &setUnit(const llvm::Function &Unit) {
     CurUnit.emplace(Unit);
 
     return *this;
   }
 
-  MDALocalMDGraphBuilder &setScope(AnalysisScope Scope) {
+  MDAMDGraphBuilder &setScope(AnalysisScope Scope) {
     CurScope = Scope;
 
     return *this;
   }
 
-  MDALocalMDGraphBuilder &turnOnMode(AnalysisMode Mode) {
+  MDAMDGraphBuilder &turnOnMode(AnalysisMode Mode) {
     CurMode |= Mode;
 
     return *this;

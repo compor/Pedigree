@@ -12,7 +12,7 @@
 
 #include "Analysis/Passes/MDGraphPass.hpp"
 
-#include "Analysis/Creational/MDALocalMDGraphBuilder.hpp"
+#include "Analysis/Creational/MDAMDGraphBuilder.hpp"
 
 #include "Analysis/Creational/DAMDGraphBuilder.hpp"
 
@@ -218,7 +218,7 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
     auto &mda = getAnalysis<llvm::MemoryDependenceWrapperPass>().getMemDep();
 #endif
 
-    MDALocalMDGraphBuilder builder{};
+    MDAMDGraphBuilder builder{};
 
     if (AnalysisBackendModeOption.isSet(AnalysisMode::MemDefs)) {
       builder.turnOnMode(AnalysisMode::MemDefs);
