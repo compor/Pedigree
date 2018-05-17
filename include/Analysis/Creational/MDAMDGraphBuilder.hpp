@@ -157,28 +157,24 @@ private:
 
     if (QueryResult.isDef() && (CurMode & AnalysisMode::MemDefs)) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
-        assert(false && "A RAW hazard was reported!");
-      }
-
-      if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
+        assert(false && "A RAR hazard was reported!");
+      } else if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Anti;
-      }
-
-      if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
+      } else if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
         info.hazards |= DependenceHazard::Flow;
-      }
-
-      if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
+      } else if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Out;
+      } else {
+        assert(false && "No appropriate hazard was found!");
       }
     } else if (QueryResult.isClobber() &&
                (CurMode & AnalysisMode::MemClobbers)) {
       if (Dst.mayReadFromMemory()) {
         info.hazards |= DependenceHazard::Flow;
-      }
-
-      if (Dst.mayWriteToMemory()) {
+      } else if (Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Out;
+      } else {
+        assert(false && "No appropriate hazard was found!");
       }
     }
 
@@ -205,7 +201,9 @@ private:
       auto *src = queryResult.getInst();
       auto info = determineHazard(*src, *dst, queryResult);
 
-      addDependenceWithInfo(*src, *dst, info);
+      if (info.hazards) {
+        addDependenceWithInfo(*src, *dst, info);
+      }
     }
   }
 
@@ -218,7 +216,9 @@ private:
       auto *src = queryResult.getInst();
       auto info = determineHazard(*src, Dst, queryResult);
 
-      addDependenceWithInfo(*src, Dst, info);
+      if (info.hazards) {
+        addDependenceWithInfo(*src, Dst, info);
+      }
     }
   }
 
@@ -227,7 +227,9 @@ private:
     auto *src = QueryResult.getInst();
     auto info = determineHazard(*src, Dst, QueryResult);
 
-    addDependenceWithInfo(*src, Dst, info);
+    if (info.hazards) {
+      addDependenceWithInfo(*src, Dst, info);
+    }
   }
 };
 
