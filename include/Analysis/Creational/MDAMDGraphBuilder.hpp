@@ -7,6 +7,8 @@
 
 #include "Config.hpp"
 
+#include "Debug.hpp"
+
 #include "Analysis/Graphs/MDGraph.hpp"
 
 #include "Analysis/AnalysisScope.hpp"
