@@ -34,8 +34,10 @@ void DFSEnumerate(GraphT &G, const UnitT &Unit) {
 
       if (node) {
         auto &info = (*node)->info();
-        info.id = i++;
+        info.id = i;
       }
+
+      ++i;
     }
   }
 }
