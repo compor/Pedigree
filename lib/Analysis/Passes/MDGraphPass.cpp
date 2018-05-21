@@ -16,6 +16,8 @@
 
 #include "Analysis/Creational/DAMDGraphBuilder.hpp"
 
+#include "Analysis/Operations/DFSEnumerate.hpp"
+
 #include "llvm/Config/llvm-config.h"
 // version macros
 
@@ -143,6 +145,12 @@ static llvm::cl::bits<pedigree::AnalysisMode> AnalysisBackendModeOption(
                      ),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
+llvm::cl::opt<bool> EnumerateWithDFS(
+    "pedigree-mdg-dfs-enumerate",
+    llvm::cl::desc(
+        "enumerate graph nodes with DFS numbers from originating IR traversal"),
+    llvm::cl::cat(PedigreeMDGraphPassCategory));
+
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-mdg-debug", llvm::cl::desc("debug pedigree mdg pass"),
@@ -232,6 +240,10 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
                 .setAnalysis(mda)
                 .setUnit(CurFunc)
                 .build();
+  }
+
+  if (EnumerateWithDFS) {
+    DFSEnumerate(*Graph, CurFunc);
   }
 
   return false;
