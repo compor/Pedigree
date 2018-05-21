@@ -16,7 +16,7 @@
 
 #include "Analysis/Creational/DAMDGraphBuilder.hpp"
 
-#include "Analysis/Operations/DFSEnumerate.hpp"
+#include "Analysis/Operations/AssignNodeUID.hpp"
 
 #include "llvm/Config/llvm-config.h"
 // version macros
@@ -278,7 +278,7 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
       }
     }
 
-    DFSEnumerate(*Graph, std::begin(DFSInstructions),
+    AssignNodeUID(*Graph, std::begin(DFSInstructions),
                  std::end(DFSInstructions));
   }
 

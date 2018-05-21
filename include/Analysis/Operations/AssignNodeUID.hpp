@@ -27,7 +27,7 @@
 namespace pedigree {
 
 template <typename GraphT, typename IteratorT>
-void DFSEnumerate(GraphT &G, IteratorT Begin, IteratorT End) {
+void AssignNodeUID(GraphT &G, IteratorT Begin, IteratorT End) {
   unsigned int i = 0;
 
   static_assert(!std::is_pointer<GraphT>::value,
