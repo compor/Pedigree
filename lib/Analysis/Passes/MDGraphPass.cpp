@@ -21,6 +21,16 @@
 #include "llvm/Config/llvm-config.h"
 // version macros
 
+#include "llvm/IR/BasicBlock.h"
+// using llvm::BasicBlock
+
+#include "llvm/IR/CFG.h"
+// using llvm::graph_traits
+
+#include "llvm/ADT/DepthFirstIterator.h"
+// using llvm::df_begin
+// using llvm::df_end
+
 #include "llvm/Analysis/MemoryDependenceAnalysis.h"
 // using llvm::MemoryDependenceAnalysis
 
@@ -56,6 +66,17 @@
 #include "llvm/Support/Debug.h"
 // using DEBUG macro
 // using llvm::dbgs
+
+#include <algorithm>
+// using std::copy
+
+#include <vector>
+// using std::vector
+
+#include <iterator>
+// using std::back_inserter
+// using std::begin
+// using std::end
 
 #include <cassert>
 // using assert
@@ -242,8 +263,23 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
                 .build();
   }
 
-  if (EnumerateWithDFS) {
-    DFSEnumerate(*Graph, CurFunc);
+  if (EnumerateWithDFS && Graph) {
+    std::vector<llvm::BasicBlock *> DFSBlocks{CurFunc.size()};
+    std::copy(llvm::df_begin(&CurFunc), llvm::df_end(&CurFunc),
+              std::back_inserter(DFSBlocks));
+
+    std::vector<llvm::Instruction *> DFSInstructions;
+
+    for (auto *e : DFSBlocks) {
+      if (e) {
+        for (auto &k : *e) {
+          DFSInstructions.push_back(&k);
+        }
+      }
+    }
+
+    DFSEnumerate(*Graph, std::begin(DFSInstructions),
+                 std::end(DFSInstructions));
   }
 
   return false;

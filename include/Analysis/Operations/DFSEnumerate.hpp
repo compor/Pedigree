@@ -12,34 +12,37 @@
 
 #include "llvm/IR/CFG.h"
 
-#include "llvm/ADT/DepthFirstIterator.h"
-// using llvm::depth_first
-
 #include <memory>
 // using std::addressof
 
 #include <iterator>
 // using std::iterator_traits
 
+#include <type_traits>
+// using std::is_pointer
+
+#include <utility>
+// using std::declval
+
 namespace pedigree {
 
-template <typename GraphT, typename UnitT>
-void DFSEnumerate(GraphT &G, const UnitT &Unit) {
-  auto dfs = llvm::depth_first(std::addressof(const_cast<UnitT &>(Unit)));
+template <typename GraphT, typename IteratorT>
+void DFSEnumerate(GraphT &G, IteratorT Begin, IteratorT End) {
   unsigned int i = 0;
 
-  for (auto *e : dfs) {
-    for (auto &k : *e) {
-      auto node = G.getNode(std::addressof(k));
+  static_assert(!std::is_pointer<GraphT>::value,
+                "Graph type cannot be a pointer!");
 
-      if (node) {
-        auto &info = (*node)->info();
-        info.id = i;
-      }
+  std::for_each(Begin, End, [&](const auto &e) {
+    auto node = G.getNode(e);
 
-      ++i;
+    if (node) {
+      auto &info = (*node)->info();
+      info.id = i;
     }
-  }
+
+    ++i;
+  });
 }
 
 } // namespace pedigree
