@@ -18,6 +18,8 @@
 
 #include "Analysis/Operations/AssignNodeUID.hpp"
 
+#include "Support/Utils/InstIterator.hpp"
+
 #include "llvm/Config/llvm-config.h"
 // version macros
 
@@ -264,22 +266,10 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   }
 
   if (EnumerateWithDFS && Graph) {
-    std::vector<llvm::BasicBlock *> DFSBlocks{CurFunc.size()};
-    std::copy(llvm::df_begin(&CurFunc), llvm::df_end(&CurFunc),
-              std::back_inserter(DFSBlocks));
+    auto instructions =
+        make_inst_range(llvm::df_begin(&CurFunc), llvm::df_end(&CurFunc));
 
-    std::vector<llvm::Instruction *> DFSInstructions;
-
-    for (auto *e : DFSBlocks) {
-      if (e) {
-        for (auto &k : *e) {
-          DFSInstructions.push_back(&k);
-        }
-      }
-    }
-
-    AssignNodeUID(*Graph, std::begin(DFSInstructions),
-                 std::end(DFSInstructions));
+    AssignNodeUID(*Graph, std::begin(instructions), std::end(instructions));
   }
 
   return false;
