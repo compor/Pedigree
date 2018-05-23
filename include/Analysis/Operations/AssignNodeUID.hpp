@@ -7,6 +7,11 @@
 
 #include "Config.hpp"
 
+#include "Support/Utils/UniformObjectAccess.hpp"
+
+#include <memory>
+// using std::addressof
+
 #include <iterator>
 // using std::iterator_traits
 
@@ -16,6 +21,7 @@
 #include <type_traits>
 // using std::is_pointer
 // using std::is_same
+// using std::remove_pointer
 
 namespace pedigree {
 
@@ -31,14 +37,19 @@ void AssignNodeUID(GraphT &G, IteratorT Begin, IteratorT End,
                    typename detail::NodeInfoType<GraphT>::IDTy FirstID = 0) {
   static_assert(!std::is_pointer<GraphT>::value,
                 "Graph type cannot be a pointer!");
+
+  using it_value_type = typename std::iterator_traits<IteratorT>::value_type;
+
   static_assert(
-      std::is_same<typename GraphT::NodeType::UnitType,
-                   typename std::iterator_traits<IteratorT>::value_type>::value,
+      std::is_same<std::remove_pointer_t<typename GraphT::NodeType::UnitType>,
+                   std::remove_pointer_t<it_value_type>>::value,
       "Graph node unit does not match iteration unit!");
 
-  std::for_each(Begin, End, [&](const auto &e) {
+  std::for_each(Begin, End, [&](auto &e) {
     ++FirstID;
-    auto node = G.getNode(e);
+
+    auto &k = ToObj(e);
+    auto node = G.getNode(std::addressof(k));
 
     if (node) {
       auto &info = (*node)->info();
