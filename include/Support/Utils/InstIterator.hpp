@@ -27,6 +27,12 @@ namespace pedigree {
 template <typename InstructionBlockIteratorT> struct InstIterator {
   using InstructionBlockT =
       typename std::iterator_traits<InstructionBlockIteratorT>::value_type;
+
+// We're using the member function to obtain the iterator instead of
+// std::begin, because that will be bound to the overload that accepts const
+// ref as a parameter, thus requiring a lot of juggling around types to detect
+// if the originating container is const or not
+
 #if LLVM_VERSION_MAJOR >= 4 && LLVM_VERSION_MINOR >= 0
   using InstructionIteratorT =
       decltype(std::declval<InstructionBlockT>()->begin());
@@ -34,6 +40,7 @@ template <typename InstructionBlockIteratorT> struct InstIterator {
   using InstructionIteratorT =
       decltype(std::declval<InstructionBlockT>().begin());
 #endif
+
   using InstructionT =
       typename std::iterator_traits<InstructionIteratorT>::value_type;
 
