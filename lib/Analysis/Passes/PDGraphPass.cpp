@@ -63,6 +63,9 @@
 // using DEBUG macro
 // using llvm::dbgs
 
+#include <cassert>
+// using assert
+
 #define DEBUG_TYPE "pedigree-pdg"
 
 // plugin registration for opt
@@ -139,6 +142,10 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
     llvm::cl::cat(PedigreePDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 
+static void checkCmdLineOptions() {
+  assert(GraphComponentOption.getBits() && "No graph components were set!");
+}
+
 //
 
 namespace pedigree {
@@ -160,6 +167,8 @@ void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
+  checkCmdLineOptions();
+
   InstructionDependenceGraph instCDG;
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>> graphs;
 
