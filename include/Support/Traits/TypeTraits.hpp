@@ -10,11 +10,15 @@
 // using std::conditional
 // using std::is_same
 // using std::is_pointer
+// using std::is_const
 // using std::remove_cv
 // using std::remove_pointer
 // using std::remove_reference
 // using std::is_nothrow_move_constructible
 // using std::is_nothrow_move_assignable
+
+#include <iterator>
+// using std::iterator_traits
 
 namespace pedigree {
 
@@ -74,6 +78,16 @@ template <typename... Args>
 constexpr bool are_all_nothrow_move_assignable_v =
     are_all_nothrow_move_assignable<Args...>::value;
 
+//
+
+template <typename T>
+struct is_const_iterator
+    : std::is_const<
+          std::remove_pointer_t<typename std::iterator_traits<T>::pointer>> {};
+
+template <typename T>
+constexpr bool is_const_iterator_v = is_const_iterator<T>::value;
+
 } // namespace pedigree
 
-#endif // PEDIGREE_TYPETRAITS_HPP
+#endif // header
