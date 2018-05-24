@@ -5,7 +5,8 @@
 #ifndef PEDIGREE_INSTITERATOR_HPP
 #define PEDIGREE_INSTITERATOR_HPP
 
-#include "Support/Utils/UniformObjectAccess.hpp"
+#include "llvm/Config/llvm-config.h"
+// version macros
 
 #include "llvm/ADT/iterator_range.h"
 // llvm::make_range
@@ -26,8 +27,13 @@ namespace pedigree {
 template <typename InstructionBlockIteratorT> struct InstIterator {
   using InstructionBlockT =
       typename std::iterator_traits<InstructionBlockIteratorT>::value_type;
+#if LLVM_VERSION_MAJOR >= 4 && LLVM_VERSION_MINOR >= 0
+  using InstructionIteratorT =
+      decltype(std::declval<InstructionBlockT>()->begin());
+#else
   using InstructionIteratorT =
       decltype(std::declval<InstructionBlockT>().begin());
+#endif
   using InstructionT =
       typename std::iterator_traits<InstructionIteratorT>::value_type;
 
