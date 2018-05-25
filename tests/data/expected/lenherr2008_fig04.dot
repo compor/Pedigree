@@ -1,0 +1,7 @@
+
+digraph {
+  A [dg_id=15]
+  B [dg_id=17]
+
+  A -> B
+}
