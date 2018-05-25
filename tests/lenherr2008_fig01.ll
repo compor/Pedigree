@@ -1,5 +1,5 @@
 ; RUN: rm -f %bindir/tests/mdg.foo2.dot
-; RUN: opt -load %bindir/%testeelib -pedigree-mdg-dot < %s --disable-output
+; RUN: opt -load %bindir/%testeelib -basicaa -pedigree-mdg-dot < %s --disable-output
 ; RUN: %checkgraphiso %bindir/tests/mdg.foo2.dot %outputdatadir/lenherr2008_fig01.dot | FileCheck %s
 ; CHECK: OK
 
