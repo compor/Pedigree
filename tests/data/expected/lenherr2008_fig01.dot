@@ -1,0 +1,10 @@
+
+digraph {
+  A [dg_id=7]
+  B [dg_id=8]
+  C [dg_id=12]
+  D [dg_id=13]
+
+  A -> B
+  C -> D
+}
