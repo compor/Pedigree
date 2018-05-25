@@ -8,7 +8,7 @@
 
 extern int initialize();
 
-void foo() {
+void foo1() {
   int A[10] = {0};
   size_t i;
 
