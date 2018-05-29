@@ -282,6 +282,9 @@ install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/"
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/share/"
   DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
 #
 
 install(DIRECTORY "third_party/enum-flags/include/"
