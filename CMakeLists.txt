@@ -270,7 +270,7 @@ configure_file(
 
 write_basic_package_version_file(
   "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PRJ_NAME_LOWER}-config-version.cmake"
-  VERSION "${PRJ_VERSION_SHORT}" COMPATIBILITY SameMinorVersion)
+  VERSION "${PRJ_VERSION_SHORT}" COMPATIBILITY SameMajorVersion)
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
