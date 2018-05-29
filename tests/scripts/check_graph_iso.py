@@ -16,6 +16,18 @@ import networkx as nx
 from networkx.drawing.nx_agraph import read_dot
 
 
+def find_nodes_with_attributes(g, **attr):
+    found = []
+    nodes = g.nodes(data=True)
+
+    for k, v in attr.iteritems():
+        for n in nodes:
+            if n[1][k] == v:
+                found.append(n[0])
+
+    return found
+
+
 def check_graph_iso(dotfile1, dotfile2):
     """ Checks if two GraphViz DOT digraphs are isomorphic.
 
@@ -32,7 +44,21 @@ def check_graph_iso(dotfile1, dotfile2):
     dot_graph1 = read_dot(dotfile1)
     dot_graph2 = read_dot(dotfile2)
 
-    return nx.is_isomorphic(dot_graph1, dot_graph2)
+    are_iso = nx.is_isomorphic(dot_graph1, dot_graph2)
+
+    while are_iso and len(dot_graph1):
+        first_node = list(dot_graph1.nodes(data=True))[0]
+        found = find_nodes_with_attributes(
+            dot_graph2, dg_uid=first_node[1]['dg_uid'])
+
+        if found:
+            dot_graph2.remove_nodes_from(found)
+            dot_graph1.remove_node(first_node[0])
+            are_iso = nx.is_isomorphic(dot_graph1, dot_graph2)
+        else:
+            are_iso = False
+
+    return are_iso
 
 
 #
