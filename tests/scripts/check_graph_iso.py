@@ -11,6 +11,8 @@ from __future__ import print_function
 import sys
 import os
 
+from argparse import ArgumentParser
+
 import networkx as nx
 
 from networkx.drawing.nx_agraph import read_dot
@@ -28,7 +30,26 @@ def find_nodes_with_attributes(g, **attr):
     return found
 
 
-def check_graph_iso(dotfile1, dotfile2):
+def are_isomorphic_with_attribute(g1, g2, node_attribute):
+    are_iso = True
+
+    while are_iso and len(g1):
+        first_node = list(g1.nodes(data=True))[0]
+
+        found = find_nodes_with_attributes(
+            g2, **{node_attribute: first_node[1][node_attribute]})
+
+        if found:
+            g2.remove_nodes_from(found)
+            g1.remove_node(first_node[0])
+            are_iso = nx.is_isomorphic(g1, g2)
+        else:
+            are_iso = False
+
+    return are_iso
+
+
+def check_graph_iso(dotfile1, dotfile2, node_attr=[]):
     """ Checks if two GraphViz DOT digraphs are isomorphic.
 
     Args:
@@ -46,17 +67,12 @@ def check_graph_iso(dotfile1, dotfile2):
 
     are_iso = nx.is_isomorphic(dot_graph1, dot_graph2)
 
-    while are_iso and len(dot_graph1):
-        first_node = list(dot_graph1.nodes(data=True))[0]
-        found = find_nodes_with_attributes(
-            dot_graph2, dg_uid=first_node[1]['dg_uid'])
-
-        if found:
-            dot_graph2.remove_nodes_from(found)
-            dot_graph1.remove_node(first_node[0])
-            are_iso = nx.is_isomorphic(dot_graph1, dot_graph2)
+    for na in node_attr:
+        if are_iso:
+            are_iso = are_isomorphic_with_attribute(
+                g1=dot_graph1, g2=dot_graph2, node_attribute=na)
         else:
-            are_iso = False
+            break
 
     return are_iso
 
@@ -64,19 +80,29 @@ def check_graph_iso(dotfile1, dotfile2):
 #
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print(
-            'Usage: {} [dotfile1] [dotfile2]\n'.format(sys.argv[0]),
-            file=sys.stderr)
-        exit(1)
+    parser = ArgumentParser(
+        description='Check graphs in GraphViz DOT format for isomorphism')
+    parser.add_argument(
+        '-f',
+        dest='dotfiles',
+        nargs='*',
+        required=True,
+        help='GraphViz DOT files')
+    parser.add_argument(
+        '-a',
+        dest='node_attributes',
+        default=[],
+        nargs='+',
+        help='Graph node attributes')
 
-    if not os.path.exists(sys.argv[1]):
-        raise ValueError('Input file: {} does not exist'.format(sys.argv[1]))
+    args = vars(parser.parse_args())
 
-    if not os.path.exists(sys.argv[2]):
-        raise ValueError('Input file: {} does not exist'.format(sys.argv[2]))
+    #
 
-    if check_graph_iso(dotfile1=sys.argv[1], dotfile2=sys.argv[2]):
+    if check_graph_iso(
+            dotfile1=args['dotfiles'][0],
+            dotfile2=args['dotfiles'][1],
+            node_attr=args['node_attributes']):
         print('OK')
     else:
         print('Error')

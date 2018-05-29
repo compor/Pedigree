@@ -1,6 +1,6 @@
 ; RUN: rm -f %bindir/tests/mdg.foo2.dot
 ; RUN: opt -load %bindir/%testeelib -basicaa -pedigree-mdg-dfs-enumerate -pedigree-mdg-dot < %s --disable-output
-; RUN: %checkgraphiso %bindir/tests/mdg.foo2.dot %outputdatadir/lenherr2008_fig01.dot | FileCheck %s
+; RUN: %checkgraphiso -f %bindir/tests/mdg.foo2.dot %outputdatadir/lenherr2008_fig01.dot -a dg_uid | FileCheck %s
 ; CHECK: OK
 
 define i32 @foo2() {

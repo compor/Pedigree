@@ -1,6 +1,6 @@
 ; RUN: rm -f %bindir/tests/mdg.foo1.dot
 ; RUN: opt -load %bindir/%testeelib -pedigree-mdg-dot < %s --disable-output
-; RUN: %checkgraphiso %bindir/tests/mdg.foo1.dot %outputdatadir/mdamdgbuilder_scope_bug01.dot | FileCheck %s
+; RUN: %checkgraphiso -f %bindir/tests/mdg.foo1.dot %outputdatadir/mdamdgbuilder_scope_bug01.dot | FileCheck %s
 ; CHECK: OK
 
 define void @foo1() {

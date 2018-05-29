@@ -1,6 +1,6 @@
 ; RUN: rm -f %bindir/tests/mdg.foo3.dot
 ; RUN: opt -load %bindir/%testeelib -basicaa -pedigree-mdg-dfs-enumerate -pedigree-mdg-dot < %s --disable-output
-; RUN: %checkgraphiso %bindir/tests/mdg.foo3.dot %outputdatadir/lenherr2008_fig04.dot | FileCheck %s
+; RUN: %checkgraphiso -f %bindir/tests/mdg.foo3.dot %outputdatadir/lenherr2008_fig04.dot -a dg_uid | FileCheck %s
 ; CHECK: OK
 
 define void @foo3() {
