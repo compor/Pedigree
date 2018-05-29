@@ -1,7 +1,7 @@
 
 digraph {
-  A [dg_id=15]
-  B [dg_id=17]
+  A [dg_uid=13]
+  B [dg_uid=16]
 
   A -> B
 }
