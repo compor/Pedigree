@@ -76,7 +76,7 @@ if __name__ == '__main__':
     if not os.path.exists(sys.argv[2]):
         raise ValueError('Input file: {} does not exist'.format(sys.argv[2]))
 
-    if check_graph_iso(sys.argv[1], sys.argv[2]):
+    if check_graph_iso(dotfile1=sys.argv[1], dotfile2=sys.argv[2]):
         print('OK')
     else:
         print('Error')
