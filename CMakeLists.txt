@@ -287,8 +287,8 @@ install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake"
 
 #
 
-install(DIRECTORY "third_party/enum-flags/include/"
-  DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/third_party/enum-flags/include/")
+#install(DIRECTORY "third_party/enum-flags/include/"
+  #DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/third_party/enum-flags/include/")
 
 #
 
