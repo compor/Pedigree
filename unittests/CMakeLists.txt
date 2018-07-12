@@ -62,7 +62,7 @@ if(SANITIZE_MEMORY)
   target_link_libraries(${PRJ_TEST_NAME} PUBLIC "-pie")
 endif()
 
-llvm_map_components_to_libnames(UNIT_LLVM_LIBS asmparser)
+llvm_map_components_to_libnames(UNIT_LLVM_LIBS asmparser ipo)
 
 target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${UNIT_LLVM_LIBS})
 target_link_libraries(${PRJ_TEST_NAME} PUBLIC ${UNIT_TESTEE_LIB})
