@@ -16,9 +16,11 @@ COMPILER_VERSION=
 
 export BUILD_TYPE=Debug
 
-export GTEST_ROOT=/usr/local/gtest-libcxx
+#export GTEST_ROOT=/usr/local/gtest-libcxx
+export GTEST_ROOT=/bulk/workbench/thirdparty/gtest/install1-libcxx/
 
-export BOOST_ROOT=/bulk/workbench/boost/015900/install/
+#export BOOST_ROOT=/bulk/workbench/boost/015900/install/
+export BOOST_ROOT=/bulk/workbench/thirdparty/boost/016800/install1/
 
 export CXX_FLAGS=
 export CXX_FLAGS="${CXX_FLAGS} -O1"
