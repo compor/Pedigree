@@ -5,14 +5,14 @@ export CC=clang
 export CXX=clang++
 export LLVMCONFIG=llvm-config
 
+#COMPILER_VERSION=3.8
+
 # or picked up from a system package install
 if [[ ! -z ${COMPILER_VERSION} ]]; then
   export CC=${CC}-${COMPILER_VERSION}
   export CXX=${CXX}-${COMPILER_VERSION}
   export LLVMCONFIG=${LLVMCONFIG}-${COMPILER_VERSION}
 fi
-
-COMPILER_VERSION=3.8
 
 export BUILD_TYPE=Debug
 
