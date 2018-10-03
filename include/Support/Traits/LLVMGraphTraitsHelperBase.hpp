@@ -91,8 +91,8 @@ struct LLVMDependenceGraphTraitsHelperBase<GraphT *> {
   using NodeType = typename GraphT::NodeType;
   using NodeRef = NodeType *;
 
-  static NodeRef getEntryNode(NodeRef G) { return G->getEntryNode(); }
-  static unsigned size(NodeRef G) { return G->size(); }
+  static NodeRef getEntryNode(GraphT *G) { return G->getEntryNode(); }
+  static unsigned size(GraphT *G) { return G->size(); }
 
   using ChildIteratorType = typename NodeType::nodes_iterator;
   static decltype(auto) child_begin(NodeRef G) { return G->nodes_begin(); }
@@ -112,8 +112,10 @@ struct LLVMDependenceGraphTraitsHelperBase<const GraphT *> {
   using NodeType = const typename GraphT::NodeType;
   using NodeRef = NodeType *;
 
-  static const NodeRef getEntryNode(NodeRef G) { return G->getEntryNode(); }
-  static unsigned size(NodeRef G) { return G->size(); }
+  static const NodeRef getEntryNode(const GraphT *G) {
+    return G->getEntryNode();
+  }
+  static unsigned size(const GraphT *G) { return G->size(); }
 
   using ChildIteratorType = typename NodeType::const_nodes_iterator;
   static decltype(auto) child_begin(NodeRef G) { return G->nodes_begin(); }
