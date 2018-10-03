@@ -15,14 +15,13 @@ This is a `LLVM` [`opt`][1] pass for creating Program Dependence Graphs.
 -   C++ compilers:
     -   [LLVM][3]  
         tested with:
-        -   3.7.x
-        -   6.0.0
+        -   7.0.0
     -   [GCC][4]  
         tested with:
-        -   5.4.1
+        -   7.3.1
     -   Boost
         tested with:
-        -   1.59
+        -   1.68
 -   [googletest][6]  
     tested with:
     -   1.8.0
