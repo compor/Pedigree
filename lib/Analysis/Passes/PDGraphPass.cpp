@@ -139,7 +139,7 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
     llvm::cl::cat(PedigreePDGraphPassCategory));
 #endif // PEDIGREE_DEBUG
 
-static void checkCmdLineOptions() {
+static void checkAndSetCmdLineOptions() {
   if (!GraphComponentOption.getBits()) {
     GraphComponentOption.addValue(PedigreePDGraphComponent::CDG);
     GraphComponentOption.addValue(PedigreePDGraphComponent::DDG);
@@ -150,6 +150,10 @@ static void checkCmdLineOptions() {
 //
 
 namespace pedigree {
+
+PDGraphPass::PDGraphPass() : llvm::FunctionPass(ID) {
+  checkAndSetCmdLineOptions();
+}
 
 void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
@@ -168,8 +172,6 @@ void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 }
 
 bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
-  checkCmdLineOptions();
-
   InstructionDependenceGraph instCDG;
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>> graphs;
 

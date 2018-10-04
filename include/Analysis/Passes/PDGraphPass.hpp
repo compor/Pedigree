@@ -31,7 +31,7 @@ struct PDGraphPass : public llvm::FunctionPass {
   static char ID;
   std::unique_ptr<PDGraph> Graph;
 
-  PDGraphPass() : llvm::FunctionPass(ID) {}
+  PDGraphPass();
 
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;
