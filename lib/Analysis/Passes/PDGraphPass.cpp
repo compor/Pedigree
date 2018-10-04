@@ -63,9 +63,6 @@
 // using DEBUG macro
 // using llvm::dbgs
 
-#include <cassert>
-// using assert
-
 #define DEBUG_TYPE "pedigree-pdg"
 
 // plugin registration for opt
@@ -143,7 +140,11 @@ static llvm::cl::opt<LogLevel, true> DebugLevel(
 #endif // PEDIGREE_DEBUG
 
 static void checkCmdLineOptions() {
-  assert(GraphComponentOption.getBits() && "No graph components were set!");
+  if (!GraphComponentOption.getBits()) {
+    GraphComponentOption.addValue(PedigreePDGraphComponent::CDG);
+    GraphComponentOption.addValue(PedigreePDGraphComponent::DDG);
+    GraphComponentOption.addValue(PedigreePDGraphComponent::MDG);
+  }
 }
 
 //
