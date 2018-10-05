@@ -159,7 +159,7 @@ private:
 
     if (QueryResult.isDef() && (CurMode & AnalysisMode::MemDefs)) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
-        assert(false && "A RAR hazard was reported!");
+        // do not add edge
       } else if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Anti;
       } else if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
