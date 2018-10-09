@@ -18,7 +18,8 @@ export BUILD_TYPE=Debug
 
 export GTEST_ROOT=/usr/local/gtest-libstdcxx
 
-export BOOST_ROOT=/bulk/workbench/boost/015900/install/
+#export BOOST_ROOT=/bulk/workbench/boost/015900/install/
+export BOOST_ROOT=/bulk/workbench/thirdparty/boost/016800/install1/
 
 export CXX_FLAGS=
 export CXX_FLAGS="${CXX_FLAGS} -O1"
