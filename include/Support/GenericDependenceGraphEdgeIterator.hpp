@@ -6,6 +6,8 @@
 #define PEDIGREE_GENERICDEPENDENCEGRAPHEDGEITERATOR_HPP
 
 #include "boost/iterator/iterator_facade.hpp"
+// using boost::iterator_facade
+// using boost::iterator_core_access
 
 #include <iterator>
 // using std::iterator_traits
