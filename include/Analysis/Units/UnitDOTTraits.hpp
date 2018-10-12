@@ -28,6 +28,7 @@
 #include <type_traits>
 // using std::integral_constant
 // using std::enable_if
+// using std::is_pointer
 
 #include <string>
 // using std::string
@@ -49,14 +50,36 @@ template <typename T, typename _ = void> struct UnitDOTTraits {
 namespace detail {
 
 struct DefaultUnitDOTTraitsImpl {
-  template <typename T> static std::string name(const T &Unit) {
-    return ToObj(Unit).getName();
+  template <typename T>
+  static std::enable_if_t<std::is_pointer<T>::value, std::string>
+  name(const T &Unit) {
+    return Unit ? Unit->getName().str() : std::string{""};
   }
 
-  template <typename T> static std::string print(const T &Unit) {
-    std::string s;
+  template <typename T>
+  static std::enable_if_t<!std::is_pointer<T>::value, std::string>
+  name(const T &Unit) {
+    return Unit.getName();
+  }
+
+  template <typename T>
+  static std::enable_if_t<std::is_pointer<T>::value, std::string>
+  print(const T &Unit) {
+    std::string s{""};
     llvm::raw_string_ostream os(s);
-    ToObj(Unit).print(os);
+    if (Unit) {
+      Unit->print(os);
+    }
+
+    return os.str();
+  }
+
+  template <typename T>
+  static std::enable_if_t<!std::is_pointer<T>::value, std::string>
+  print(const T &Unit) {
+    std::string s{""};
+    llvm::raw_string_ostream os(s);
+    Unit.print(os);
 
     return os.str();
   }
