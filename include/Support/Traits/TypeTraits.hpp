@@ -50,19 +50,19 @@ constexpr bool is_unqual_same_v = is_unqual_same<T, U>::value;
 
 //
 
-template <bool... B> struct conjuction {};
+template <bool... B> struct conjunction {};
 
 template <bool B, bool... Rest>
-struct conjuction<B, Rest...>
-    : std::integral_constant<bool, B && conjuction<Rest...>::value> {};
+struct conjunction<B, Rest...>
+    : std::integral_constant<bool, B && conjunction<Rest...>::value> {};
 
-template <bool B> struct conjuction<B> : std::integral_constant<bool, B> {};
+template <bool B> struct conjunction<B> : std::integral_constant<bool, B> {};
 
 //
 
 template <typename... Args>
 struct are_all_nothrow_move_constructible
-    : conjuction<std::is_nothrow_move_constructible<Args>::value...> {};
+    : conjunction<std::is_nothrow_move_constructible<Args>::value...> {};
 
 template <typename... Args>
 constexpr bool are_all_nothrow_move_constructible_v =
@@ -72,7 +72,7 @@ constexpr bool are_all_nothrow_move_constructible_v =
 
 template <typename... Args>
 struct are_all_nothrow_move_assignable
-    : conjuction<std::is_nothrow_move_assignable<Args>::value...> {};
+    : conjunction<std::is_nothrow_move_assignable<Args>::value...> {};
 
 template <typename... Args>
 constexpr bool are_all_nothrow_move_assignable_v =
