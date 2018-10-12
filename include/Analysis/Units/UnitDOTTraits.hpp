@@ -74,7 +74,7 @@ struct UnitDOTTraits<
     auto *term = llvm::dyn_cast<llvm::TerminatorInst>(ToPtr(Unit));
 
     return term ? "term@" + ToObj(Unit).getParent()->getName().str()
-                : ToObj(Unit).getName().str();
+                : Base::name(Unit);
   }
 
   using Base::print;
