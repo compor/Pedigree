@@ -120,9 +120,20 @@ public:
   }
 
   decltype(auto) getOrInsertNode(UnitType Unit) {
+    bool justInserted = false;
     auto &node = NodeMap[Unit];
+
     if (!node) {
       node = std::make_unique<NodeType>(Unit);
+      justInserted = true;
+    }
+
+    if (justInserted) {
+      if (Unit) {
+        VirtualRoot->addDependentNode(node.get());
+      }
+
+      node.get()->ContainingGraph = this;
     }
 
     return node.get();
@@ -235,6 +246,8 @@ public:
       noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
     return llvm::make_range(edges_begin(), edges_end());
   }
+
+  NodeType *getRootNode() noexcept { return VirtualRoot; }
 
   NodeType *getEntryNode() noexcept(noexcept(begin()->second.get())) {
     return begin()->second.get();

@@ -5,6 +5,10 @@
 #ifndef PEDIGREE_GENERICDEPENDENCENODE_HPP
 #define PEDIGREE_GENERICDEPENDENCENODE_HPP
 
+#include "Config.hpp"
+
+#include "Support/GenericDependenceGraph.hpp"
+
 #include "Support/Traits/TypeTraits.hpp"
 
 #include "Analysis/Info/EmptyInfo.hpp"
@@ -74,6 +78,12 @@ class GenericDependenceNode
     : NodeInfoT::value_type,
       boost::equality_comparable<
           GenericDependenceNode<T, NodeInfoT, EdgeInfoT>> {
+
+  using ContainingGraphType =
+      GenericDependenceGraph<GenericDependenceNode<T, NodeInfoT, EdgeInfoT>>;
+
+  friend ContainingGraphType;
+
 public:
   using NodeType = GenericDependenceNode;
   using UnitType = T *;
@@ -88,6 +98,7 @@ private:
   mutable unsigned DependeeCount;
   UnitType Unit;
   EdgeStorageType Edges;
+  mutable ContainingGraphType *ContainingGraph;
 
 public:
   using value_type = typename EdgeStorageType::value_type;
@@ -107,38 +118,41 @@ public:
 
   template <typename... Args>
   explicit GenericDependenceNode(UnitType Unit, Args &&... args) noexcept
-      : NodeInfoType::value_type(std::forward<Args>(args)...),
-        DependeeCount(0),
-        Unit(Unit) {}
+      : NodeInfoType::value_type(std::forward<Args>(args)...), DependeeCount(0),
+        Unit(Unit), ContainingGraph(nullptr) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_constructible_v<decltype(DependeeCount),
-                                           decltype(Unit), decltype(Edges),
-                                           typename NodeInfoType::value_type>)
+      are_all_nothrow_move_constructible_v<
+          decltype(DependeeCount), decltype(Unit), decltype(Edges),
+          decltype(ContainingGraph), typename NodeInfoType::value_type>)
       : NodeInfoType::value_type(std::move(Other)),
         DependeeCount(std::move(Other.DependeeCount)),
-        Unit(std::move(Other.Unit)), Edges(std::move(Other.Edges)) {
+        Unit(std::move(Other.Unit)), Edges(std::move(Other.Edges)),
+        ContainingGraph(std::move(Other.ContainingGraph)) {
     Other.DependeeCount = {};
     Other.Unit = {};
     Other.Edges.clear();
+    Other.ContainingGraph = {};
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_assignable_v<decltype(DependeeCount), decltype(Unit),
-                                        decltype(Edges),
-                                        typename NodeInfoType::value_type>) {
+      are_all_nothrow_move_assignable_v<
+          decltype(DependeeCount), decltype(Unit), decltype(Edges),
+          decltype(ContainingGraph), typename NodeInfoType::value_type>) {
     NodeInfoType::value_type::operator=(std::move(Other));
 
     DependeeCount = std::move(Other.DependeeCount);
     Unit = std::move(Other.Unit);
     Edges = std::move(Other.Edges);
+    ContainingGraph = std::move(Other.ContainingGraph);
 
     Other.DependeeCount = {};
     Other.Unit = {};
     Other.Edges.clear();
+    Other.ContainingGraph = {};
 
     return *this;
   };
@@ -161,6 +175,14 @@ public:
 
   void addDependentNode(const NodeType *Node,
                         typename EdgeInfoType::value_type Info = {}) {
+    auto *containingGraphRoot = ContainingGraph->getRootNode();
+    auto found = containingGraphRoot->getEdgeWith(Node);
+
+    if (found != containingGraphRoot->Edges.end()) {
+      containingGraphRoot->Edges.erase(found);
+      containingGraphRoot->decrementDependeeCount();
+    }
+
     Edges.emplace_back(const_cast<NodeType *>(Node), std::move(Info));
     Node->incrementDependeeCount();
   }
