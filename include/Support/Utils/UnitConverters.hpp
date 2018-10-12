@@ -22,7 +22,7 @@ namespace pedigree {
 struct BlockToInstructionUnitConverter {
   llvm::Instruction *operator()(const llvm::BasicBlock *From) {
     auto *from = const_cast<llvm::BasicBlock *>(From);
-    return from->getTerminator();
+    return from ? from->getTerminator() : nullptr;
   }
 };
 
