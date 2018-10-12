@@ -58,6 +58,7 @@ private:
   using NodeMapType = std::map<UnitType, std::unique_ptr<NodeType>>;
 
   NodeMapType NodeMap;
+  NodeType *ExternalRoot;
 
 public:
   using VerticesSizeType = typename NodeMapType::size_type;
@@ -86,21 +87,25 @@ public:
   // explicitly define default methods
   // workaround for gcc bug 57728 which is present in clang too
   // GenericDependenceGraph() = default;
-  GenericDependenceGraph() noexcept {};
+  GenericDependenceGraph() noexcept
+      : ExternalRoot(getOrInsertNode(UnitType())){};
 
   GenericDependenceGraph(const GenericDependenceGraph &) = delete;
   GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
 
   explicit GenericDependenceGraph(GenericDependenceGraph &&Other) noexcept(
       noexcept(Other.NodeMap.clear()) &&
-      are_all_nothrow_move_constructible_v<decltype(NodeMap)>)
-      : NodeMap(std::move(Other.NodeMap)) {
+      are_all_nothrow_move_constructible_v<decltype(ExternalRoot),
+                                           decltype(NodeMap)>)
+      : ExternalRoot(std::move(Other.ExternalRoot)),
+        NodeMap(std::move(Other.NodeMap)) {
     Other.NodeMap.clear();
   }
 
   GenericDependenceGraph &operator=(GenericDependenceGraph &&Other) noexcept(
       noexcept(Other.NodeMap.clear()) &&
-      are_all_nothrow_move_assignable_v<decltype(NodeMap)>) {
+      are_all_nothrow_move_assignable_v<decltype(ExternalRoot),
+                                        decltype(NodeMap)>) {
     NodeMap = std::move(Other.NodeMap);
     Other.NodeMap.clear();
 
