@@ -61,9 +61,9 @@ TEST_P(DDGraphConstructionTest, DDGraphConstruction) {
   EXPECT_EQ(td.numEdges, ddg->numEdges());
 }
 
-std::array<DDGraphTestData, 3> testData1{{{"whalebook_fig81.ll", 10, 9},
-                                          {"whalebook_fig85.ll", 6, 3},
-                                          {"whalebook_fig821.ll", 11, 10}}};
+std::array<DDGraphTestData, 3> testData1{{{"whalebook_fig81.ll", 11, 9},
+                                          {"whalebook_fig85.ll", 7, 3},
+                                          {"whalebook_fig821.ll", 12, 10}}};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGraphConstructionTest,
                         ::testing::ValuesIn(testData1), );
