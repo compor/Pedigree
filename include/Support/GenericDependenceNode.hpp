@@ -175,12 +175,14 @@ public:
 
   void addDependentNode(const NodeType *Node,
                         typename EdgeInfoType::value_type Info = {}) {
-    auto *containingGraphRoot = ContainingGraph->getRootNode();
-    auto found = containingGraphRoot->getEdgeWith(Node);
+    if (ContainingGraph) {
+      auto *containingGraphRoot = ContainingGraph->getRootNode();
+      auto found = containingGraphRoot->getEdgeWith(Node);
 
-    if (found != containingGraphRoot->Edges.end()) {
-      containingGraphRoot->Edges.erase(found);
-      containingGraphRoot->decrementDependeeCount();
+      if (found != containingGraphRoot->Edges.end()) {
+        containingGraphRoot->Edges.erase(found);
+        containingGraphRoot->decrementDependeeCount();
+      }
     }
 
     Edges.emplace_back(const_cast<NodeType *>(Node), std::move(Info));
