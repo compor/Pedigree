@@ -249,6 +249,8 @@ public:
 
   NodeType *getRootNode() noexcept { return VirtualRoot; }
 
+  const NodeType *getRootNode() const noexcept { return VirtualRoot; }
+
   NodeType *getEntryNode() noexcept(noexcept(begin()->second.get())) {
     return begin()->second.get();
   }
