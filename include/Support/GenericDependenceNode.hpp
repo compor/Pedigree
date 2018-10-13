@@ -179,7 +179,7 @@ public:
       auto *containingGraphRoot = ContainingGraph->getRootNode();
       auto found = containingGraphRoot->getEdgeWith(Node);
 
-      if (found != containingGraphRoot->Edges.end()) {
+      if (this != Node && found != containingGraphRoot->Edges.end()) {
         containingGraphRoot->Edges.erase(found);
         containingGraphRoot->decrementDependeeCount();
       }
