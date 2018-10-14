@@ -125,15 +125,6 @@ public:
 
     if (!node) {
       node = std::make_unique<NodeType>(Unit);
-      justInserted = true;
-    }
-
-    if (justInserted) {
-      if (Unit) {
-        VirtualRoot->addDependentNode(node.get());
-      }
-
-      node.get()->ContainingGraph = this;
     }
 
     return node.get();
