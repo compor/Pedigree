@@ -90,11 +90,11 @@ TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
   EXPECT_EQ(td.numEdges, cdg2.numEdges());
 }
 
-std::array<CDGraphTestData, 5> testData1{{{"whalebook_fig81.ll", 5, 5},
-                                          {"whalebook_fig85.ll", 5, 5},
-                                          {"whalebook_fig821.ll", 6, 6},
-                                          {"hpc4pc_book_fig37.ll", 9, 10},
-                                          {"hpc4pc_book_fig321.ll", 10, 10}}};
+std::array<CDGraphTestData, 5> testData1{{{"whalebook_fig81.ll", 5, 3},
+                                          {"whalebook_fig85.ll", 5, 4},
+                                          {"whalebook_fig821.ll", 6, 4},
+                                          {"hpc4pc_book_fig37.ll", 9, 9},
+                                          {"hpc4pc_book_fig321.ll", 10, 9}}};
 
 INSTANTIATE_TEST_CASE_P(DefaultInstance, CDGraphConstructionTest,
                         ::testing::ValuesIn(testData1), );
