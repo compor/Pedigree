@@ -250,6 +250,12 @@ public:
     return VirtualRoot->Edges.size() ? getRootNode() : begin()->second.get();
   }
 
+  void connectRootNode() {
+    for (auto *e : nodes()) {
+      VirtualRoot->addDependentNode(e);
+    }
+  }
+
   // TODO this is completely wrong
   bool compare(const GenericDependenceGraph &Other) const {
     if (numVertices() != Other.numVertices() ||
