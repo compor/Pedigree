@@ -129,6 +129,7 @@ add_subdirectory(third_party/enum-flags)
 set(LIB_SOURCES
   lib/Debug.cpp
   lib/Analysis/Graphs/DependenceGraphs.cpp
+  lib/Analysis/Passes/GraphPassCommandLineOptions.cpp
   lib/Analysis/Passes/DDGraphPass.cpp
   lib/Analysis/Passes/CDGraphPass.cpp
   lib/Analysis/Passes/MDGraphPass.cpp

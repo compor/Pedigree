@@ -85,6 +85,8 @@
 
 #define DEBUG_TYPE "pedigree-mdg"
 
+extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
+
 namespace llvm {
 class Function;
 } // namespace llvm
@@ -263,6 +265,10 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
                 .setAnalysis(mda)
                 .setUnit(CurFunc)
                 .build();
+  }
+
+  if(PedigreeGraphConnectRoot) {
+    Graph->connectRootNode();
   }
 
   if (EnumerateWithDFS && Graph) {

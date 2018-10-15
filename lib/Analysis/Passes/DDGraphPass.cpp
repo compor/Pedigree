@@ -37,6 +37,8 @@
 
 #define DEBUG_TYPE "pedigree-ddg"
 
+extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
+
 namespace llvm {
 class Function;
 } // namespace llvm
@@ -108,6 +110,10 @@ void DDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 bool DDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   DDGraphBuilder builder{};
   Graph = builder.setUnit(CurFunc).build();
+
+  if(PedigreeGraphConnectRoot) {
+    Graph->connectRootNode();
+  }
 
   return false;
 }

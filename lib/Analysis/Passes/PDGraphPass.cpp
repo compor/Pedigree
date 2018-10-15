@@ -65,6 +65,8 @@
 
 #define DEBUG_TYPE "pedigree-pdg"
 
+extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
+
 // plugin registration for opt
 
 char pedigree::PDGraphPass::ID = 0;
@@ -195,6 +197,10 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   }
 
   Graph = builder.build();
+
+  if(PedigreeGraphConnectRoot) {
+    Graph->connectRootNode();
+  }
 
   return false;
 }

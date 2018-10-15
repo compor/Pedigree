@@ -45,6 +45,8 @@
 
 #define DEBUG_TYPE "pedigree-cdg"
 
+extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
+
 namespace llvm {
 class Function;
 } // namespace llvm
@@ -121,6 +123,10 @@ void CDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 bool CDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   CDGraphBuilder builder{};
   Graph = builder.setUnit(CurFunc).build();
+
+  if (PedigreeGraphConnectRoot) {
+    Graph->connectRootNode();
+  }
 
   if (PedigreeCDGraphConvertToInstruction) {
     InstGraph = std::make_unique<InstCDGraph>();
