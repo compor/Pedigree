@@ -1,5 +1,6 @@
 
 digraph {
+  R [dg_uid=0]
   A [dg_uid=4]
   B [dg_uid=7]
 
