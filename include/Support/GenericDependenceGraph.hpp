@@ -242,11 +242,15 @@ public:
 
   const NodeType *getRootNode() const noexcept { return VirtualRoot; }
 
-  NodeType *getEntryNode() {
+  NodeType *getEntryNode() noexcept(noexcept(VirtualRoot->Edges.size()) &&
+                                    noexcept(getRootNode()) &&
+                                    noexcept(begin()->second.get())) {
     return VirtualRoot->Edges.size() ? getRootNode() : begin()->second.get();
   }
 
-  const NodeType *getEntryNode() const {
+  const NodeType *getEntryNode() const
+      noexcept(noexcept(VirtualRoot->Edges.size()) && noexcept(getRootNode()) &&
+               noexcept(begin()->second.get())) {
     return VirtualRoot->Edges.size() ? getRootNode() : begin()->second.get();
   }
 
