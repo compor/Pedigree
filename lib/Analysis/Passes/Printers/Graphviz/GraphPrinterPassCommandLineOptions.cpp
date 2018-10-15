@@ -13,6 +13,6 @@
 #include <string>
 // using std::string
 
-llvm::cl::list<std::string> GraphDOTFunctionWhitelist(
+llvm::cl::list<std::string> PedigreeGraphDOTFunctionWhitelist(
     "pedigree-dot-func-wl", llvm::cl::Hidden,
     llvm::cl::desc("generate dependence DOT graph only for these functions"));

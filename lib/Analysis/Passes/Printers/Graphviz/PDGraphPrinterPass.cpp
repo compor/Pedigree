@@ -37,7 +37,7 @@
 #include <algorithm>
 // std::find
 
-extern llvm::cl::list<std::string> GraphDOTFunctionWhitelist;
+extern llvm::cl::list<std::string> PedigreeGraphDOTFunctionWhitelist;
 
 namespace pedigree {
 
@@ -55,13 +55,13 @@ struct PDGraphPrinterPass
   PDGraphPrinterPass() : Base("pdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
-    auto found = std::find(std::begin(GraphDOTFunctionWhitelist),
-                           std::end(GraphDOTFunctionWhitelist),
+    auto found = std::find(std::begin(PedigreeGraphDOTFunctionWhitelist),
+                           std::end(PedigreeGraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
     auto hasChanged = false;
 
-    if (GraphDOTFunctionWhitelist.empty() ||
-        std::end(GraphDOTFunctionWhitelist) != found) {
+    if (PedigreeGraphDOTFunctionWhitelist.empty() ||
+        std::end(PedigreeGraphDOTFunctionWhitelist) != found) {
       hasChanged |= Base::runOnFunction(CurFunction);
     }
 
@@ -85,13 +85,13 @@ struct PDGraphSimplePrinterPass
   PDGraphSimplePrinterPass() : Base("pdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
-    auto found = std::find(std::begin(GraphDOTFunctionWhitelist),
-                           std::end(GraphDOTFunctionWhitelist),
+    auto found = std::find(std::begin(PedigreeGraphDOTFunctionWhitelist),
+                           std::end(PedigreeGraphDOTFunctionWhitelist),
                            CurFunction.getName().str());
     auto hasChanged = false;
 
-    if (GraphDOTFunctionWhitelist.empty() ||
-        std::end(GraphDOTFunctionWhitelist) != found) {
+    if (PedigreeGraphDOTFunctionWhitelist.empty() ||
+        std::end(PedigreeGraphDOTFunctionWhitelist) != found) {
       hasChanged |= Base::runOnFunction(CurFunction);
     }
 
