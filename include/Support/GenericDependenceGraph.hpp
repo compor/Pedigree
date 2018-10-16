@@ -62,7 +62,7 @@ private:
 
 public:
   using VerticesSizeType = typename NodeMapType::size_type;
-  using EdgesSizeType = typename NodeType::EdgesSizeType;
+  using OutEdgesSizeType = typename NodeType::OutEdgesSizeType;
   // TODO hide the exposure of internal implemenation using smart pointer
   // TODO potentially use a std::reference_wrapper?
   // this is important because map-like containers expose the semantic
@@ -138,11 +138,11 @@ public:
     return numVertices();
   }
 
-  EdgesSizeType numEdges() const
-      noexcept(noexcept(std::declval<NodeType>().numEdges())) {
-    EdgesSizeType n{};
+  OutEdgesSizeType numOutEdges() const
+      noexcept(noexcept(std::declval<NodeType>().numOutEdges())) {
+    OutEdgesSizeType n{};
     std::for_each(std::begin(NodeMap), std::end(NodeMap),
-                  [&n](const auto &e) { n += e.second.get()->numEdges(); });
+                  [&n](const auto &e) { n += e.second.get()->numOutEdges(); });
     return n;
   }
 
@@ -263,7 +263,7 @@ public:
   // TODO this is completely wrong
   bool compare(const GenericDependenceGraph &Other) const {
     if (numVertices() != Other.numVertices() ||
-        numEdges() != Other.numEdges()) {
+        numOutEdges() != Other.numOutEdges()) {
       return true;
     }
 

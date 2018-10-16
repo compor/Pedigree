@@ -41,14 +41,14 @@ struct CDGraphTestData {
 
   std::string assemblyFile;
   CDGraph::VerticesSizeType numVertices;
-  CDGraph::EdgesSizeType numEdges;
+  CDGraph::OutEdgesSizeType numOutEdges;
 };
 
 std::ostream &operator<<(std::ostream &os, const CDGraphTestData &td) {
   auto delim = ' ';
   return os << delim << "assembly file: " << td.assemblyFile << delim
             << "vertices num: " << td.numVertices << delim
-            << "edges num: " << td.numEdges << delim;
+            << "out edges num: " << td.numOutEdges << delim;
 }
 
 //
@@ -70,7 +70,7 @@ TEST_P(CDGraphConstructionTest, CDGraphConstruction) {
   auto cdg = cdgBuilder.setUnit(*curFunc).build();
 
   EXPECT_EQ(td.numVertices, cdg->numVertices());
-  EXPECT_EQ(td.numEdges, cdg->numEdges());
+  EXPECT_EQ(td.numOutEdges, cdg->numOutEdges());
 }
 
 TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
@@ -87,7 +87,7 @@ TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
   Convert(*cdg, cdg2, BlockToInstructionUnitConverter{});
 
   EXPECT_EQ(td.numVertices, cdg2.numVertices());
-  EXPECT_EQ(td.numEdges, cdg2.numEdges());
+  EXPECT_EQ(td.numOutEdges, cdg2.numOutEdges());
 }
 
 std::array<CDGraphTestData, 5> testData1{{{"whalebook_fig81.ll", 5, 3},

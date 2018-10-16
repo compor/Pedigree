@@ -102,7 +102,8 @@ private:
 
 public:
   using value_type = typename OutEdgeStorageType::value_type;
-  using EdgesSizeType = typename OutEdgeStorageType::size_type;
+  using InEdgesSizeType = typename InEdgeStorageType::size_type;
+  using OutEdgesSizeType = typename OutEdgeStorageType::size_type;
 
   using iterator = typename OutEdgeStorageType::iterator;
   using const_iterator = typename OutEdgeStorageType::const_iterator;
@@ -200,12 +201,16 @@ public:
     return true;
   }
 
-  EdgesSizeType numEdges() const noexcept(noexcept(OutEdges.size())) {
+  OutEdgesSizeType numOutEdges() const noexcept(noexcept(OutEdges.size())) {
     return OutEdges.size();
   }
 
-  decltype(auto) size() const noexcept(noexcept(numEdges())) {
-    return numEdges();
+  InEdgesSizeType numInEdges() const noexcept(noexcept(InEdges.size())) {
+    return InEdges.size();
+  }
+
+  decltype(auto) size() const noexcept(noexcept(numOutEdges())) {
+    return numOutEdges();
   }
 
   decltype(auto) begin() noexcept(noexcept(OutEdges.begin())) {
@@ -310,10 +315,8 @@ public:
     return llvm::make_range(pred_nodes_begin(), pred_nodes_end());
   }
 
-  unsigned getDependeeCount() const noexcept { return InEdges.size(); }
-
   bool compare(const GenericDependenceNode &Other) const {
-    if (this->numEdges() != Other.numEdges()) {
+    if (this->numOutEdges() != Other.numOutEdges()) {
       return true;
     }
 

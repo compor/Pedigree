@@ -29,14 +29,14 @@ namespace {
 struct DDGraphTestData {
   std::string assemblyFile;
   DDGraph::VerticesSizeType numVertices;
-  DDGraph::EdgesSizeType numEdges;
+  DDGraph::OutEdgesSizeType numOutEdges;
 };
 
 std::ostream &operator<<(std::ostream &os, const DDGraphTestData &td) {
   auto delim = ' ';
   return os << delim << "assembly file: " << td.assemblyFile << delim
             << "vertices num: " << td.numVertices << delim
-            << "edges num: " << td.numEdges << delim;
+            << "out edges num: " << td.numOutEdges << delim;
 }
 
 //
@@ -58,7 +58,7 @@ TEST_P(DDGraphConstructionTest, DDGraphConstruction) {
   auto ddg = ddgBuilder.setUnit(*curFunc).build();
 
   EXPECT_EQ(td.numVertices, ddg->numVertices());
-  EXPECT_EQ(td.numEdges, ddg->numEdges());
+  EXPECT_EQ(td.numOutEdges, ddg->numOutEdges());
 }
 
 std::array<DDGraphTestData, 3> testData1{{{"whalebook_fig81.ll", 11, 9},
