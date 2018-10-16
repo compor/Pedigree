@@ -94,9 +94,10 @@ public:
 private:
   using DependenceRecordType = detail::EdgeRecordImpl<NodeType *, EdgeInfoType>;
   using OutEdgeStorageType = std::vector<DependenceRecordType>;
+  using InEdgeStorageType = llvm::SmallPtrSet<NodeType *, 8>;
 
-  mutable unsigned DependeeCount;
   UnitType Unit;
+  mutable InEdgeStorageType InEdges;
   OutEdgeStorageType OutEdges;
 
 public:
@@ -117,36 +118,34 @@ public:
 
   template <typename... Args>
   explicit GenericDependenceNode(UnitType Unit, Args &&... args) noexcept
-      : NodeInfoType::value_type(std::forward<Args>(args)...), DependeeCount(0),
-        Unit(Unit) {}
+      : NodeInfoType::value_type(std::forward<Args>(args)...), Unit(Unit) {}
 
   GenericDependenceNode(const GenericDependenceNode &) = delete;
   GenericDependenceNode &operator=(const GenericDependenceNode &) = delete;
 
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_constructible_v<decltype(DependeeCount),
-                                           decltype(Unit), decltype(OutEdges),
+      are_all_nothrow_move_constructible_v<decltype(Unit), decltype(InEdges),
+                                           decltype(OutEdges),
                                            typename NodeInfoType::value_type>)
-      : NodeInfoType::value_type(std::move(Other)),
-        DependeeCount(std::move(Other.DependeeCount)),
-        Unit(std::move(Other.Unit)), OutEdges(std::move(Other.OutEdges)) {
-    Other.DependeeCount = {};
+      : NodeInfoType::value_type(std::move(Other)), Unit(std::move(Other.Unit)),
+        InEdges(std::move(Other.InEdges)), OutEdges(std::move(Other.OutEdges)) {
     Other.Unit = {};
+    Other.InEdges.clear();
     Other.OutEdges.clear();
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
-      are_all_nothrow_move_assignable_v<decltype(DependeeCount), decltype(Unit),
+      are_all_nothrow_move_assignable_v<decltype(Unit), decltype(InEdges),
                                         decltype(OutEdges),
                                         typename NodeInfoType::value_type>) {
     NodeInfoType::value_type::operator=(std::move(Other));
 
-    DependeeCount = std::move(Other.DependeeCount);
     Unit = std::move(Other.Unit);
+    InEdges = std::move(Other.InEdges);
     OutEdges = std::move(Other.OutEdges);
 
-    Other.DependeeCount = {};
     Other.Unit = {};
+    Other.InEdges.clear();
     Other.OutEdges.clear();
 
     return *this;
@@ -171,7 +170,7 @@ public:
   void addDependentNode(const NodeType *Node,
                         typename EdgeInfoType::value_type Info = {}) {
     OutEdges.emplace_back(const_cast<NodeType *>(Node), std::move(Info));
-    Node->incrementDependeeCount();
+    Node->InEdges.insert(this);
   }
 
   boost::optional<const typename EdgeInfoType::value_type &>
@@ -281,7 +280,7 @@ public:
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  unsigned getDependeeCount() const noexcept { return DependeeCount; }
+  unsigned getDependeeCount() const noexcept { return InEdges.size(); }
 
   bool compare(const GenericDependenceNode &Other) const {
     if (this->numEdges() != Other.numEdges()) {
@@ -305,9 +304,6 @@ public:
   }
 
 private:
-  void incrementDependeeCount() const noexcept { ++DependeeCount; }
-  void decrementDependeeCount() const noexcept { --DependeeCount; }
-
   const_iterator getEdgeWith(const NodeType *Node) const {
     return std::find_if(OutEdges.begin(), OutEdges.end(),
                         [&Node](const auto &e) { return Node == e.node; });
