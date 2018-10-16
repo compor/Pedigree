@@ -93,18 +93,18 @@ public:
 
 private:
   using DependenceRecordType = detail::EdgeRecordImpl<NodeType *, EdgeInfoType>;
-  using EdgeStorageType = std::vector<DependenceRecordType>;
+  using OutEdgeStorageType = std::vector<DependenceRecordType>;
 
   mutable unsigned DependeeCount;
   UnitType Unit;
-  EdgeStorageType Edges;
+  OutEdgeStorageType OutEdges;
 
 public:
-  using value_type = typename EdgeStorageType::value_type;
-  using EdgesSizeType = typename EdgeStorageType::size_type;
+  using value_type = typename OutEdgeStorageType::value_type;
+  using EdgesSizeType = typename OutEdgeStorageType::size_type;
 
-  using iterator = typename EdgeStorageType::iterator;
-  using const_iterator = typename EdgeStorageType::const_iterator;
+  using iterator = typename OutEdgeStorageType::iterator;
+  using const_iterator = typename OutEdgeStorageType::const_iterator;
 
   using nodes_iterator =
       llvm::mapped_iterator<iterator, std::function<NodeType *(value_type &)>>;
@@ -125,29 +125,29 @@ public:
 
   GenericDependenceNode(GenericDependenceNode &&Other) noexcept(
       are_all_nothrow_move_constructible_v<decltype(DependeeCount),
-                                           decltype(Unit), decltype(Edges),
+                                           decltype(Unit), decltype(OutEdges),
                                            typename NodeInfoType::value_type>)
       : NodeInfoType::value_type(std::move(Other)),
         DependeeCount(std::move(Other.DependeeCount)),
-        Unit(std::move(Other.Unit)), Edges(std::move(Other.Edges)) {
+        Unit(std::move(Other.Unit)), OutEdges(std::move(Other.OutEdges)) {
     Other.DependeeCount = {};
     Other.Unit = {};
-    Other.Edges.clear();
+    Other.OutEdges.clear();
   }
 
   GenericDependenceNode &operator=(GenericDependenceNode &&Other) noexcept(
       are_all_nothrow_move_assignable_v<decltype(DependeeCount), decltype(Unit),
-                                        decltype(Edges),
+                                        decltype(OutEdges),
                                         typename NodeInfoType::value_type>) {
     NodeInfoType::value_type::operator=(std::move(Other));
 
     DependeeCount = std::move(Other.DependeeCount);
     Unit = std::move(Other.Unit);
-    Edges = std::move(Other.Edges);
+    OutEdges = std::move(Other.OutEdges);
 
     Other.DependeeCount = {};
     Other.Unit = {};
-    Other.Edges.clear();
+    Other.OutEdges.clear();
 
     return *this;
   };
@@ -165,12 +165,12 @@ public:
   UnitType unit() const noexcept { return Unit; }
 
   bool hasEdgeWith(const NodeType *Node) const {
-    return Edges.end() != getEdgeWith(Node);
+    return OutEdges.end() != getEdgeWith(Node);
   }
 
   void addDependentNode(const NodeType *Node,
                         typename EdgeInfoType::value_type Info = {}) {
-    Edges.emplace_back(const_cast<NodeType *>(Node), std::move(Info));
+    OutEdges.emplace_back(const_cast<NodeType *>(Node), std::move(Info));
     Node->incrementDependeeCount();
   }
 
@@ -178,7 +178,7 @@ public:
   getEdgeInfo(const NodeType *Node) const {
     auto found = getEdgeWith(Node);
 
-    return found != Edges.end()
+    return found != OutEdges.end()
                ? boost::optional<const typename EdgeInfoType::value_type &>(
                      (*found).info())
                : boost::none;
@@ -188,7 +188,7 @@ public:
                    typename EdgeInfoType::value_type Info = {}) {
     auto found = getEdgeWith(Node);
 
-    if (found == Edges.end()) {
+    if (found == OutEdges.end()) {
       return false;
     }
 
@@ -198,26 +198,28 @@ public:
     return true;
   }
 
-  EdgesSizeType numEdges() const noexcept(noexcept(Edges.size())) {
-    return Edges.size();
+  EdgesSizeType numEdges() const noexcept(noexcept(OutEdges.size())) {
+    return OutEdges.size();
   }
 
   decltype(auto) size() const noexcept(noexcept(numEdges())) {
     return numEdges();
   }
 
-  decltype(auto) begin() noexcept(noexcept(Edges.begin())) {
-    return Edges.begin();
+  decltype(auto) begin() noexcept(noexcept(OutEdges.begin())) {
+    return OutEdges.begin();
   }
 
-  decltype(auto) begin() const noexcept(noexcept(Edges.begin())) {
-    return Edges.begin();
+  decltype(auto) begin() const noexcept(noexcept(OutEdges.begin())) {
+    return OutEdges.begin();
   }
 
-  decltype(auto) end() noexcept(noexcept(Edges.end())) { return Edges.end(); }
+  decltype(auto) end() noexcept(noexcept(OutEdges.end())) {
+    return OutEdges.end();
+  }
 
-  decltype(auto) end() const noexcept(noexcept(Edges.end())) {
-    return Edges.end();
+  decltype(auto) end() const noexcept(noexcept(OutEdges.end())) {
+    return OutEdges.end();
   }
 
   decltype(auto) edges_begin() noexcept(noexcept(begin())) { return begin(); }
@@ -250,23 +252,23 @@ public:
   }
 
   decltype(auto)
-  nodes_begin() noexcept(noexcept(nodes_iterator(Edges.begin(), {}))) {
-    return nodes_iterator(Edges.begin(), nodes_iterator_map);
+  nodes_begin() noexcept(noexcept(nodes_iterator(OutEdges.begin(), {}))) {
+    return nodes_iterator(OutEdges.begin(), nodes_iterator_map);
   }
 
   decltype(auto) nodes_begin() const
-      noexcept(noexcept(const_nodes_iterator(Edges.begin(), {}))) {
-    return const_nodes_iterator(Edges.begin(), nodes_const_iterator_map);
+      noexcept(noexcept(const_nodes_iterator(OutEdges.begin(), {}))) {
+    return const_nodes_iterator(OutEdges.begin(), nodes_const_iterator_map);
   }
 
   decltype(auto)
-  nodes_end() noexcept(noexcept(nodes_iterator(Edges.end(), {}))) {
-    return nodes_iterator(Edges.end(), nodes_iterator_map);
+  nodes_end() noexcept(noexcept(nodes_iterator(OutEdges.end(), {}))) {
+    return nodes_iterator(OutEdges.end(), nodes_iterator_map);
   }
 
   decltype(auto) nodes_end() const
-      noexcept(noexcept(const_nodes_iterator(Edges.end(), {}))) {
-    return const_nodes_iterator(Edges.end(), nodes_const_iterator_map);
+      noexcept(noexcept(const_nodes_iterator(OutEdges.end(), {}))) {
+    return const_nodes_iterator(OutEdges.end(), nodes_const_iterator_map);
   }
 
   decltype(auto)
@@ -307,12 +309,12 @@ private:
   void decrementDependeeCount() const noexcept { --DependeeCount; }
 
   const_iterator getEdgeWith(const NodeType *Node) const {
-    return std::find_if(Edges.begin(), Edges.end(),
+    return std::find_if(OutEdges.begin(), OutEdges.end(),
                         [&Node](const auto &e) { return Node == e.node; });
   }
 
   iterator getEdgeWith(const NodeType *Node) {
-    return std::find_if(Edges.begin(), Edges.end(),
+    return std::find_if(OutEdges.begin(), OutEdges.end(),
                         [&Node](const auto &e) { return Node == e.node; });
   }
 };
