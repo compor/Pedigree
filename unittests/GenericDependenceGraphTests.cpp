@@ -20,9 +20,6 @@
 #include <iterator>
 // using std::distance
 
-#include <iostream>
-// using std::ostream
-
 namespace pedigree {
 namespace testing {
 namespace {
