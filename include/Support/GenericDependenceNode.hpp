@@ -114,8 +114,9 @@ public:
   using const_nodes_iterator = llvm::mapped_iterator<
       const_iterator, std::function<const NodeType *(const value_type &)>>;
 
-  using pred_nodes_iterator = typename OutEdgeStorageType::iterator;
-  using const_pred_nodes_iterator = typename OutEdgeStorageType::const_iterator;
+  using inverse_nodes_iterator = typename OutEdgeStorageType::iterator;
+  using const_inverse_nodes_iterator =
+      typename OutEdgeStorageType::const_iterator;
 
   using edges_iterator = iterator;
   using const_edges_iterator = const_iterator;
@@ -288,31 +289,32 @@ public:
     return llvm::make_range(nodes_begin(), nodes_end());
   }
 
-  decltype(auto) pred_nodes_begin() noexcept(noexcept(InEdges.begin())) {
+  decltype(auto) inverse_nodes_begin() noexcept(noexcept(InEdges.begin())) {
     return InEdges.begin();
   }
 
-  decltype(auto) pred_nodes_begin() const noexcept(noexcept(InEdges.begin())) {
+  decltype(auto) inverse_nodes_begin() const
+      noexcept(noexcept(InEdges.begin())) {
     return InEdges.begin();
   }
 
-  decltype(auto) pred_nodes_end() noexcept(noexcept(InEdges.end())) {
+  decltype(auto) inverse_nodes_end() noexcept(noexcept(InEdges.end())) {
     return InEdges.end();
   }
 
-  decltype(auto) pred_nodes_end() const noexcept(noexcept(InEdges.end())) {
+  decltype(auto) inverse_nodes_end() const noexcept(noexcept(InEdges.end())) {
     return InEdges.end();
   }
 
-  decltype(auto) pred_nodes() noexcept(
-      noexcept(llvm::make_range(pred_nodes_begin(), pred_nodes_end()))) {
-    return llvm::make_range(pred_nodes_begin(), pred_nodes_end());
+  decltype(auto) inverse_nodes() noexcept(
+      noexcept(llvm::make_range(inverse_nodes_begin(), inverse_nodes_end()))) {
+    return llvm::make_range(inverse_nodes_begin(), inverse_nodes_end());
   }
 
-  decltype(auto) pred_nodes() const
-      noexcept(noexcept(llvm::make_range(pred_nodes_begin(),
-                                         pred_nodes_end()))) {
-    return llvm::make_range(pred_nodes_begin(), pred_nodes_end());
+  decltype(auto) inverse_nodes() const
+      noexcept(noexcept(llvm::make_range(inverse_nodes_begin(),
+                                         inverse_nodes_end()))) {
+    return llvm::make_range(inverse_nodes_begin(), inverse_nodes_end());
   }
 
   bool compare(const GenericDependenceNode &Other) const {
