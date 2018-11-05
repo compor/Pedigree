@@ -85,7 +85,6 @@ namespace llvm {
 // node traits specialization meant to be used as a supplement to the graph
 // traits specialization
 
-//
 // traits for llvm::Instruction aliases
 
 template <>
@@ -108,7 +107,29 @@ struct GraphTraits<const pedigree::InstructionDependenceGraph *>
     : public pedigree::LLVMDependenceGraphTraitsHelperBase<
           const pedigree::InstructionDependenceGraph *> {};
 
-//
+// inverse traits for llvm::Instruction aliases
+
+template <>
+struct GraphTraits<Inverse<pedigree::InstructionDependenceNode *>>
+    : public pedigree::LLVMDependenceInverseNodeTraitsHelperBase<
+          pedigree::InstructionDependenceNode *> {};
+
+template <>
+struct GraphTraits<Inverse<const pedigree::InstructionDependenceNode *>>
+    : public pedigree::LLVMDependenceInverseNodeTraitsHelperBase<
+          const pedigree::InstructionDependenceNode *> {};
+
+template <>
+struct GraphTraits<Inverse<pedigree::InstructionDependenceGraph *>>
+    : public pedigree::LLVMDependenceInverseGraphTraitsHelperBase<
+          pedigree::InstructionDependenceGraph *> {};
+
+template <>
+struct GraphTraits<Inverse<const pedigree::InstructionDependenceGraph *>>
+    : public pedigree::LLVMDependenceInverseGraphTraitsHelperBase<
+          const pedigree::InstructionDependenceGraph *> {};
+
+// DOT traits for llvm::Instruction aliases
 
 template <>
 struct DOTGraphTraits<pedigree::InstructionDependenceGraph *>
@@ -120,7 +141,6 @@ struct DOTGraphTraits<pedigree::InstructionDependenceGraph *>
   DOTGraphTraits(bool isSimple = false) : Base(isSimple) {}
 };
 
-//
 // traits for llvm::BasicBlock aliases
 
 template <>
@@ -143,7 +163,29 @@ struct GraphTraits<const pedigree::BasicBlockDependenceGraph *>
     : public pedigree::LLVMDependenceGraphTraitsHelperBase<
           const pedigree::BasicBlockDependenceGraph *> {};
 
-//
+// inverse traits for llvm::BasicBlock aliases
+
+template <>
+struct GraphTraits<Inverse<pedigree::BasicBlockDependenceNode *>>
+    : public pedigree::LLVMDependenceInverseNodeTraitsHelperBase<
+          pedigree::BasicBlockDependenceNode *> {};
+
+template <>
+struct GraphTraits<Inverse<const pedigree::BasicBlockDependenceNode *>>
+    : public pedigree::LLVMDependenceInverseNodeTraitsHelperBase<
+          const pedigree::BasicBlockDependenceNode *> {};
+
+template <>
+struct GraphTraits<Inverse<pedigree::BasicBlockDependenceGraph *>>
+    : public pedigree::LLVMDependenceInverseGraphTraitsHelperBase<
+          pedigree::BasicBlockDependenceGraph *> {};
+
+template <>
+struct GraphTraits<Inverse<const pedigree::BasicBlockDependenceGraph *>>
+    : public pedigree::LLVMDependenceInverseGraphTraitsHelperBase<
+          const pedigree::BasicBlockDependenceGraph *> {};
+
+// DOT traits for llvm::BasicBlock aliases
 
 template <>
 struct DOTGraphTraits<pedigree::BasicBlockDependenceGraph *>
