@@ -194,16 +194,6 @@ public:
     return const_nodes_iterator(NodeMap.end(), nodes_const_iterator_map);
   }
 
-  decltype(auto)
-  nodes() noexcept(noexcept(llvm::make_range(nodes_begin(), nodes_end()))) {
-    return llvm::make_range(nodes_begin(), nodes_end());
-  }
-
-  decltype(auto) nodes() const
-      noexcept(noexcept(llvm::make_range(nodes_begin(), nodes_end()))) {
-    return llvm::make_range(nodes_begin(), nodes_end());
-  }
-
   decltype(auto) edges_begin() {
     return detail::GenericDependenceGraphEdgeIterator<
         nodes_iterator, typename NodeType::edges_iterator>{nodes_begin(),
@@ -255,7 +245,7 @@ public:
   }
 
   void connectRootNode() {
-    for (auto *e : nodes()) {
+    for (auto *e : llvm::make_range(nodes_begin(), nodes_end())) {
       VirtualRoot->addDependentNode(e);
     }
   }

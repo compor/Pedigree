@@ -279,16 +279,6 @@ public:
     return const_nodes_iterator(OutEdges.end(), nodes_const_iterator_map);
   }
 
-  decltype(auto)
-  nodes() noexcept(noexcept(llvm::make_range(nodes_begin(), nodes_end()))) {
-    return llvm::make_range(nodes_begin(), nodes_end());
-  }
-
-  decltype(auto) nodes() const
-      noexcept(noexcept(llvm::make_range(nodes_begin(), nodes_end()))) {
-    return llvm::make_range(nodes_begin(), nodes_end());
-  }
-
   decltype(auto) inverse_nodes_begin() noexcept(noexcept(InEdges.begin())) {
     return InEdges.begin();
   }
@@ -304,17 +294,6 @@ public:
 
   decltype(auto) inverse_nodes_end() const noexcept(noexcept(InEdges.end())) {
     return InEdges.end();
-  }
-
-  decltype(auto) inverse_nodes() noexcept(
-      noexcept(llvm::make_range(inverse_nodes_begin(), inverse_nodes_end()))) {
-    return llvm::make_range(inverse_nodes_begin(), inverse_nodes_end());
-  }
-
-  decltype(auto) inverse_nodes() const
-      noexcept(noexcept(llvm::make_range(inverse_nodes_begin(),
-                                         inverse_nodes_end()))) {
-    return llvm::make_range(inverse_nodes_begin(), inverse_nodes_end());
   }
 
   bool compare(const GenericDependenceNode &Other) const {
