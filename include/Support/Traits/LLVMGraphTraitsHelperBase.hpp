@@ -62,7 +62,9 @@ struct LLVMDependenceNodeTraitsHelperBase<DependenceNodeT *> {
   static decltype(auto) edges_begin(NodeRef G) { return G->edges_begin(); }
   static decltype(auto) edges_end(NodeRef G) { return G->edges_end(); }
 
-  static decltype(auto) edges(NodeRef G) { return G->edges(); }
+  static decltype(auto) edges(NodeRef G) {
+    return llvm::make_range(edges_begin(G), edges_end(G));
+  }
 };
 
 template <typename DependenceNodeT>
@@ -93,7 +95,9 @@ struct LLVMDependenceNodeTraitsHelperBase<const DependenceNodeT *> {
   static decltype(auto) edges_begin(NodeRef G) { return G->edges_begin(); }
   static decltype(auto) edges_end(NodeRef G) { return G->edges_end(); }
 
-  static decltype(auto) edges(NodeRef G) { return G->edges(); }
+  static decltype(auto) edges(NodeRef G) {
+    return llvm::make_range(edges_begin(G), edges_end(G));
+  }
 };
 
 // inverse traits

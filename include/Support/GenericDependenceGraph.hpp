@@ -218,16 +218,6 @@ public:
         nodes_end(), nodes_end()};
   }
 
-  decltype(auto)
-  edges() noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
-    return llvm::make_range(edges_begin(), edges_end());
-  }
-
-  decltype(auto) edges() const
-      noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
-    return llvm::make_range(edges_begin(), edges_end());
-  }
-
   NodeType *getRootNode() noexcept { return VirtualRoot; }
 
   const NodeType *getRootNode() const noexcept { return VirtualRoot; }

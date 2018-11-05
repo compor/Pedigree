@@ -239,16 +239,6 @@ public:
   decltype(auto) edges_end() noexcept(noexcept(end())) { return end(); }
   decltype(auto) edges_end() const noexcept(noexcept(end())) { return end(); }
 
-  decltype(auto)
-  edges() noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
-    return llvm::make_range(edges_begin(), edges_end());
-  }
-
-  decltype(auto) edges() const
-      noexcept(noexcept(llvm::make_range(edges_begin(), edges_end()))) {
-    return llvm::make_range(edges_begin(), edges_end());
-  }
-
   static NodeType *nodes_iterator_map(value_type &P) {
     assert(P.node && "Pointer to graph node is null!");
     return P.node;
