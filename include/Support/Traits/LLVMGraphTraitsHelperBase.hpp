@@ -19,7 +19,8 @@ namespace pedigree {
 
 // generic base for easing the task of creating graph traits for graph nodes
 
-template <typename DependenceNodeT> struct LLVMDependenceNodeTraitsHelperBase {
+template <typename DependenceNodeT>
+struct LLVMDependenceGraphNodeTraitsHelperBase {
   static_assert(
       std::is_same<typename std::is_pointer<DependenceNodeT>::type,
                    std::false_type::type>::value,
@@ -27,7 +28,7 @@ template <typename DependenceNodeT> struct LLVMDependenceNodeTraitsHelperBase {
 };
 
 template <typename DependenceNodeT>
-struct LLVMDependenceInverseNodeTraitsHelperBase {
+struct LLVMDependenceInverseGraphNodeTraitsHelperBase {
   static_assert(
       std::is_same<typename std::is_pointer<DependenceNodeT>::type,
                    std::false_type::type>::value,
@@ -35,7 +36,7 @@ struct LLVMDependenceInverseNodeTraitsHelperBase {
 };
 
 template <typename DependenceNodeT>
-struct LLVMDependenceNodeTraitsHelperBase<DependenceNodeT *> {
+struct LLVMDependenceGraphNodeTraitsHelperBase<DependenceNodeT *> {
   using NodeType = DependenceNodeT;
   using NodeRef = NodeType *;
 
@@ -68,7 +69,7 @@ struct LLVMDependenceNodeTraitsHelperBase<DependenceNodeT *> {
 };
 
 template <typename DependenceNodeT>
-struct LLVMDependenceNodeTraitsHelperBase<const DependenceNodeT *> {
+struct LLVMDependenceGraphNodeTraitsHelperBase<const DependenceNodeT *> {
   using NodeType = const DependenceNodeT;
   using NodeRef = NodeType *;
 
@@ -103,7 +104,7 @@ struct LLVMDependenceNodeTraitsHelperBase<const DependenceNodeT *> {
 // inverse traits
 
 template <typename DependenceNodeT>
-struct LLVMDependenceInverseNodeTraitsHelperBase<DependenceNodeT *> {
+struct LLVMDependenceInverseGraphNodeTraitsHelperBase<DependenceNodeT *> {
   using NodeType = DependenceNodeT;
   using NodeRef = NodeType *;
 
@@ -140,7 +141,7 @@ struct LLVMDependenceInverseNodeTraitsHelperBase<DependenceNodeT *> {
 };
 
 template <typename DependenceNodeT>
-struct LLVMDependenceInverseNodeTraitsHelperBase<const DependenceNodeT *> {
+struct LLVMDependenceInverseGraphNodeTraitsHelperBase<const DependenceNodeT *> {
   using NodeType = const DependenceNodeT;
   using NodeRef = NodeType *;
 

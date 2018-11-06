@@ -89,12 +89,12 @@ namespace llvm {
 
 template <>
 struct GraphTraits<pedigree::InstructionDependenceNode *>
-    : public pedigree::LLVMDependenceNodeTraitsHelperBase<
+    : public pedigree::LLVMDependenceGraphNodeTraitsHelperBase<
           pedigree::InstructionDependenceNode *> {};
 
 template <>
 struct GraphTraits<const pedigree::InstructionDependenceNode *>
-    : public pedigree::LLVMDependenceNodeTraitsHelperBase<
+    : public pedigree::LLVMDependenceGraphNodeTraitsHelperBase<
           const pedigree::InstructionDependenceNode *> {};
 
 template <>
@@ -111,12 +111,12 @@ struct GraphTraits<const pedigree::InstructionDependenceGraph *>
 
 template <>
 struct GraphTraits<Inverse<pedigree::InstructionDependenceNode *>>
-    : public pedigree::LLVMDependenceInverseNodeTraitsHelperBase<
+    : public pedigree::LLVMDependenceInverseGraphNodeTraitsHelperBase<
           pedigree::InstructionDependenceNode *> {};
 
 template <>
 struct GraphTraits<Inverse<const pedigree::InstructionDependenceNode *>>
-    : public pedigree::LLVMDependenceInverseNodeTraitsHelperBase<
+    : public pedigree::LLVMDependenceInverseGraphNodeTraitsHelperBase<
           const pedigree::InstructionDependenceNode *> {};
 
 template <>
@@ -145,12 +145,12 @@ struct DOTGraphTraits<pedigree::InstructionDependenceGraph *>
 
 template <>
 struct GraphTraits<pedigree::BasicBlockDependenceNode *>
-    : public pedigree::LLVMDependenceNodeTraitsHelperBase<
+    : public pedigree::LLVMDependenceGraphNodeTraitsHelperBase<
           pedigree::BasicBlockDependenceNode *> {};
 
 template <>
 struct GraphTraits<const pedigree::BasicBlockDependenceNode *>
-    : public pedigree::LLVMDependenceNodeTraitsHelperBase<
+    : public pedigree::LLVMDependenceGraphNodeTraitsHelperBase<
           const pedigree::BasicBlockDependenceNode *> {};
 
 template <>
@@ -167,12 +167,12 @@ struct GraphTraits<const pedigree::BasicBlockDependenceGraph *>
 
 template <>
 struct GraphTraits<Inverse<pedigree::BasicBlockDependenceNode *>>
-    : public pedigree::LLVMDependenceInverseNodeTraitsHelperBase<
+    : public pedigree::LLVMDependenceInverseGraphNodeTraitsHelperBase<
           pedigree::BasicBlockDependenceNode *> {};
 
 template <>
 struct GraphTraits<Inverse<const pedigree::BasicBlockDependenceNode *>>
-    : public pedigree::LLVMDependenceInverseNodeTraitsHelperBase<
+    : public pedigree::LLVMDependenceInverseGraphNodeTraitsHelperBase<
           const pedigree::BasicBlockDependenceNode *> {};
 
 template <>
