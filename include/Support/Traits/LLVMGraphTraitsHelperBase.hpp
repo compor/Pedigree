@@ -8,6 +8,9 @@
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
 
+#include <iterator>
+// using std::iterator_traits
+
 #include <type_traits>
 // using std::is_same
 // using std::is_pointer
@@ -60,11 +63,18 @@ struct LLVMDependenceGraphNodeTraitsHelperBase<DependenceNodeT *> {
   }
 
   using edges_iterator = typename NodeType::edges_iterator;
-  static decltype(auto) edges_begin(NodeRef G) { return G->edges_begin(); }
-  static decltype(auto) edges_end(NodeRef G) { return G->edges_end(); }
+  using ChildEdgeIteratorType = typename NodeType::edges_iterator;
+  using EdgeRef =
+      typename std::iterator_traits<ChildEdgeIteratorType>::reference;
+  static decltype(auto) child_edge_begin(NodeRef G) { return G->edges_begin(); }
+  static decltype(auto) child_edge_end(NodeRef G) { return G->edges_end(); }
 
-  static decltype(auto) edges(NodeRef G) {
-    return llvm::make_range(edges_begin(G), edges_end(G));
+  static decltype(auto) children_edges(NodeRef G) {
+    return llvm::make_range(child_edge_begin(G), child_edge_end(G));
+  }
+
+  static NodeRef edge_dest(EdgeRef E) {
+    return NodeType::nodes_iterator_map(E);
   }
 };
 
@@ -93,11 +103,18 @@ struct LLVMDependenceGraphNodeTraitsHelperBase<const DependenceNodeT *> {
   }
 
   using edges_iterator = typename NodeType::const_edges_iterator;
-  static decltype(auto) edges_begin(NodeRef G) { return G->edges_begin(); }
-  static decltype(auto) edges_end(NodeRef G) { return G->edges_end(); }
+  using ChildEdgeIteratorType = typename NodeType::const_edges_iterator;
+  using EdgeRef =
+      typename std::iterator_traits<ChildEdgeIteratorType>::reference;
+  static decltype(auto) child_edge_begin(NodeRef G) { return G->edges_begin(); }
+  static decltype(auto) child_edge_end(NodeRef G) { return G->edges_end(); }
 
-  static decltype(auto) edges(NodeRef G) {
-    return llvm::make_range(edges_begin(G), edges_end(G));
+  static decltype(auto) children_edges(NodeRef G) {
+    return llvm::make_range(child_edge_begin(G), child_edge_end(G));
+  }
+
+  static NodeRef edge_dest(EdgeRef E) {
+    return NodeType::nodes_const_iterator_map(E);
   }
 };
 
@@ -131,13 +148,22 @@ struct LLVMDependenceInverseGraphNodeTraitsHelperBase<DependenceNodeT *> {
     return llvm::make_range(nodes_begin(G), nodes_end(G));
   }
 
-  // TODO not implemented yet
-  // using edges_iterator = typename NodeType::edges_iterator;
-  // static decltype(auto) edges_begin(NodeRef G) { return
-  // G->inverse_edges_begin(); } static decltype(auto) edges_end(NodeRef G) {
-  // return G->inverse_edges_end(); }
+  using edges_iterator = typename NodeType::inverse_edges_iterator;
+  using ChildEdgeIteratorType = typename NodeType::inverse_edges_iterator;
+  using EdgeRef =
+      typename std::iterator_traits<ChildEdgeIteratorType>::reference;
+  static decltype(auto) child_edge_begin(NodeRef G) {
+    return G->inverse_edges_begin();
+  }
+  static decltype(auto) child_edge_end(NodeRef G) {
+    return G->inverse_edges_end();
+  }
 
-  // static decltype(auto) edges(NodeRef G) { return G->inverse_edges(); }
+  static decltype(auto) children_edges(NodeRef G) {
+    return llvm::make_range(child_edge_begin(G), child_edge_end(G));
+  }
+
+  static NodeRef edge_dest(EdgeRef E) { return E; }
 };
 
 template <typename DependenceNodeT>
@@ -168,15 +194,22 @@ struct LLVMDependenceInverseGraphNodeTraitsHelperBase<const DependenceNodeT *> {
     return llvm::make_range(nodes_begin(G), nodes_end(G));
   }
 
-  // TODO not implemented yet
-  // using edges_iterator = typename NodeType::const_edges_iterator;
-  // static decltype(auto) edges_begin(NodeRef G) {
-  // return G->inverse_edges_begin();
-  //}
-  // static decltype(auto) edges_end(NodeRef G) { return G->inverse_edges_end();
-  // }
+  using edges_iterator = typename NodeType::const_inverse_edges_iterator;
+  using ChildEdgeIteratorType = typename NodeType::const_inverse_edges_iterator;
+  using EdgeRef =
+      typename std::iterator_traits<ChildEdgeIteratorType>::reference;
+  static decltype(auto) child_edge_begin(NodeRef G) {
+    return G->inverse_edges_begin();
+  }
+  static decltype(auto) child_edge_end(NodeRef G) {
+    return G->inverse_edges_end();
+  }
 
-  // static decltype(auto) edges(NodeRef G) { return G->inverse_edges(); }
+  static decltype(auto) children_edges(NodeRef G) {
+    return llvm::make_range(child_edge_begin(G), child_edge_end(G));
+  }
+
+  static NodeRef edge_dest(EdgeRef E) { return E; }
 };
 
 // generic base for easing the task of creating graph traits for graphs

@@ -7,6 +7,8 @@
 
 #include "Config.hpp"
 
+// TODO reconsider the utility of this iterator
+// see Matt Austern's segmented iterators manuscript
 #include "GenericDependenceGraphEdgeIterator.hpp"
 
 #include "Support/Traits/TypeTraits.hpp"

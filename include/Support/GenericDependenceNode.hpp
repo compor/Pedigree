@@ -121,6 +121,10 @@ public:
   using edges_iterator = iterator;
   using const_edges_iterator = const_iterator;
 
+  using inverse_edges_iterator = typename decltype(InEdges)::iterator;
+  using const_inverse_edges_iterator =
+      typename decltype(InEdges)::const_iterator;
+
   template <typename... Args>
   explicit GenericDependenceNode(UnitType Unit, Args &&... args) noexcept
       : NodeInfoType::value_type(std::forward<Args>(args)...), Unit(Unit) {}
@@ -238,6 +242,23 @@ public:
 
   decltype(auto) edges_end() noexcept(noexcept(end())) { return end(); }
   decltype(auto) edges_end() const noexcept(noexcept(end())) { return end(); }
+
+  decltype(auto) inverse_edges_begin() noexcept(noexcept(InEdges.begin())) {
+    return InEdges.begin();
+  }
+
+  decltype(auto) inverse_edges_begin() const
+      noexcept(noexcept(InEdges.begin())) {
+    return InEdges.begin();
+  }
+
+  decltype(auto) inverse_edges_end() noexcept(noexcept(InEdges.end())) {
+    return InEdges.end();
+  }
+
+  decltype(auto) inverse_edges_end() const noexcept(noexcept(InEdges.end())) {
+    return InEdges.end();
+  }
 
   static NodeType *nodes_iterator_map(value_type &P) {
     assert(P.node && "Pointer to graph node is null!");
