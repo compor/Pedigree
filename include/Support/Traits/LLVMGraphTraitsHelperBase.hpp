@@ -251,6 +251,21 @@ struct LLVMDependenceGraphTraitsHelperBase<GraphT *> {
   static decltype(auto) nodes(GraphT *G) {
     return llvm::make_range(nodes_begin(G), nodes_end(G));
   }
+
+  using edges_iterator = typename NodeType::edges_iterator;
+  using ChildEdgeIteratorType = typename NodeType::edges_iterator;
+  using EdgeRef =
+      typename std::iterator_traits<ChildEdgeIteratorType>::reference;
+  static decltype(auto) child_edge_begin(NodeRef G) { return G->edges_begin(); }
+  static decltype(auto) child_edge_end(NodeRef G) { return G->edges_end(); }
+
+  static decltype(auto) children_edges(NodeRef G) {
+    return llvm::make_range(child_edge_begin(G), child_edge_end(G));
+  }
+
+  static NodeRef edge_dest(EdgeRef E) {
+    return NodeType::nodes_iterator_map(E);
+  }
 };
 
 template <typename GraphT>
@@ -279,6 +294,21 @@ struct LLVMDependenceGraphTraitsHelperBase<const GraphT *> {
 
   static decltype(auto) nodes(const GraphT *G) {
     return llvm::make_range(nodes_begin(G), nodes_end(G));
+  }
+
+  using edges_iterator = typename NodeType::const_edges_iterator;
+  using ChildEdgeIteratorType = typename NodeType::const_edges_iterator;
+  using EdgeRef =
+      typename std::iterator_traits<ChildEdgeIteratorType>::reference;
+  static decltype(auto) child_edge_begin(NodeRef G) { return G->edges_begin(); }
+  static decltype(auto) child_edge_end(NodeRef G) { return G->edges_end(); }
+
+  static decltype(auto) children_edges(NodeRef G) {
+    return llvm::make_range(child_edge_begin(G), child_edge_end(G));
+  }
+
+  static NodeRef edge_dest(EdgeRef E) {
+    return NodeType::nodes_const_iterator_map(E);
   }
 };
 
@@ -311,6 +341,23 @@ struct LLVMDependenceInverseGraphTraitsHelperBase<GraphT *> {
   static decltype(auto) nodes(GraphT *G) {
     return llvm::make_range(nodes_begin(G), nodes_end(G));
   }
+
+  using edges_iterator = typename NodeType::inverse_edges_iterator;
+  using ChildEdgeIteratorType = typename NodeType::inverse_edges_iterator;
+  using EdgeRef =
+      typename std::iterator_traits<ChildEdgeIteratorType>::reference;
+  static decltype(auto) child_edge_begin(NodeRef G) {
+    return G->inverse_edges_begin();
+  }
+  static decltype(auto) child_edge_end(NodeRef G) {
+    return G->inverse_edges_end();
+  }
+
+  static decltype(auto) children_edges(NodeRef G) {
+    return llvm::make_range(child_edge_begin(G), child_edge_end(G));
+  }
+
+  static NodeRef edge_dest(EdgeRef E) { return E; }
 };
 
 template <typename GraphT>
@@ -344,6 +391,23 @@ struct LLVMDependenceInverseGraphTraitsHelperBase<const GraphT *> {
   static decltype(auto) nodes(const GraphT *G) {
     return llvm::make_range(nodes_begin(G), nodes_end(G));
   }
+
+  using edges_iterator = typename NodeType::const_inverse_edges_iterator;
+  using ChildEdgeIteratorType = typename NodeType::const_inverse_edges_iterator;
+  using EdgeRef =
+      typename std::iterator_traits<ChildEdgeIteratorType>::reference;
+  static decltype(auto) child_edge_begin(NodeRef G) {
+    return G->inverse_edges_begin();
+  }
+  static decltype(auto) child_edge_end(NodeRef G) {
+    return G->inverse_edges_end();
+  }
+
+  static decltype(auto) children_edges(NodeRef G) {
+    return llvm::make_range(child_edge_begin(G), child_edge_end(G));
+  }
+
+  static NodeRef edge_dest(EdgeRef E) { return E; }
 };
 
 } // namespace pedigree
