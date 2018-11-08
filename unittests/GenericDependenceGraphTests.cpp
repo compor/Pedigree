@@ -8,14 +8,15 @@
 
 #include "Support/GenericDependenceGraph.hpp"
 
+#include "Support/Traits/LLVMGraphTraitsHelperBase.hpp"
+
+#include "llvm/ADT/GraphTraits.h"
+
 #include "gtest/gtest.h"
 // using testing::Test
 
 #include <array>
 // using std::array
-
-#include <string>
-// using std::string
 
 #include <iterator>
 // using std::distance
@@ -24,17 +25,41 @@ namespace pedigree {
 namespace testing {
 namespace {
 
+using TestNodeTy = GenericDependenceNode<int>;
+using TestGraphTy = GenericDependenceGraph<TestNodeTy>;
+
+} // namespace
+} // namespace testing
+} // namespace pedigree
+
+namespace llvm {
+
+template <>
+struct GraphTraits<pedigree::testing::TestNodeTy *>
+    : public pedigree::LLVMDependenceGraphNodeTraitsHelperBase<
+          pedigree::testing::TestNodeTy *> {};
+
+template <>
+struct GraphTraits<pedigree::testing::TestGraphTy *>
+    : public pedigree::LLVMDependenceGraphTraitsHelperBase<
+          pedigree::testing::TestGraphTy *> {};
+
+} // namespace llvm
+
 //
 
+namespace pedigree {
+namespace testing {
+namespace {
+
 struct GenericDependenceGraphTest : public ::testing::Test {
-  using TestNodeTy = GenericDependenceNode<int>;
   std::array<int, 4> TestNodes{{1, 3, 5, 7}};
 
   std::vector<TestNodeTy *> DepNodes1;
   std::vector<TestNodeTy *> DepNodes1b;
   std::vector<TestNodeTy *> DepNodes2;
 
-  GenericDependenceGraph<TestNodeTy> G1, G1b, G2;
+  TestGraphTy G1, G1b, G2;
 
   void SetUp() override {
     for (auto &e : TestNodes) {
@@ -74,8 +99,10 @@ TEST_F(GenericDependenceGraphTest, GraphComparison) {
 }
 
 TEST_F(GenericDependenceGraphTest, IterateNodeEdges) {
-  const auto &node = *DepNodes1[0];
-  auto n = std::distance(node.edges_begin(), node.edges_end());
+  using GT = llvm::GraphTraits<TestGraphTy *>;
+
+  auto n = std::distance(GT::child_edge_begin(DepNodes1[0]),
+                         GT::child_edge_end(DepNodes1[0]));
 
   EXPECT_EQ(3, n);
 }
