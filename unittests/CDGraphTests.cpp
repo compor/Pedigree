@@ -85,7 +85,7 @@ TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
 
   InstCDGraph cdg2;
   Convert(*cdg, cdg2, BlockToTerminatorUnitConverter{},
-          BlockToInstructionsUnitConverter{});
+          BlockToTerminatorUnitConverter{});
 
   EXPECT_EQ(td.numVertices, cdg2.numVertices());
   EXPECT_EQ(td.numOutEdges, cdg2.numOutEdges());
