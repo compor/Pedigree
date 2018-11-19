@@ -34,6 +34,16 @@ struct BlockToTerminatorUnitConverter {
   }
 };
 
+struct BlockToInstructionsUnitConverter {
+  decltype(auto) operator()(const llvm::BasicBlock &From) {
+    return llvm::make_range(From.begin(), From.end());
+  }
+
+  decltype(auto) operator()(const llvm::BasicBlock *From) {
+    return operator()(*From);
+  }
+};
+
 } // namespace pedigree
 
 #endif // header
