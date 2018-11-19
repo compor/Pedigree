@@ -29,8 +29,7 @@ struct BlockToTerminatorUnitConverter {
   }
 
   decltype(auto) operator()(const llvm::BasicBlock *From) {
-    return llvm::make_filter_range(
-        *From, [](auto &e) { return llvm::isa<llvm::TerminatorInst>(e); });
+    return operator()(*From);
   }
 };
 
