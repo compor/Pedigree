@@ -17,10 +17,12 @@
 
 namespace pedigree {
 
-template <typename FromNodeT, typename ToNodeT, typename ConversionOperation>
+template <typename FromNodeT, typename ToNodeT,
+          typename SourceConversionOperation, typename DestConversionOperation>
 void Convert(const GenericDependenceGraph<FromNodeT> &From,
              GenericDependenceGraph<ToNodeT> &To,
-             ConversionOperation ConvertOp) {
+             SourceConversionOperation SrcConvertOp,
+             DestConversionOperation DstConvertOp) {
   using FromUnitT = typename FromNodeT::UnitType;
   using ToUnitT = typename ToNodeT::UnitType;
 
@@ -31,11 +33,11 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
       typename std::remove_reference_t<decltype(From)>>>;
 
   for (const auto &node : GT::nodes(std::addressof(From))) {
-    auto &&srcRange = ConvertOp(node->unit());
+    auto &&srcRange = SrcConvertOp(node->unit());
 
     for (const auto &child : GT::children(node)) {
       auto info = node->getEdgeInfo(child);
-      auto &&dstRange = ConvertOp(child->unit());
+      auto &&dstRange = DstConvertOp(child->unit());
 
       for (auto &src : srcRange) {
         auto srcDep =

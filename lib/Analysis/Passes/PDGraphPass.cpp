@@ -179,7 +179,8 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
     Convert(getAnalysis<CDGraphPass>().getGraph(), instCDG,
-            BlockToTerminatorUnitConverter{});
+            BlockToTerminatorUnitConverter{},
+            BlockToInstructionsUnitConverter{});
     graphs.emplace_back(instCDG);
   }
 

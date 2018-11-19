@@ -130,7 +130,8 @@ bool CDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   if (PedigreeCDGraphConvertToInstruction) {
     InstGraph = std::make_unique<InstCDGraph>();
-    Convert(*Graph, *InstGraph, BlockToTerminatorUnitConverter{});
+    Convert(*Graph, *InstGraph, BlockToTerminatorUnitConverter{},
+            BlockToInstructionsUnitConverter{});
   }
 
   return false;
