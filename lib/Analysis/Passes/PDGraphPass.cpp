@@ -179,7 +179,7 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
     Convert(getAnalysis<CDGraphPass>().getGraph(), instCDG,
-            BlockToInstructionUnitConverter{});
+            BlockToTerminatorUnitConverter{});
     graphs.emplace_back(instCDG);
   }
 
@@ -198,7 +198,7 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   Graph = builder.build();
 
-  if(PedigreeGraphConnectRoot) {
+  if (PedigreeGraphConnectRoot) {
     Graph->connectRootNode();
   }
 

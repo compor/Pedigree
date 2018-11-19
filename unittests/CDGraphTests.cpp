@@ -84,7 +84,7 @@ TEST_P(CDGraphConstructionTest, CDGraphConvertion) {
   auto cdg = cdgBuilder.setUnit(*curFunc).build();
 
   InstCDGraph cdg2;
-  Convert(*cdg, cdg2, BlockToInstructionUnitConverter{});
+  Convert(*cdg, cdg2, BlockToTerminatorUnitConverter{});
 
   EXPECT_EQ(td.numVertices, cdg2.numVertices());
   EXPECT_EQ(td.numOutEdges, cdg2.numOutEdges());

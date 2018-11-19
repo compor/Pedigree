@@ -13,16 +13,24 @@
 #include "llvm/IR/InstrTypes.h"
 // using llvm::TerminatorInst
 
+#include "llvm/ADT/STLExtras.h"
+// using llvm::make_filter_range
+
 namespace llvm {
 class Instruction;
 }
 
 namespace pedigree {
 
-struct BlockToInstructionUnitConverter {
-  llvm::Instruction *operator()(const llvm::BasicBlock *From) {
-    auto *from = const_cast<llvm::BasicBlock *>(From);
-    return from ? from->getTerminator() : nullptr;
+struct BlockToTerminatorUnitConverter {
+  decltype(auto) operator()(const llvm::BasicBlock &From) {
+    return llvm::make_filter_range(
+        From, [](auto &e) { return llvm::isa<llvm::TerminatorInst>(e); });
+  }
+
+  decltype(auto) operator()(const llvm::BasicBlock *From) {
+    return llvm::make_filter_range(
+        *From, [](auto &e) { return llvm::isa<llvm::TerminatorInst>(e); });
   }
 };
 

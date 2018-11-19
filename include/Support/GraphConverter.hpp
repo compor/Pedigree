@@ -9,6 +9,9 @@
 
 #include "Analysis/Units/UnitTraits.hpp"
 
+#include "llvm/ADT/GraphTraits.h"
+// using llvm::GraphTraits
+
 #include <memory>
 // using std::addressof
 
@@ -28,13 +31,22 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
       typename std::remove_reference_t<decltype(From)>>>;
 
   for (const auto &node : GT::nodes(std::addressof(From))) {
-    auto src = To.getOrInsertNode(ConvertOp(node->unit()));
+    auto &&srcRange = ConvertOp(node->unit());
 
     for (const auto &child : GT::children(node)) {
-      auto converted = ConvertOp(child->unit());
-      auto dst = To.getOrInsertNode(converted);
       auto info = node->getEdgeInfo(child);
-      src->addDependentNode(dst, info.value());
+      auto &&dstRange = ConvertOp(child->unit());
+
+      for (auto &src : srcRange) {
+        auto srcDep =
+            To.getOrInsertNode(const_cast<ToUnitT>(std::addressof(src)));
+
+        for (auto &dst : dstRange) {
+          auto dstDep =
+              To.getOrInsertNode(const_cast<ToUnitT>(std::addressof(dst)));
+          srcDep->addDependentNode(dstDep, info.value());
+        }
+      }
     }
   }
 }
