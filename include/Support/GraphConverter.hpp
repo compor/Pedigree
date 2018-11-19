@@ -33,11 +33,19 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
       typename std::remove_reference_t<decltype(From)>>>;
 
   for (const auto &node : GT::nodes(std::addressof(From))) {
-    auto &&srcRange = SrcConvertOp(node->unit());
+    if (!node->unit()) {
+      continue;
+    }
+
+    const auto &srcRange = SrcConvertOp(node->unit());
 
     for (const auto &child : GT::children(node)) {
+      if (!child->unit()) {
+        continue;
+      }
+
       auto info = node->getEdgeInfo(child);
-      auto &&dstRange = DstConvertOp(child->unit());
+      const auto &dstRange = DstConvertOp(child->unit());
 
       for (auto &src : srcRange) {
         auto srcDep =
