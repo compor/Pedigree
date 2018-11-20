@@ -83,7 +83,7 @@ static llvm::cl::OptionCategory
                                 "Options for Pedigree CDGraph pass");
 
 static llvm::cl::opt<bool> PedigreeCDGraphConvertToInstruction(
-    "pedigree-cdg-instruction",
+    "pedigree-cdg-convert-instruction",
     llvm::cl::desc("adapt cdg to block terminator instructions"),
     llvm::cl::init(false), llvm::cl::cat(PedigreeCDGraphPassCategory));
 
