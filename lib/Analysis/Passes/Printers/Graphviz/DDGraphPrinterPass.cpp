@@ -45,10 +45,11 @@ struct DDGraphPrinterPass
     : public llvm::DOTGraphTraitsPrinter<
           DDGraphPass, false, DDGraph *,
           LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
-                                                          DDGraph>> {
+                                                                  DDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
       DDGraphPass, false, DDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass, DDGraph>>;
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
+                                                              DDGraph>>;
 
   static char ID;
 
@@ -75,10 +76,11 @@ struct DDGraphSimplePrinterPass
     : public llvm::DOTGraphTraitsPrinter<
           DDGraphPass, true, DDGraph *,
           LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
-                                                          DDGraph>> {
+                                                                  DDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
       DDGraphPass, true, DDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass, DDGraph>>;
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
+                                                              DDGraph>>;
 
   static char ID;
 

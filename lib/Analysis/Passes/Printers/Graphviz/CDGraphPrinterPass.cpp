@@ -42,10 +42,11 @@ struct CDGraphPrinterPass
     : public llvm::DOTGraphTraitsPrinter<
           CDGraphPass, false, CDGraph *,
           LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass,
-                                                          CDGraph>> {
+                                                                  CDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
       CDGraphPass, false, CDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass, CDGraph>>;
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass,
+                                                              CDGraph>>;
 
   static char ID;
 
@@ -72,10 +73,11 @@ struct CDGraphSimplePrinterPass
     : public llvm::DOTGraphTraitsPrinter<
           CDGraphPass, true, CDGraph *,
           LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass,
-                                                          CDGraph>> {
+                                                                  CDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
       CDGraphPass, true, CDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass, CDGraph>>;
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass,
+                                                              CDGraph>>;
 
   static char ID;
 
