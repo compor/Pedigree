@@ -44,11 +44,11 @@ namespace pedigree {
 struct MDGraphPrinterPass
     : public llvm::DOTGraphTraitsPrinter<
           MDGraphPass, false, MDGraph *,
-          LLVMAnalysisDependenceGraphPassTraitsHelperBase<MDGraphPass,
+          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<MDGraphPass,
                                                           MDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
       MDGraphPass, false, MDGraph *,
-      LLVMAnalysisDependenceGraphPassTraitsHelperBase<MDGraphPass, MDGraph>>;
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<MDGraphPass, MDGraph>>;
 
   static char ID;
 
@@ -74,11 +74,11 @@ struct MDGraphPrinterPass
 struct MDGraphSimplePrinterPass
     : public llvm::DOTGraphTraitsPrinter<
           MDGraphPass, true, MDGraph *,
-          LLVMAnalysisDependenceGraphPassTraitsHelperBase<MDGraphPass,
+          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<MDGraphPass,
                                                           MDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
       MDGraphPass, true, MDGraph *,
-      LLVMAnalysisDependenceGraphPassTraitsHelperBase<MDGraphPass, MDGraph>>;
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<MDGraphPass, MDGraph>>;
 
   static char ID;
 

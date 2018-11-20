@@ -11,9 +11,16 @@
 namespace pedigree {
 
 template <typename AnalysisT, typename GraphT>
-struct LLVMAnalysisDependenceGraphPassTraitsHelperBase {
+struct LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase {
   static GraphT *getGraph(AnalysisT *A) {
     return std::addressof(A->getGraph());
+  }
+};
+
+template <typename AnalysisT, typename GraphT>
+struct LLVMAnalysisInstructionDependenceGraphPassTraitsHelperBase {
+  static GraphT *getGraph(AnalysisT *A) {
+    return std::addressof(A->getInstGraph());
   }
 };
 

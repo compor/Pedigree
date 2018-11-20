@@ -8,7 +8,7 @@
 
 #include "Util.hpp"
 
-#include "Analysis/Passes/DDGraphPass.hpp"
+#include "Analysis/Passes/CDGraphPass.hpp"
 
 #include "Support/Traits/LLVMAnalysisGraphTraits.hpp"
 
@@ -31,9 +31,6 @@
 // using llvm::cl::desc
 // using llvm::cl::Hidden
 
-#include "llvm/Support/raw_ostream.h"
-// using llvm::raw_string_ostream
-
 #include <algorithm>
 // std::find
 
@@ -41,18 +38,19 @@ extern llvm::cl::list<std::string> PedigreeGraphDOTFunctionWhitelist;
 
 namespace pedigree {
 
-struct DDGraphPrinterPass
+struct InstCDGraphPrinterPass
     : public llvm::DOTGraphTraitsPrinter<
-          DDGraphPass, false, DDGraph *,
-          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
-                                                          DDGraph>> {
+          CDGraphPass, false, InstCDGraph *,
+          LLVMAnalysisInstructionDependenceGraphPassTraitsHelperBase<
+              CDGraphPass, InstCDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
-      DDGraphPass, false, DDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass, DDGraph>>;
+      CDGraphPass, false, InstCDGraph *,
+      LLVMAnalysisInstructionDependenceGraphPassTraitsHelperBase<CDGraphPass,
+                                                                 InstCDGraph>>;
 
   static char ID;
 
-  DDGraphPrinterPass() : Base("ddg", ID) {}
+  InstCDGraphPrinterPass() : Base("cdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
     auto found = std::find(std::begin(PedigreeGraphDOTFunctionWhitelist),
@@ -71,18 +69,19 @@ struct DDGraphPrinterPass
 
 //
 
-struct DDGraphSimplePrinterPass
+struct InstCDGraphSimplePrinterPass
     : public llvm::DOTGraphTraitsPrinter<
-          DDGraphPass, true, DDGraph *,
-          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
-                                                          DDGraph>> {
+          CDGraphPass, true, InstCDGraph *,
+          LLVMAnalysisInstructionDependenceGraphPassTraitsHelperBase<
+              CDGraphPass, InstCDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
-      DDGraphPass, true, DDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass, DDGraph>>;
+      CDGraphPass, true, InstCDGraph *,
+      LLVMAnalysisInstructionDependenceGraphPassTraitsHelperBase<CDGraphPass,
+                                                                 InstCDGraph>>;
 
   static char ID;
 
-  DDGraphSimplePrinterPass() : Base("ddg", ID) {}
+  InstCDGraphSimplePrinterPass() : Base("cdg", ID) {}
 
   bool runOnFunction(llvm::Function &CurFunction) override {
     auto found = std::find(std::begin(PedigreeGraphDOTFunctionWhitelist),
@@ -101,17 +100,17 @@ struct DDGraphSimplePrinterPass
 
 } // namespace pedigree
 
-char pedigree::DDGraphPrinterPass::ID = 0;
-static llvm::RegisterPass<pedigree::DDGraphPrinterPass>
-    X("pedigree-ddg-dot", PRJ_CMDLINE_DESC("pedigree ddg DOT pass"), false,
-      false);
+char pedigree::InstCDGraphPrinterPass::ID = 0;
+static llvm::RegisterPass<pedigree::InstCDGraphPrinterPass>
+    X("pedigree-inst-cdg-dot",
+      PRJ_CMDLINE_DESC("pedigree instruction cdg DOT pass"), false, false);
 
 //
 
-char pedigree::DDGraphSimplePrinterPass::ID = 0;
-static llvm::RegisterPass<pedigree::DDGraphSimplePrinterPass>
-    Y("pedigree-ddg-simple-dot",
-      PRJ_CMDLINE_DESC("pedigree simple ddg DOT pass"), false, false);
+char pedigree::InstCDGraphSimplePrinterPass::ID = 0;
+static llvm::RegisterPass<pedigree::InstCDGraphSimplePrinterPass>
+    Y("pedigree-inst-cdg-simple-dot",
+      PRJ_CMDLINE_DESC("pedigree simple cdg DOT pass"), false, false);
 
 // plugin registration for clang
 
@@ -122,27 +121,27 @@ static llvm::RegisterPass<pedigree::DDGraphSimplePrinterPass>
 // RegisterStandardPasses class
 
 static void
-registerPedigreeDDGraphPrinterPass(const llvm::PassManagerBuilder &Builder,
+registerPedigreeCDGraphPrinterPass(const llvm::PassManagerBuilder &Builder,
                                    llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::DDGraphPrinterPass());
+  PM.add(new pedigree::InstCDGraphPrinterPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses RegisterPedigreeDDGraphPrinterPass(
+static llvm::RegisterStandardPasses RegisterPedigreeCDGraphPrinterPass(
     llvm::PassManagerBuilder::EP_EarlyAsPossible,
-    registerPedigreeDDGraphPrinterPass);
+    registerPedigreeCDGraphPrinterPass);
 
 //
 
-static void registerPedigreeDDGraphSimplePrinterPass(
+static void registerPedigreeCDGraphSimplePrinterPass(
     const llvm::PassManagerBuilder &Builder,
     llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::DDGraphSimplePrinterPass());
+  PM.add(new pedigree::InstCDGraphSimplePrinterPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses RegisterPedigreeDDGraphSimplePrinterPass(
+static llvm::RegisterStandardPasses RegisterPedigreeCDGraphSimplePrinterPass(
     llvm::PassManagerBuilder::EP_EarlyAsPossible,
-    registerPedigreeDDGraphSimplePrinterPass);
+    registerPedigreeCDGraphSimplePrinterPass);
