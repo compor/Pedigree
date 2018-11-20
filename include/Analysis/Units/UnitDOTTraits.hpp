@@ -53,7 +53,7 @@ struct DefaultUnitDOTTraitsImpl {
   template <typename T>
   static std::enable_if_t<std::is_pointer<T>::value, std::string>
   name(const T &Unit) {
-    return Unit ? Unit->getName().str() : std::string{""};
+    return Unit ? name(*Unit) : "";
   }
 
   template <typename T>
@@ -65,13 +65,7 @@ struct DefaultUnitDOTTraitsImpl {
   template <typename T>
   static std::enable_if_t<std::is_pointer<T>::value, std::string>
   print(const T &Unit) {
-    std::string s{""};
-    llvm::raw_string_ostream os(s);
-    if (Unit) {
-      Unit->print(os);
-    }
-
-    return os.str();
+    return Unit ? print(*Unit) : "";
   }
 
   template <typename T>
@@ -81,7 +75,7 @@ struct DefaultUnitDOTTraitsImpl {
     llvm::raw_string_ostream os(s);
     Unit.print(os);
 
-    return os.str();
+    return s;
   }
 };
 
