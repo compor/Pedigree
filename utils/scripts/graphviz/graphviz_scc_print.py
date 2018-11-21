@@ -43,6 +43,11 @@ def create_scc_subgraphs(infile, outfile):
             subgraph = scc_graph.subgraph(list(scc), 'cluster_scc_' + str(i))
             subgraph.graph_attr.update(label='')
 
+    # clean up attribute label copied over by graph
+    scc_graph.edge_attr.update(label='')
+    scc_graph.node_attr.update(label='')
+    [e.attr.update(label='') for e in scc_graph.edges()]
+
     scc_graph.write(outfile)
 
 
@@ -57,8 +62,5 @@ if __name__ == '__main__':
 
     if not os.path.exists(sys.argv[1]):
         raise ValueError('Input file: {} does not exist'.format(sys.argv[1]))
-
-    if os.path.exists(sys.argv[2]):
-        raise ValueError('Output file: {} does not exist'.format(sys.argv[2]))
 
     create_scc_subgraphs(sys.argv[1], sys.argv[2])
