@@ -2,15 +2,15 @@
 //
 //
 
-#include "Config.hpp"
+#include "pedigree/Config.hpp"
 
-#include "Debug.hpp"
+#include "pedigree/Debug.hpp"
 
-#include "Util.hpp"
+#include "pedigree/Util.hpp"
 
-#include "Analysis/Passes/MDGraphPass.hpp"
+#include "pedigree/Analysis/Passes/MDGraphPass.hpp"
 
-#include "Support/Traits/LLVMAnalysisGraphTraits.hpp"
+#include "pedigree/Support/Traits/LLVMAnalysisGraphTraits.hpp"
 
 #include "llvm/Pass.h"
 // using llvm::RegisterPass

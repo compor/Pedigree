@@ -2,25 +2,25 @@
 //
 //
 
-#include "Config.hpp"
+#include "pedigree/Config.hpp"
 
-#include "Debug.hpp"
+#include "pedigree/Debug.hpp"
 
-#include "Util.hpp"
+#include "pedigree/Util.hpp"
 
-#include "Analysis/Passes/PDGraphPass.hpp"
+#include "pedigree/Analysis/Passes/PDGraphPass.hpp"
 
-#include "Analysis/Passes/DDGraphPass.hpp"
+#include "pedigree/Analysis/Passes/DDGraphPass.hpp"
 
-#include "Analysis/Passes/CDGraphPass.hpp"
+#include "pedigree/Analysis/Passes/CDGraphPass.hpp"
 
-#include "Analysis/Passes/MDGraphPass.hpp"
+#include "pedigree/Analysis/Passes/MDGraphPass.hpp"
 
-#include "Analysis/Creational/PDGraphBuilder.hpp"
+#include "pedigree/Analysis/Creational/PDGraphBuilder.hpp"
 
-#include "Support/GraphConverter.hpp"
+#include "pedigree/Support/GraphConverter.hpp"
 
-#include "Support/Utils/UnitConverters.hpp"
+#include "pedigree/Support/Utils/UnitConverters.hpp"
 
 #include "llvm/Config/llvm-config.h"
 // version macros

@@ -2,11 +2,11 @@
 //
 //
 
-#include "Debug.hpp"
+#include "pedigree/Debug.hpp"
 
-#include "Analysis/Passes/DDGraphPass.hpp"
+#include "pedigree/Analysis/Passes/DDGraphPass.hpp"
 
-#include "Analysis/Creational/DDGraphBuilder.hpp"
+#include "pedigree/Analysis/Creational/DDGraphBuilder.hpp"
 
 #include "llvm/Config/llvm-config.h"
 // version macros

@@ -6,13 +6,13 @@
 
 #include "TestCommon.hpp"
 
-#include "Analysis/Graphs/CDGraph.hpp"
+#include "pedigree/Analysis/Graphs/CDGraph.hpp"
 
-#include "Analysis/Creational/CDGraphBuilder.hpp"
+#include "pedigree/Analysis/Creational/CDGraphBuilder.hpp"
 
-#include "Support/GraphConverter.hpp"
+#include "pedigree/Support/GraphConverter.hpp"
 
-#include "Support/Utils/UnitConverters.hpp"
+#include "pedigree/Support/Utils/UnitConverters.hpp"
 
 #include "llvm/IR/BasicBlock.h"
 // using llvm::BasicBlock

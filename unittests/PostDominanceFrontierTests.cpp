@@ -6,7 +6,7 @@
 
 #include "TestCommon.hpp"
 
-#include "Analysis/PostDominanceFrontier.hpp"
+#include "pedigree/Analysis/PostDominanceFrontier.hpp"
 
 #include "llvm/Config/llvm-config.h"
 // version macros

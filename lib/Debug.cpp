@@ -2,7 +2,7 @@
 //
 //
 
-#include "Debug.hpp"
+#include "pedigree/Debug.hpp"
 
 #if PEDIGREE_DEBUG
 

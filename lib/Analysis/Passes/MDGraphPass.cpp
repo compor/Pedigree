@@ -2,23 +2,23 @@
 //
 //
 
-#include "Config.hpp"
+#include "pedigree/Config.hpp"
 
-#include "Debug.hpp"
+#include "pedigree/Debug.hpp"
 
-#include "Util.hpp"
+#include "pedigree/Util.hpp"
 
-#include "Analysis/AnalysisScope.hpp"
+#include "pedigree/Analysis/AnalysisScope.hpp"
 
-#include "Analysis/Passes/MDGraphPass.hpp"
+#include "pedigree/Analysis/Passes/MDGraphPass.hpp"
 
-#include "Analysis/Creational/MDAMDGraphBuilder.hpp"
+#include "pedigree/Analysis/Creational/MDAMDGraphBuilder.hpp"
 
-#include "Analysis/Creational/DAMDGraphBuilder.hpp"
+#include "pedigree/Analysis/Creational/DAMDGraphBuilder.hpp"
 
-#include "Analysis/Operations/AssignNodeUID.hpp"
+#include "pedigree/Analysis/Operations/AssignNodeUID.hpp"
 
-#include "Support/Utils/InstIterator.hpp"
+#include "pedigree/Support/Utils/InstIterator.hpp"
 
 #include "llvm/Config/llvm-config.h"
 // version macros
