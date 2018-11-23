@@ -188,6 +188,9 @@ endforeach()
 target_include_directories(${OBJ_LIB_NAME} PUBLIC
   $<TARGET_PROPERTY:enum-flags::enum-flags,INTERFACE_INCLUDE_DIRECTORIES>)
 
+target_include_directories(${LIB_NAME} PUBLIC
+  $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${PATH_PREFIX}/include>)
+
 target_link_libraries(${LIB_NAME} INTERFACE enum-flags::enum-flags)
 target_link_libraries(${TEST_LIB_NAME} INTERFACE enum-flags::enum-flags)
 
