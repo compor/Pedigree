@@ -7,6 +7,8 @@
 
 #include "Pedigree/Config.hpp"
 
+#include "Pedigree/Util.hpp"
+
 #define DEFINE_DEBUG_LEVELS                                                    \
   enum class LogLevel { Info, Notice, Warning, Error, Debug }
 
@@ -61,12 +63,6 @@ extern LogLevel passLogLevel;
 
 } // namespace debug
 } // namespace pedigree
-
-// preprocessor stringification macros
-#define STRINGIFY_UTIL(x) #x
-#define STRINGIFY(x) STRINGIFY_UTIL(x)
-
-#define PRJ_CMDLINE_DESC(x) x " (version: " STRINGIFY(VERSION_STRING) ")"
 
 #define DEBUG_MSG(L, STR)                                                      \
   do {                                                                         \
