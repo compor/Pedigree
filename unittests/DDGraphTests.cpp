@@ -6,9 +6,9 @@
 
 #include "TestCommon.hpp"
 
-#include "pedigree/Analysis/Graphs/DDGraph.hpp"
+#include "Pedigree/Analysis/Graphs/DDGraph.hpp"
 
-#include "pedigree/Analysis/Creational/DDGraphBuilder.hpp"
+#include "Pedigree/Analysis/Creational/DDGraphBuilder.hpp"
 
 #include "gtest/gtest.h"
 // using testing::Test

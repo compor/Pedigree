@@ -2,7 +2,7 @@
 //
 //
 
-#include "pedigree/Config.hpp"
+#include "Pedigree/Config.hpp"
 
 #include "llvm/Support/CommandLine.h"
 // using llvm::cl::opt

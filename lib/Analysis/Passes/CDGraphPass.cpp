@@ -2,19 +2,19 @@
 //
 //
 
-#include "pedigree/Config.hpp"
+#include "Pedigree/Config.hpp"
 
-#include "pedigree/Debug.hpp"
+#include "Pedigree/Debug.hpp"
 
-#include "pedigree/Util.hpp"
+#include "Pedigree/Util.hpp"
 
-#include "pedigree/Analysis/Passes/CDGraphPass.hpp"
+#include "Pedigree/Analysis/Passes/CDGraphPass.hpp"
 
-#include "pedigree/Analysis/Creational/CDGraphBuilder.hpp"
+#include "Pedigree/Analysis/Creational/CDGraphBuilder.hpp"
 
-#include "pedigree/Support/GraphConverter.hpp"
+#include "Pedigree/Support/GraphConverter.hpp"
 
-#include "pedigree/Support/Utils/UnitConverters.hpp"
+#include "Pedigree/Support/Utils/UnitConverters.hpp"
 
 #include "llvm/Config/llvm-config.h"
 // version macros

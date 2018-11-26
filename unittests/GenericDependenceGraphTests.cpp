@@ -4,11 +4,11 @@
 
 #include "TestCommon.hpp"
 
-#include "pedigree/Support/GenericDependenceNode.hpp"
+#include "Pedigree/Support/GenericDependenceNode.hpp"
 
-#include "pedigree/Support/GenericDependenceGraph.hpp"
+#include "Pedigree/Support/GenericDependenceGraph.hpp"
 
-#include "pedigree/Support/Traits/LLVMGraphTraitsHelperBase.hpp"
+#include "Pedigree/Support/Traits/LLVMGraphTraitsHelperBase.hpp"
 
 #include "llvm/ADT/GraphTraits.h"
 

@@ -2,9 +2,9 @@
 //
 //
 
-#include "pedigree/Config.hpp"
+#include "Pedigree/Config.hpp"
 
-#include "pedigree/Analysis/Graphs/DependenceGraphs.hpp"
+#include "Pedigree/Analysis/Graphs/DependenceGraphs.hpp"
 
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
