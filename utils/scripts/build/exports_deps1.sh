@@ -14,7 +14,8 @@ if [[ ! -z ${COMPILER_VERSION} ]]; then
   export LLVMCONFIG=${LLVMCONFIG}-${COMPILER_VERSION}
 fi
 
-export BUILD_TYPE=Debug
+#export BUILD_TYPE=Debug
+export BUILD_TYPE=RelWithDebInfo
 
 #export GTEST_ROOT=/usr/local/gtest-libcxx
 export GTEST_ROOT=/bulk/workbench/thirdparty/gtest/install1-libcxx/
