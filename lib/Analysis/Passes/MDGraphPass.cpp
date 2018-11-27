@@ -170,7 +170,7 @@ static llvm::cl::bits<pedigree::AnalysisMode> AnalysisBackendModeOption(
                      ),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
-llvm::cl::opt<bool> EnumerateWithDFS(
+static llvm::cl::opt<bool> EnumerateWithDFS(
     "pedigree-mdg-dfs-enumerate",
     llvm::cl::desc(
         "enumerate graph nodes with DFS numbers from originating IR traversal"),
