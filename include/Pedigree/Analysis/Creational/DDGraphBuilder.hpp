@@ -31,6 +31,7 @@ namespace pedigree {
 class DDGraphBuilder : public llvm::InstVisitor<DDGraphBuilder> {
   std::unique_ptr<DDGraph> Graph;
   boost::optional<const llvm::Function &> CurUnit;
+  bool shouldIgnoreConstantPHINodes = false;
 
   // always flow for SSA use-def chains
   static constexpr BasicDependenceInfo::value_type info{DependenceOrigin::Data,
@@ -41,6 +42,12 @@ public:
 
   DDGraphBuilder &setUnit(const llvm::Function &Unit) {
     CurUnit.emplace(Unit);
+
+    return *this;
+  }
+
+  DDGraphBuilder &ignoreConstantPHINodes(bool Val) {
+    shouldIgnoreConstantPHINodes = Val;
 
     return *this;
   }
@@ -60,6 +67,21 @@ public:
       if (user) {
         auto src = Graph->getOrInsertNode(&CurInstruction);
         auto dst = Graph->getOrInsertNode(user);
+        src->addDependentNode(dst, info);
+      }
+    }
+  }
+
+  void visitPHINode(llvm::PHINode &CurInstruction) {
+    if (shouldIgnoreConstantPHINodes) {
+      return;
+    }
+
+    for (auto &e : CurInstruction.incoming_values()) {
+      if (llvm::isa<llvm::Constant>(e.get())) {
+        auto dst = Graph->getOrInsertNode(&CurInstruction);
+        auto src = Graph->getOrInsertNode(
+            CurInstruction.getIncomingBlock(e)->getTerminator());
         src->addDependentNode(dst, info);
       }
     }

@@ -26,6 +26,8 @@
 // using llvm::cl::desc
 // using llvm::cl::location
 // using llvm::cl::cat
+// using llvm::cl::init
+// using llvm::cl::Hidden
 // using llvm::cl::OptionCategory
 
 #include "llvm/Support/raw_ostream.h"
@@ -74,6 +76,11 @@ static llvm::cl::OptionCategory
     PedigreeDDGraphPassCategory("Pedigree DDGraph Pass",
                                 "Options for Pedigree DDGraph pass");
 
+static llvm::cl::opt<bool> IgnoreConstantPHINodes(
+    "pedigree-ddg-ignore-constant-phi", llvm::cl::init(false), llvm::cl::Hidden,
+    llvm::cl::desc("ignore PHI nodes with constant values as data dependences"),
+    llvm::cl::cat(PedigreeDDGraphPassCategory));
+
 #if PEDIGREE_DEBUG
 static llvm::cl::opt<bool, true>
     Debug("pedigree-ddg-debug", llvm::cl::desc("debug pedigree ddg pass"),
@@ -109,9 +116,11 @@ void DDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 
 bool DDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   DDGraphBuilder builder{};
-  Graph = builder.setUnit(CurFunc).build();
+  Graph = builder.setUnit(CurFunc)
+              .ignoreConstantPHINodes(IgnoreConstantPHINodes)
+              .build();
 
-  if(PedigreeGraphConnectRoot) {
+  if (PedigreeGraphConnectRoot) {
     Graph->connectRootNode();
   }
 
