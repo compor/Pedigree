@@ -73,18 +73,18 @@ public:
   }
 
   void visitPHINode(llvm::PHINode &CurInstruction) {
-    if (shouldIgnoreConstantPHINodes) {
-      return;
-    }
-
-    for (auto &e : CurInstruction.incoming_values()) {
-      if (llvm::isa<llvm::Constant>(e.get())) {
-        auto dst = Graph->getOrInsertNode(&CurInstruction);
-        auto src = Graph->getOrInsertNode(
-            CurInstruction.getIncomingBlock(e)->getTerminator());
-        src->addDependentNode(dst, info);
+    if (!shouldIgnoreConstantPHINodes) {
+      for (auto &e : CurInstruction.incoming_values()) {
+        if (llvm::isa<llvm::Constant>(e.get())) {
+          auto dst = Graph->getOrInsertNode(&CurInstruction);
+          auto src = Graph->getOrInsertNode(
+              CurInstruction.getIncomingBlock(e)->getTerminator());
+          src->addDependentNode(dst, info);
+        }
       }
     }
+
+    visitInstruction(CurInstruction);
   }
 };
 
