@@ -26,10 +26,7 @@
 // using llvm::DOTGraphTraitsPrinter
 
 #include "llvm/Support/CommandLine.h"
-// using llvm::cl::opt
 // using llvm::cl::list
-// using llvm::cl::desc
-// using llvm::cl::Hidden
 
 #include "llvm/Support/raw_ostream.h"
 // using llvm::raw_string_ostream
