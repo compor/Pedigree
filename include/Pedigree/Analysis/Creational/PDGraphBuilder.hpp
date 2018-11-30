@@ -13,9 +13,6 @@
 
 #include "Pedigree/Exchange/MetadataReader.hpp"
 
-#include <algorithm>
-// using std::for_each
-
 #include <vector>
 // using std::vector
 
@@ -64,6 +61,7 @@ class PDGraphBuilder {
 
       for (const auto &child : GT::children(node)) {
         auto dst = ToGraph.getOrInsertNode(child->unit());
+        postInsertionProcess(dst);
 
         auto newInfo = node->getEdgeInfo(child);
 
