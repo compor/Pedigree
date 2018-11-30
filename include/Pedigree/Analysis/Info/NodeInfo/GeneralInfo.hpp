@@ -2,8 +2,8 @@
 //
 //
 
-#ifndef PEDIGREE_INFO_UIDINFO_HPP
-#define PEDIGREE_INFO_UIDINFO_HPP
+#ifndef PEDIGREE_INFO_GENERALINFO_HPP
+#define PEDIGREE_INFO_GENERALINFO_HPP
 
 #include "Pedigree/Config.hpp"
 
@@ -20,7 +20,7 @@
 
 namespace pedigree {
 
-struct UIDInfo {
+struct GeneralInfo {
   struct value_type {
     using IDTy = std::uint64_t;
     IDTy id;
@@ -31,8 +31,8 @@ struct UIDInfo {
 
 // traits
 
-template <> struct NodeInfoDOTTraits<UIDInfo::value_type> {
-  static std::string toDOTAttributes(const UIDInfo::value_type &I) {
+template <> struct NodeInfoDOTTraits<GeneralInfo::value_type> {
+  static std::string toDOTAttributes(const GeneralInfo::value_type &I) {
     std::stringstream ss{};
     ss << " dg_uid=" << I.id;
 
