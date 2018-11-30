@@ -11,6 +11,9 @@
 #include "llvm/ADT/Twine.h"
 // using llvm::Twine
 
+#include <cassert>
+// using assert
+
 #ifndef PEDIGREE_METADATAREADER_HPP
 #define PEDIGREE_METADATAREADER_HPP
 
@@ -39,8 +42,20 @@ public:
     return wasRead;
   }
 
+  template <typename T, typename ET = MetadataExchangeTraits<T>>
+  bool read(const llvm::Instruction *CurInstruction, const llvm::Twine &Key,
+            T &Out) {
+    assert(CurInstruction && "Instruction is null!");
+    read(*CurInstruction, Key, Out);
+  }
+
   bool has(const llvm::Instruction &CurInstruction, const llvm::Twine &Key) {
     return CurInstruction.getMetadata(Key.str()) != nullptr;
+  }
+
+  bool has(const llvm::Instruction *CurInstruction, const llvm::Twine &Key) {
+    assert(CurInstruction && "Instruction is null!");
+    return has(*CurInstruction, Key);
   }
 };
 
