@@ -74,7 +74,13 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
   }
 
   bool isNodeHidden(const NodeType *Node) {
-    return isSimple() && !Node->numOutEdges() && !Node->numInEdges();
+    bool isHidden = false;
+
+    isHidden |= isSimple() && !Node->numOutEdges() && !Node->numInEdges();
+    isHidden |= NodeInfoDOTTraits<
+        typename NodeType::NodeInfoType::value_type>::isHidden(Node->info());
+
+    return isHidden;
   }
 
   std::string getNodeLabel(const NodeType *Node, const GraphType *Graph) {

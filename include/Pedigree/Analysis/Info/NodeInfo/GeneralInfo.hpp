@@ -24,8 +24,9 @@ struct GeneralInfo {
   struct value_type {
     using IDTy = std::uint64_t;
     IDTy id;
+    bool filtered;
 
-    constexpr value_type() noexcept : id(0) {}
+    constexpr value_type() noexcept : id(0), filtered(false) {}
   };
 };
 
@@ -38,6 +39,8 @@ template <> struct NodeInfoDOTTraits<GeneralInfo::value_type> {
 
     return ss.str();
   }
+
+  static bool isHidden(const GeneralInfo::value_type &I) { return I.filtered; }
 };
 
 } // namespace pedigree
