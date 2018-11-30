@@ -30,15 +30,17 @@
 namespace pedigree {
 
 class PDGraphBuilder {
+  using NodeType = InstructionDependenceGraph::NodeType;
+
+public:
+  using PostInsertionFunc = std::function<void(
+      NodeType::NodeInfoType::value_type &, const NodeType::UnitType)>;
+
+private:
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>>
       componentGraphs;
   std::unique_ptr<PDGraph> Graph;
   bool LazilyConstructible;
-
-  using NodeType = InstructionDependenceGraph::NodeType;
-
-  using PostInsertionFunc = std::function<void(
-      NodeType::NodeInfoType::value_type &, const NodeType::UnitType)>;
 
   std::vector<PostInsertionFunc> PostInsertionFunctions;
 
