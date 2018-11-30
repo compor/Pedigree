@@ -40,10 +40,10 @@ class PDGraphBuilder {
 
   using NodeType = InstructionDependenceGraph::NodeType;
 
-  using NodeApplyFunc = std::function<void(NodeType::NodeInfoType::value_type &,
-                                           const NodeType::UnitType)>;
+  using PostInsertionFunc = std::function<void(
+      NodeType::NodeInfoType::value_type &, const NodeType::UnitType)>;
 
-  std::vector<NodeApplyFunc> NodeApplyFunctions;
+  std::vector<PostInsertionFunc> PostInsertionFunctions;
 
   // TODO consider moving this to the graph, maybe as an operator
   void combine(InstructionDependenceGraph &ToGraph,
@@ -55,7 +55,8 @@ class PDGraphBuilder {
     for (const auto &node : GT::nodes(&FromGraph)) {
       auto src = ToGraph.getOrInsertNode(node->unit());
 
-      std::for_each(NodeApplyFunctions.begin(), NodeApplyFunctions.end(),
+      std::for_each(PostInsertionFunctions.begin(),
+                    PostInsertionFunctions.end(),
                     [&src](auto &f) { f(src->info(), src->unit()); });
 
       for (const auto &child : GT::children(node)) {
@@ -96,8 +97,8 @@ public:
     return *this;
   }
 
-  PDGraphBuilder &registerApplyFunc(const NodeApplyFunc &Func) {
-    NodeApplyFunctions.emplace_back(Func);
+  PDGraphBuilder &registerPostInsertionCallback(const PostInsertionFunc &Func) {
+    PostInsertionFunctions.emplace_back(Func);
 
     return *this;
   }
