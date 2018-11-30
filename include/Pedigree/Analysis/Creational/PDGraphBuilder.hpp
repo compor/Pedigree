@@ -13,11 +13,15 @@
 
 #include "Pedigree/Exchange/MetadataReader.hpp"
 
+#include <algorithm>
+// using std::for_each
+
 #include <vector>
 // using std::vector
 
 #include <functional>
 // using std::cref
+// using std::function
 
 #include <memory>
 // using std::unique_ptr
@@ -34,6 +38,13 @@ class PDGraphBuilder {
   std::unique_ptr<PDGraph> Graph;
   bool LazilyConstructible;
 
+  using NodeType = InstructionDependenceGraph::NodeType;
+
+  using NodeApplyFunc = std::function<void(NodeType::NodeInfoType::value_type &,
+                                           const NodeType::UnitType)>;
+
+  std::vector<NodeApplyFunc> NodeApplyFunctions;
+
   // TODO consider moving this to the graph, maybe as an operator
   void combine(InstructionDependenceGraph &ToGraph,
                const InstructionDependenceGraph &FromGraph) {
@@ -43,6 +54,9 @@ class PDGraphBuilder {
 
     for (const auto &node : GT::nodes(&FromGraph)) {
       auto src = ToGraph.getOrInsertNode(node->unit());
+
+      std::for_each(NodeApplyFunctions.begin(), NodeApplyFunctions.end(),
+                    [&src](auto &f) { f(src->info(), src->unit()); });
 
       for (const auto &child : GT::children(node)) {
         auto dst = ToGraph.getOrInsertNode(child->unit());
@@ -78,6 +92,12 @@ public:
 
   PDGraphBuilder &setLazilyConstructible(bool Mode) {
     LazilyConstructible = Mode;
+
+    return *this;
+  }
+
+  PDGraphBuilder &registerApplyFunc(const NodeApplyFunc &Func) {
+    NodeApplyFunctions.emplace_back(Func);
 
     return *this;
   }
