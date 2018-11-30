@@ -63,6 +63,9 @@
 // using DEBUG macro
 // using llvm::dbgs
 
+#include <string>
+// using std::string
+
 #define DEBUG_TYPE "pedigree-pdg"
 
 extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
@@ -99,6 +102,10 @@ static llvm::cl::OptionCategory
                                 "Options for Pedigree PDGraph pass");
 
 enum class PedigreePDGraphComponent { CDG, DDG, MDG };
+
+static llvm::cl::opt<std::string> PedigreeGraphPDGMetadataFilter(
+    "pedigree-pdg-metadata-filter", llvm::cl::Hidden,
+    llvm::cl::desc("mark as filtered nodes with this metadata key"));
 
 static llvm::cl::bits<PedigreePDGraphComponent> GraphComponentOption(
     "pedigree-pdg-components", llvm::cl::desc("component graph selection"),
@@ -193,6 +200,19 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   }
 
   PDGraphBuilder builder{};
+
+  if (!PedigreeGraphPDGMetadataFilter.empty()) {
+    MetadataAnnotationReader mdar;
+
+    builder.registerPostInsertionCallback(
+        [&mdar](PDGraphBuilder::PostInsertionFuncFirstArgTy i,
+                PDGraphBuilder::PostInsertionFuncSecondArgTy u) {
+          if (u && mdar.has(u, PedigreeGraphPDGMetadataFilter)) {
+            i.filtered = true;
+          }
+        });
+  }
+
   for (const auto &e : graphs) {
     builder.addGraph(e.get());
   }
