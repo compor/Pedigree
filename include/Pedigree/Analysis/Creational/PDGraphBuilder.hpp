@@ -11,6 +11,8 @@
 
 #include "Pedigree/Analysis/Graphs/PDGraph.hpp"
 
+#include "Pedigree/Exchange/MetadataReader.hpp"
+
 #include <vector>
 // using std::vector
 
