@@ -33,8 +33,10 @@ class PDGraphBuilder {
   using NodeType = InstructionDependenceGraph::NodeType;
 
 public:
-  using PostInsertionFunc = std::function<void(
-      NodeType::NodeInfoType::value_type &, const NodeType::UnitType)>;
+  using PostInsertionFuncFirstArgTy = NodeType::NodeInfoType::value_type &;
+  using PostInsertionFuncSecondArgTy = const NodeType::UnitType;
+  using PostInsertionFunc = std::function<void(PostInsertionFuncFirstArgTy,
+                                               PostInsertionFuncSecondArgTy)>;
 
 private:
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>>
