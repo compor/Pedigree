@@ -16,18 +16,24 @@
 
 namespace pedigree {
 
+template <typename T> struct MetadataExchangeTraits {
+  static bool read(T &, llvm::Metadata *) { return false; }
+};
+
+//
+
 class MetadataAnnotationReader {
 public:
   MetadataAnnotationReader() = default;
 
-  template <typename T>
+  template <typename T, typename ET = MetadataExchangeTraits<T>>
   bool read(const llvm::Instruction &CurInstruction, const llvm::Twine &Key,
             T &Out) {
     bool wasRead = false;
 
     auto *data = CurInstruction.getMetadata(Key.str());
     if (data) {
-      Out.read(data);
+      ET::read(Out, data);
     }
 
     return wasRead;
