@@ -12,6 +12,7 @@ from __future__ import print_function
 import sys
 import os
 import re
+import random
 
 from argparse import ArgumentParser
 
@@ -41,10 +42,20 @@ def create_scc_subgraphs(infile, outfile):
 
     scc_gen = nx.strongly_connected_components(dot_graph)
 
-    for i, scc in enumerate(scc_gen):
-        if len(scc) > 1:
-            subgraph = scc_graph.subgraph(list(scc), 'cluster_scc_' + str(i))
-            subgraph.graph_attr.update(label='')
+    multinode_sccs = [scc for scc in scc_gen if len(scc) > 1]
+
+    hue = 0
+    hue_interval = 360 / len(multinode_sccs) / 360.0
+
+    for i, scc in enumerate(multinode_sccs):
+        subgraph = scc_graph.subgraph(list(scc), 'cluster_scc_' + str(i))
+        subgraph.graph_attr.update(label='')
+
+        saturation = random.randint(50, 100) / 100.0
+        value = random.randint(50, 100) / 100.0
+        color = '{}, {}, {}'.format(hue, saturation, value)
+        [n.attr.update(fillcolor=color, style='filled') for n in subgraph]
+        hue += hue_interval
 
     # clean up attribute label copied over by graph
     scc_graph.edge_attr.update(label='')
