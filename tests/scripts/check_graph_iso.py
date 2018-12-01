@@ -9,6 +9,11 @@ check for matching values for node attributes between the graphs.
 
 from __future__ import print_function
 
+import sys
+import os
+
+from itertools import tee
+
 from argparse import ArgumentParser
 
 import networkx as nx
@@ -101,6 +106,23 @@ def check_graph_iso(dotfile1, dotfile2, node_attr=[]):
     return are_iso
 
 
+def pairwise(iterable):
+    """Creates an iterator of pairwise elements from an iterables.
+
+    If an iterable is a list as [a, b, c], it will return the following tuples
+    in order: (a, b) (b, c).
+
+    Args:
+        dotfile1 (iterable): An iterable.
+
+    Returns:
+        iterator: An iterator.
+    """
+    a, b = tee(iterable)
+    next(b)
+    return zip(a, b)
+
+
 #
 
 if __name__ == '__main__':
@@ -130,15 +152,27 @@ if __name__ == '__main__':
 
     args = vars(parser.parse_args())
 
+    #
+
     if args['quiet']:
         sys.stdout = None
 
-    #
+    invalid_files = [f for f in args['dotfiles'] if not os.path.isfile(f)]
 
-    if check_graph_iso(
-            dotfile1=args['dotfiles'][0],
-            dotfile2=args['dotfiles'][1],
-            node_attr=args['node_attributes']):
-        print('OK')
-    else:
-        print('Error')
+    if invalid_files:
+        raise ValueError('Input files: {} do not exist'.format(invalid_files))
+
+    if len(args['dotfiles']) < 2:
+        raise ValueError('Less than 2 files were provided')
+
+    status = True
+    for dotfile, dotfile_next in pairwise(args['dotfiles']):
+        status = check_graph_iso(
+            dotfile, dotfile_next, node_attr=args['node_attributes'])
+
+        if not status:
+            break
+
+    print('OK' if status else 'Error')
+
+    sys.exit(0)
