@@ -9,9 +9,9 @@ check for matching values for node attributes between the graphs.
 
 from __future__ import print_function
 
-import networkx as nx
-
 from argparse import ArgumentParser
+
+import networkx as nx
 
 from networkx.drawing.nx_agraph import read_dot
 
@@ -108,18 +108,30 @@ if __name__ == '__main__':
         description='Check graphs in GraphViz DOT format for isomorphism')
     parser.add_argument(
         '-f',
+        '--files',
         dest='dotfiles',
         nargs='*',
         required=True,
         help='GraphViz DOT files')
     parser.add_argument(
         '-a',
+        '--attributes',
         dest='node_attributes',
         default=[],
         nargs='+',
         help='Graph node attributes')
+    parser.add_argument(
+        '-q',
+        '--quiet',
+        dest='quiet',
+        default=False,
+        action='store_true',
+        help='silence output')
 
     args = vars(parser.parse_args())
+
+    if args['quiet']:
+        sys.stdout = None
 
     #
 
