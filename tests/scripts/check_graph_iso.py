@@ -143,6 +143,13 @@ if __name__ == '__main__':
         nargs='+',
         help='Graph node attributes')
     parser.add_argument(
+        '-v',
+        '--verbose',
+        dest='verbose',
+        default=False,
+        action='store_true',
+        help='verbose output')
+    parser.add_argument(
         '-q',
         '--quiet',
         dest='quiet',
@@ -167,6 +174,10 @@ if __name__ == '__main__':
 
     status = True
     for dotfile, dotfile_next in pairwise(args['dotfiles']):
+        if args['verbose']:
+            print('comparing graphs in files {} and {}'.format(
+                dotfile, dotfile_next))
+
         status = check_graph_iso(
             dotfile, dotfile_next, node_attr=args['node_attributes'])
 
