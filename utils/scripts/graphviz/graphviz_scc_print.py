@@ -11,6 +11,9 @@ from __future__ import print_function
 
 import sys
 import os
+import re
+
+from argparse import ArgumentParser
 
 import networkx as nx
 
@@ -51,16 +54,70 @@ def create_scc_subgraphs(infile, outfile):
     scc_graph.write(outfile)
 
 
+def get_filename_parts(filename, default_suffix=''):
+    """ Parses a string representing a filename and returns as a 2-element
+    string tuple with the filename stem and its suffix (the shortest string
+    after a dot from the end of the string). If there's no suffix found a
+    default is used instead.
+
+    Args:
+        filename(string): The input file name expected to contain a GraphViz DOT
+        digraph.
+        default_suffix(string, optional): The suffix to use if one cannot be
+        found from the filename. Defaults to an empty string.
+
+    Returns (string, string): A 2 element tuple of the filename stem and its
+    suffix.
+    """
+    m = re.match(r'(.*)(\..*$)', filename)
+    if not m:
+        return (filename, default_suffix)
+
+    return m.group(1, 2)
+
+
 #
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print(
-            'Usage: {} [infile] [outfile]\n'.format(sys.argv[0]),
-            file=sys.stderr)
-        exit(1)
+    parser = ArgumentParser(
+        description='Mark SCCs in graphs specified GraphViz DOT format')
+    parser.add_argument(
+        '-f',
+        '--files',
+        dest='dotfiles',
+        nargs='*',
+        required=True,
+        help='GraphViz DOT files')
+    parser.add_argument(
+        '-s',
+        '--suffix',
+        dest='suffix',
+        default='.scc',
+        help='output file supplementary suffix')
+    parser.add_argument(
+        '-q',
+        '--quiet',
+        dest='quiet',
+        default=False,
+        action='store_true',
+        help='silence output')
 
-    if not os.path.exists(sys.argv[1]):
-        raise ValueError('Input file: {} does not exist'.format(sys.argv[1]))
+    args = vars(parser.parse_args())
 
-    create_scc_subgraphs(sys.argv[1], sys.argv[2])
+    #
+
+    if args['quiet']:
+        sys.stdout = None
+
+    invalid_files = [f for f in args['dotfiles'] if not os.path.isfile(f)]
+
+    if invalid_files:
+        raise ValueError('Input files: {} do not exist'.format(invalid_files))
+
+    for f in args['dotfiles']:
+        cur_prefix, cur_suffix = get_filename_parts(f)
+        new_filename = cur_prefix + '.' + args['suffix'] + cur_suffix
+        print('generating file: {}'.format(new_filename))
+        create_scc_subgraphs(f, cur_prefix + args['suffix'] + cur_suffix)
+
+    sys.exit(0)
