@@ -22,7 +22,7 @@ from networkx.drawing.nx_agraph import read_dot
 from networkx.drawing.nx_agraph import to_agraph
 
 
-def create_scc_subgraphs(infile, outfile):
+def create_scc_subgraphs(infile, outfile, mode=''):
     """ Create the strongly connected components (SCC's) as subgraphs of a
     GraphViz DOT digraph.
 
@@ -35,6 +35,10 @@ def create_scc_subgraphs(infile, outfile):
 
         outfile (string): The output file name to be created containing a
         GraphViz DOT digraph.
+
+        mode (string): A string denoting the way that the multinode SCCs will
+        be visually marked on the output graph. Defaults to the emptry string.
+        Current values supported: ['subgraph', 'colour']
     """
 
     dot_graph = read_dot(infile)
@@ -48,14 +52,19 @@ def create_scc_subgraphs(infile, outfile):
     hue_interval = 360 / len(multinode_sccs) / 360.0
 
     for i, scc in enumerate(multinode_sccs):
-        subgraph = scc_graph.subgraph(list(scc), 'cluster_scc_' + str(i))
-        subgraph.graph_attr.update(label='')
+        if mode == 'subgraph':
+            subgraph = scc_graph.subgraph(list(scc), 'cluster_scc_' + str(i))
+            subgraph.graph_attr.update(label='')
 
-        saturation = random.randint(50, 100) / 100.0
-        value = random.randint(50, 100) / 100.0
-        color = '{}, {}, {}'.format(hue, saturation, value)
-        [n.attr.update(fillcolor=color, style='filled') for n in subgraph]
-        hue += hue_interval
+        if mode == 'colour':
+            saturation = random.randint(50, 100) / 100.0
+            value = random.randint(50, 100) / 100.0
+            color = '{}, {}, {}'.format(hue, saturation, value)
+            [
+                scc_graph.get_node(n).attr.update(
+                    fillcolor=color, style='filled') for n in scc
+            ]
+            hue += hue_interval
 
     # clean up attribute label copied over by graph
     scc_graph.edge_attr.update(label='')
@@ -100,6 +109,13 @@ if __name__ == '__main__':
         required=True,
         help='GraphViz DOT files')
     parser.add_argument(
+        '-m',
+        '--mode',
+        dest='mode',
+        choices=['colour', 'subgraph'],
+        default='subgraph',
+        help='visual marking method of multinode SCCs')
+    parser.add_argument(
         '-s',
         '--suffix',
         dest='suffix',
@@ -129,6 +145,6 @@ if __name__ == '__main__':
         cur_prefix, cur_suffix = get_filename_parts(f)
         new_filename = cur_prefix + '.' + args['suffix'] + cur_suffix
         print('generating file: {}'.format(new_filename))
-        create_scc_subgraphs(f, new_filename)
+        create_scc_subgraphs(f, new_filename, args['mode'])
 
     sys.exit(0)
