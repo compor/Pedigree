@@ -14,16 +14,16 @@
 
 namespace pedigree {
 
-template class GenericDependenceNode<llvm::Instruction, GeneralInfo,
+template class GenericDependenceNode<llvm::Instruction, BasicNodeInfo,
                                      BasicDependenceInfo>;
 
-template class GenericDependenceNode<llvm::BasicBlock, GeneralInfo,
+template class GenericDependenceNode<llvm::BasicBlock, BasicNodeInfo,
                                      BasicDependenceInfo>;
 
-template class GenericDependenceGraph<
-    GenericDependenceNode<llvm::Instruction, GeneralInfo, BasicDependenceInfo>>;
+template class GenericDependenceGraph<GenericDependenceNode<
+    llvm::Instruction, BasicNodeInfo, BasicDependenceInfo>>;
 
-template class GenericDependenceGraph<
-    GenericDependenceNode<llvm::BasicBlock, GeneralInfo, BasicDependenceInfo>>;
+template class GenericDependenceGraph<GenericDependenceNode<
+    llvm::BasicBlock, BasicNodeInfo, BasicDependenceInfo>>;
 
 } // namespace pedigree
