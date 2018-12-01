@@ -92,7 +92,7 @@ if __name__ == '__main__':
         '-s',
         '--suffix',
         dest='suffix',
-        default='.scc',
+        default='scc',
         help='output file supplementary suffix')
     parser.add_argument(
         '-q',
@@ -118,6 +118,6 @@ if __name__ == '__main__':
         cur_prefix, cur_suffix = get_filename_parts(f)
         new_filename = cur_prefix + '.' + args['suffix'] + cur_suffix
         print('generating file: {}'.format(new_filename))
-        create_scc_subgraphs(f, cur_prefix + args['suffix'] + cur_suffix)
+        create_scc_subgraphs(f, new_filename)
 
     sys.exit(0)
