@@ -157,29 +157,29 @@ if __name__ == '__main__':
         action='store_true',
         help='silence output')
 
-    args = vars(parser.parse_args())
+    args = parser.parse_args()
 
     #
 
-    if args['quiet']:
+    if args.quiet:
         sys.stdout = None
 
-    invalid_files = [f for f in args['dotfiles'] if not os.path.isfile(f)]
+    invalid_files = [f for f in args.dotfiles if not os.path.isfile(f)]
 
     if invalid_files:
         raise ValueError('Input files: {} do not exist'.format(invalid_files))
 
-    if len(args['dotfiles']) < 2:
+    if len(args.dotfiles) < 2:
         raise ValueError('Less than 2 files were provided')
 
     status = True
-    for dotfile, dotfile_next in pairwise(args['dotfiles']):
-        if args['verbose']:
+    for dotfile, dotfile_next in pairwise(args.dotfiles):
+        if args.verbose:
             print('comparing graphs in files {} and {}'.format(
                 dotfile, dotfile_next))
 
         status = check_graph_iso(
-            dotfile, dotfile_next, node_attr=args['node_attributes'])
+            dotfile, dotfile_next, node_attr=args.node_attributes)
 
         if not status:
             break

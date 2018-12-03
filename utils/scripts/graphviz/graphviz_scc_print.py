@@ -129,22 +129,22 @@ if __name__ == '__main__':
         action='store_true',
         help='silence output')
 
-    args = vars(parser.parse_args())
+    args = parser.parse_args()
 
     #
 
-    if args['quiet']:
+    if args.quiet:
         sys.stdout = None
 
-    invalid_files = [f for f in args['dotfiles'] if not os.path.isfile(f)]
+    invalid_files = [f for f in args.dotfiles if not os.path.isfile(f)]
 
     if invalid_files:
         raise ValueError('Input files: {} do not exist'.format(invalid_files))
 
-    for f in args['dotfiles']:
+    for f in args.dotfiles:
         cur_prefix, cur_suffix = get_filename_parts(f)
-        new_filename = cur_prefix + '.' + args['suffix'] + cur_suffix
+        new_filename = cur_prefix + '.' + args.suffix + cur_suffix
         print('generating file: {}'.format(new_filename))
-        create_scc_subgraphs(f, new_filename, args['mode'])
+        create_scc_subgraphs(f, new_filename, args.mode)
 
     sys.exit(0)
