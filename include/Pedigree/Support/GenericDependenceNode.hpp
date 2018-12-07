@@ -42,10 +42,6 @@
 #include <functional>
 // using std::function
 
-#include <type_traits>
-// using std::enable_if
-// using std::is_void
-
 namespace pedigree {
 
 namespace detail {
