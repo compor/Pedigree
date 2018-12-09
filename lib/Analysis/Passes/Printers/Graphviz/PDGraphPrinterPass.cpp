@@ -12,6 +12,8 @@
 
 #include "Pedigree/Support/Traits/LLVMAnalysisGraphTraits.hpp"
 
+#include "Pedigree/Support/FileSystem.hpp"
+
 #include "llvm/Pass.h"
 // using llvm::RegisterPass
 
@@ -34,10 +36,20 @@
 #include "llvm/Support/raw_ostream.h"
 // using llvm::raw_string_ostream
 
+#include "llvm/Support/ErrorHandling.h"
+// using llvm::report_fatal_error
+
+#include <string>
+// using std::string
+
 #include <algorithm>
 // std::find
 
+#include <system_error>
+// using std::error_code
+
 extern llvm::cl::list<std::string> PedigreeGraphDOTFunctionWhitelist;
+extern llvm::cl::opt<std::string> PedigreeReportsDir;
 
 namespace pedigree {
 
@@ -53,7 +65,16 @@ struct PDGraphPrinterPass
 
   static char ID;
 
-  PDGraphPrinterPass() : Base("pdg", ID) {}
+  PDGraphPrinterPass() : Base(PedigreeReportsDir + "/" + "pdg", ID) {
+    auto dirOrErr = CreateDirectory(PedigreeReportsDir);
+    if (std::error_code ec = dirOrErr.getError()) {
+      llvm::errs() << "Error: " << ec.message() << '\n';
+      llvm::report_fatal_error("Failed to create reports directory" +
+                               PedigreeReportsDir);
+    }
+
+    PedigreeReportsDir = dirOrErr.get();
+  }
 
   bool runOnFunction(llvm::Function &CurFunction) override {
     auto found = std::find(std::begin(PedigreeGraphDOTFunctionWhitelist),
@@ -84,7 +105,16 @@ struct PDGraphSimplePrinterPass
 
   static char ID;
 
-  PDGraphSimplePrinterPass() : Base("pdg", ID) {}
+  PDGraphSimplePrinterPass() : Base(PedigreeReportsDir + "/" + "pdg", ID) {
+    auto dirOrErr = CreateDirectory(PedigreeReportsDir);
+    if (std::error_code ec = dirOrErr.getError()) {
+      llvm::errs() << "Error: " << ec.message() << '\n';
+      llvm::report_fatal_error("Failed to create reports directory" +
+                               PedigreeReportsDir);
+    }
+
+    PedigreeReportsDir = dirOrErr.get();
+  }
 
   bool runOnFunction(llvm::Function &CurFunction) override {
     auto found = std::find(std::begin(PedigreeGraphDOTFunctionWhitelist),
