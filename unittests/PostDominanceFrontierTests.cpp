@@ -112,8 +112,14 @@ std::array<PDFConstructionTestData, 5> testData1{
      {"hpc4pc_book_fig37.ll", "while.cond", {"while.cond"}},
      {"hpc4pc_book_fig37.ll", "while.cond.1", {"while.cond.1", "while.cond"}}}};
 
-INSTANTIATE_TEST_CASE_P(DefaultInstance, PDFConstructionTest,
+std::array<PDFConstructionTestData, 1> testData2{
+    {{"exit.ll", "if.then", {"entry"}}}};
+
+INSTANTIATE_TEST_CASE_P(TestInstance1, PDFConstructionTest,
                         ::testing::ValuesIn(testData1), );
+
+INSTANTIATE_TEST_CASE_P(TestInstance2, PDFConstructionTest,
+                        ::testing::ValuesIn(testData2), );
 
 } // unnamed namespace
 } // namespace testing
