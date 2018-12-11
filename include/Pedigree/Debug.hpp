@@ -23,11 +23,7 @@
 
 namespace boost {
 
-[[noreturn]] inline void throw_exception(std::exception const &e) {
-  std::cerr << e.what() << '\n';
-
-  std::terminate();
-}
+[[noreturn]] inline void throw_exception(std::exception const &e);
 
 } // namespace boost
 

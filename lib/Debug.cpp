@@ -4,6 +4,16 @@
 
 #include "Pedigree/Debug.hpp"
 
+namespace boost {
+
+[[noreturn]] inline void throw_exception(std::exception const &e) {
+  std::cerr << e.what() << '\n';
+
+  std::terminate();
+}
+
+} // namespace boost
+
 #if PEDIGREE_DEBUG
 
 namespace pedigree {
@@ -16,3 +26,4 @@ LogLevel passLogLevel = LogLevel::Info;
 } // namespace pedigree
 
 #endif // PEDIGREE_DEBUG
+
