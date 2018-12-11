@@ -5,12 +5,19 @@
 #ifndef PEDIGREE_POSTDOMINANCEFRONTIER_HPP
 #define PEDIGREE_POSTDOMINANCEFRONTIER_HPP
 
+#include "Pedigree/Config.hpp"
+
+#include "Pedigree/Debug.hpp"
+
 #include "llvm/Config/llvm-config.h"
 // version macros
 
 #include "llvm/ADT/GraphTraits.h"
 // using llvm::GraphTraits
 // using llvm::Inverse
+
+#include "llvm/IR/Instructions.h"
+// using llvm::UnreachableInst
 
 #include "llvm/IR/CFG.h"
 // using llvm::GraphTraits
@@ -74,17 +81,30 @@ public:
   void analyze(DomTreeT &DT) {
     const auto &roots = DT.getRoots();
 
-    assert(roots.size() == 1 && "Only one entry block for post domfronts!");
-
     this->Roots.resize(roots.size());
     std::copy(roots.begin(), roots.end(), this->Roots.begin());
+
+    assert(getSingleRoot() && "Only one entry block for post domfronts!");
+
     calculate(DT);
   }
 
 protected:
+  BlockT *getSingleRoot() const {
+    BlockT *root = nullptr;
+    for (auto i = 0; i < this->Roots.size(); ++i) {
+      if (!llvm::isa<llvm::UnreachableInst>(this->Roots[i]->getTerminator()) &&
+          !root) {
+        root = this->Roots[i];
+      }
+    }
+
+    return root;
+  }
+
   const DomSetType &calculate(const DomTreeT &DT) {
     this->Frontiers.clear();
-    auto *root = DT[this->Roots[0]];
+    auto *root = DT[getSingleRoot()];
     const auto &traversal = llvm::post_order(root);
 
     for (const auto &e : traversal)
