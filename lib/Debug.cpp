@@ -4,6 +4,8 @@
 
 #include "Pedigree/Debug.hpp"
 
+#ifdef BOOST_NO_EXCEPTIONS
+
 namespace boost {
 
 [[noreturn]] inline void throw_exception(std::exception const &e) {
@@ -13,6 +15,8 @@ namespace boost {
 }
 
 } // namespace boost
+
+#endif // BOOST_NO_EXCEPTIONS
 
 #if PEDIGREE_DEBUG
 
