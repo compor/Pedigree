@@ -7,8 +7,6 @@
 
 #include "Pedigree/Config.hpp"
 
-#include "Pedigree/Util.hpp"
-
 #define DEFINE_DEBUG_LEVELS                                                    \
   enum class LogLevel { Info, Notice, Warning, Error, Debug }
 

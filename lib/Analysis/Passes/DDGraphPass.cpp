@@ -4,6 +4,8 @@
 
 #include "Pedigree/Debug.hpp"
 
+#include "Pedigree/Util.hpp"
+
 #include "Pedigree/Analysis/Passes/DDGraphPass.hpp"
 
 #include "Pedigree/Analysis/Creational/DDGraphBuilder.hpp"
