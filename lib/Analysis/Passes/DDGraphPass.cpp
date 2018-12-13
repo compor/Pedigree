@@ -79,7 +79,7 @@ static llvm::cl::OptionCategory
                                 "Options for Pedigree DDGraph pass");
 
 static llvm::cl::opt<bool> IgnoreConstantPHINodes(
-    "pedigree-ddg-ignore-constant-phi", llvm::cl::init(false), llvm::cl::Hidden,
+    "pedigree-ddg-ignore-constant-phi", llvm::cl::init(true), llvm::cl::Hidden,
     llvm::cl::desc("ignore PHI nodes with constant values as data dependences"),
     llvm::cl::cat(PedigreeDDGraphPassCategory));
 
