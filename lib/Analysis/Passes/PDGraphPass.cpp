@@ -101,11 +101,15 @@ static llvm::cl::OptionCategory
     PedigreePDGraphPassCategory("Pedigree PDGraph Pass",
                                 "Options for Pedigree PDGraph pass");
 
-enum class PedigreePDGraphComponent { CDG, DDG, MDG };
-
-static llvm::cl::opt<std::string> PedigreeGraphPDGMetadataFilter(
-    "pedigree-pdg-metadata-filter", llvm::cl::Hidden,
+static llvm::cl::opt<std::string> MetadataFilterInclusion(
+    "pedigree-pdg-metadata-filter-inclusion", llvm::cl::Hidden,
     llvm::cl::desc("mark as filtered nodes with this metadata key"));
+
+static llvm::cl::opt<std::string> MetadataFilterExclusion(
+    "pedigree-pdg-metadata-filter-exclusion", llvm::cl::Hidden,
+    llvm::cl::desc("mark as filtered nodes without this metadata key"));
+
+enum class PedigreePDGraphComponent { CDG, DDG, MDG };
 
 static llvm::cl::bits<PedigreePDGraphComponent> GraphComponentOption(
     "pedigree-pdg-components", llvm::cl::desc("component graph selection"),
@@ -201,13 +205,27 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   PDGraphBuilder builder{};
 
-  if (!PedigreeGraphPDGMetadataFilter.empty()) {
+  // TODO refactor filters to use lists and their absolute position in the
+  // command line to chain and apply them
+  if (!MetadataFilterExclusion.empty()) {
     MetadataAnnotationReader mdar;
 
     builder.registerPostInsertionCallback(
         [&mdar](PDGraphBuilder::PostInsertionFuncFirstArgTy i,
                 PDGraphBuilder::PostInsertionFuncSecondArgTy u) {
-          if (u && mdar.has(u, PedigreeGraphPDGMetadataFilter)) {
+          if (u && mdar.has(u, MetadataFilterExclusion)) {
+            i.filtered = true;
+          }
+        });
+  }
+
+  if (!MetadataFilterInclusion.empty()) {
+    MetadataAnnotationReader mdar;
+
+    builder.registerPostInsertionCallback(
+        [&mdar](PDGraphBuilder::PostInsertionFuncFirstArgTy i,
+                PDGraphBuilder::PostInsertionFuncSecondArgTy u) {
+          if (u && !mdar.has(u, MetadataFilterInclusion)) {
             i.filtered = true;
           }
         });
