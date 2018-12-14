@@ -122,7 +122,6 @@ public:
   }
 
   decltype(auto) getOrInsertNode(UnitType Unit) {
-    bool justInserted = false;
     auto &node = NodeMap[Unit];
 
     if (!node) {
