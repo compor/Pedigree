@@ -66,7 +66,7 @@
 // using llvm::raw_ostream
 
 #include "llvm/Support/Debug.h"
-// using DEBUG macro
+// using LLVM_DEBUG macro
 // using llvm::dbgs
 
 #include <algorithm>
@@ -176,31 +176,6 @@ static llvm::cl::opt<bool> EnumerateWithDFS(
         "enumerate graph nodes with DFS numbers from originating IR traversal"),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
-#if PEDIGREE_DEBUG
-static llvm::cl::opt<bool, true>
-    Debug("pedigree-mdg-debug", llvm::cl::desc("debug pedigree mdg pass"),
-          llvm::cl::location(pedigree::debug::passDebugFlag),
-          llvm::cl::cat(PedigreeMDGraphPassCategory));
-
-static llvm::cl::opt<LogLevel, true> DebugLevel(
-    "pedigree-mdg-debug-level",
-    llvm::cl::desc("debug level for pedigree mdg pass"),
-    llvm::cl::location(pedigree::debug::passLogLevel),
-    llvm::cl::values(
-        clEnumValN(LogLevel::Info, "info", "informational messages"),
-        clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
-        clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
-        clEnumValN(LogLevel::Error, "error", "error conditions"),
-        clEnumValN(LogLevel::Debug, "debug", "debug messages")
-// clang-format off
-#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
-                                , clEnumValEnd
-#endif
-        // clang-format on
-        ),
-    llvm::cl::cat(PedigreeMDGraphPassCategory));
-#endif // PEDIGREE_DEBUG
-
 static void checkCmdLineOptions() {
   assert(AnalysisBackendType::DA != AnalysisBackendOption &&
          pedigree::AnalysisScope::Function != AnalysisBackendScopeOption &&
@@ -267,7 +242,7 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
                 .build();
   }
 
-  if(PedigreeGraphConnectRoot) {
+  if (PedigreeGraphConnectRoot) {
     Graph->connectRootNode();
   }
 

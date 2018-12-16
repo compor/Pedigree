@@ -83,31 +83,6 @@ static llvm::cl::opt<bool> IgnoreConstantPHINodes(
     llvm::cl::desc("ignore PHI nodes with constant values as data dependences"),
     llvm::cl::cat(PedigreeDDGraphPassCategory));
 
-#if PEDIGREE_DEBUG
-static llvm::cl::opt<bool, true>
-    Debug("pedigree-ddg-debug", llvm::cl::desc("debug pedigree ddg pass"),
-          llvm::cl::location(pedigree::debug::passDebugFlag),
-          llvm::cl::cat(PedigreeDDGraphPassCategory));
-
-static llvm::cl::opt<LogLevel, true> DebugLevel(
-    "pedigree-ddg-debug-level",
-    llvm::cl::desc("debug level for pedigree ddg pass"),
-    llvm::cl::location(pedigree::debug::passLogLevel),
-    llvm::cl::values(
-        clEnumValN(LogLevel::Info, "info", "informational messages"),
-        clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
-        clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
-        clEnumValN(LogLevel::Error, "error", "error conditions"),
-        clEnumValN(LogLevel::Debug, "debug", "debug messages")
-// clang-format off
-#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
-                                , clEnumValEnd
-#endif
-        // clang-format on
-        ),
-    llvm::cl::cat(PedigreeDDGraphPassCategory));
-#endif // PEDIGREE_DEBUG
-
 //
 
 namespace pedigree {

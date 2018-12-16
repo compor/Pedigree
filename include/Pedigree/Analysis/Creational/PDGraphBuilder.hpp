@@ -13,6 +13,10 @@
 
 #include "Pedigree/Exchange/MetadataReader.hpp"
 
+#include "llvm/Support/Debug.h"
+// using LLVM_DEBUG macro
+// using llvm::dbgs
+
 #include <vector>
 // using std::vector
 
@@ -26,6 +30,8 @@
 
 #include <cassert>
 // using assert
+
+#define DEBUG_TYPE "pedigree-pdg-builder"
 
 namespace pedigree {
 

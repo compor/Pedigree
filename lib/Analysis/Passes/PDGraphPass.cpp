@@ -127,31 +127,6 @@ static llvm::cl::bits<PedigreePDGraphComponent> GraphComponentOption(
                      ),
     llvm::cl::CommaSeparated, llvm::cl::cat(PedigreePDGraphPassCategory));
 
-#if PEDIGREE_DEBUG
-static llvm::cl::opt<bool, true>
-    Debug("pedigree-debug", llvm::cl::desc("debug pedigree pdg pass"),
-          llvm::cl::location(pedigree::debug::passDebugFlag),
-          llvm::cl::cat(PedigreePDGraphPassCategory));
-
-static llvm::cl::opt<LogLevel, true> DebugLevel(
-    "pedigree-pdg-debug-level",
-    llvm::cl::desc("debug level for pedigree pdg pass"),
-    llvm::cl::location(pedigree::debug::passLogLevel),
-    llvm::cl::values(
-        clEnumValN(LogLevel::Info, "info", "informational messages"),
-        clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
-        clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
-        clEnumValN(LogLevel::Error, "error", "error conditions"),
-        clEnumValN(LogLevel::Debug, "debug", "debug messages")
-// clang-format off
-#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
-                                , clEnumValEnd
-#endif
-        // clang-format on
-        ),
-    llvm::cl::cat(PedigreePDGraphPassCategory));
-#endif // PEDIGREE_DEBUG
-
 static void checkAndSetCmdLineOptions() {
   if (!GraphComponentOption.getBits()) {
     GraphComponentOption.addValue(PedigreePDGraphComponent::CDG);

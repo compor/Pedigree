@@ -20,12 +20,18 @@
 #include "llvm/Analysis/PostDominators.h"
 // using llvm::PostDominatorTree
 
+#include "llvm/Support/Debug.h"
+// using LLVM_DEBUG macro
+// using llvm::dbgs
+
 #include "boost/optional.hpp"
 // using boost::optional
 
 #include <memory>
 // using std::unique_ptr
 // using std::make_unique
+
+#define DEBUG_TYPE "pedigree-cdg-builder"
 
 namespace llvm {
 class Function;

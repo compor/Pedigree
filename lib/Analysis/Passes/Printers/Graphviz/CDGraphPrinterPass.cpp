@@ -33,6 +33,10 @@
 #include "llvm/Support/ErrorHandling.h"
 // using llvm::report_fatal_error
 
+#include "llvm/Support/Debug.h"
+// using LLVM_DEBUG macro
+// using llvm::dbgs
+
 #include <string>
 // using std::string
 
@@ -41,6 +45,8 @@
 
 #include <system_error>
 // using std::error_code
+
+#define DEBUG_TYPE "pedigree-cdg-printer"
 
 extern llvm::cl::list<std::string> PedigreeGraphDOTFunctionWhitelist;
 extern llvm::cl::opt<std::string> PedigreeReportsDir;

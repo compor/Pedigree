@@ -40,7 +40,7 @@
 // using llvm::raw_ostream
 
 #include "llvm/Support/Debug.h"
-// using DEBUG macro
+// using LLVM_DEBUG macro
 // using llvm::dbgs
 
 #define DEBUG_TYPE "pedigree-cdg"
@@ -86,31 +86,6 @@ static llvm::cl::opt<bool> PedigreeCDGraphConvertToInstruction(
     "pedigree-cdg-convert-instruction",
     llvm::cl::desc("adapt cdg to block terminator instructions"),
     llvm::cl::init(false), llvm::cl::cat(PedigreeCDGraphPassCategory));
-
-#if PEDIGREE_DEBUG
-static llvm::cl::opt<bool, true>
-    Debug("pedigree-cdg-debug", llvm::cl::desc("debug pedigree cdg pass"),
-          llvm::cl::location(pedigree::debug::passDebugFlag),
-          llvm::cl::cat(PedigreeCDGraphPassCategory));
-
-static llvm::cl::opt<LogLevel, true> DebugLevel(
-    "pedigree-cdg-debug-level",
-    llvm::cl::desc("debug level for pedigree cdg pass"),
-    llvm::cl::location(pedigree::debug::passLogLevel),
-    llvm::cl::values(
-        clEnumValN(LogLevel::Info, "info", "informational messages"),
-        clEnumValN(LogLevel::Notice, "notice", "significant conditions"),
-        clEnumValN(LogLevel::Warning, "warning", "warning conditions"),
-        clEnumValN(LogLevel::Error, "error", "error conditions"),
-        clEnumValN(LogLevel::Debug, "debug", "debug messages")
-// clang-format off
-#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
-                                , clEnumValEnd
-#endif
-        // clang-format on
-        ),
-    llvm::cl::cat(PedigreeCDGraphPassCategory));
-#endif // PEDIGREE_DEBUG
 
 //
 

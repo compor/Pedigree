@@ -21,6 +21,10 @@
 #include "llvm/Analysis/DependenceAnalysis.h"
 // using llvm::DependenceAnalysis
 
+#include "llvm/Support/Debug.h"
+// using LLVM_DEBUG macro
+// using llvm::dbgs
+
 #include "boost/optional.hpp"
 // using boost::optional
 
@@ -30,6 +34,8 @@
 
 #include <vector>
 // using std::vector
+
+#define DEBUG_TYPE "pedigree-mdg-da-builder"
 
 namespace llvm {
 class Function;

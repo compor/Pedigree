@@ -33,6 +33,10 @@
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
 
+#include "llvm/Support/Debug.h"
+// using LLVM_DEBUG macro
+// using llvm::dbgs
+
 #include "boost/optional.hpp"
 // using boost::optional
 
@@ -45,6 +49,8 @@
 
 #include <cassert>
 // using assert
+
+#define DEBUG_TYPE "pedigree-mdg-mda-builder"
 
 namespace llvm {
 class Function;
@@ -167,7 +173,7 @@ private:
       } else if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Out;
       } else {
-        DEBUG_MSG(LogLevel::Info, "No appropriate hazard was found!");
+        LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
       }
     } else if (QueryResult.isClobber() &&
                (CurMode & AnalysisMode::MemClobbers)) {
@@ -176,7 +182,7 @@ private:
       } else if (Dst.mayWriteToMemory()) {
         info.hazards |= DependenceHazard::Out;
       } else {
-        DEBUG_MSG(LogLevel::Info, "No appropriate hazard was found!");
+        LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
       }
     }
 
