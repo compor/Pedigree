@@ -153,7 +153,6 @@ static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
 #endif
         // clang-format on
         ),
-    llvm::cl::init(pedigree::AnalysisScope::Block),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
 static llvm::cl::list<pedigree::AnalysisMode> AnalysisBackendModeOption(
@@ -177,7 +176,25 @@ static llvm::cl::opt<bool> EnumerateWithDFS(
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
 static void checkCmdLineOptions() {
-  if (AnalysisBackendType::DA == AnalysisBackendOption) {
+  // set default initial value in the absence of an explicitly provided option
+  // depending on the backend type
+  if (!AnalysisBackendScopeOption.getPosition()) {
+    if (AnalysisBackendType::DA == AnalysisBackendOption) {
+      AnalysisBackendScopeOption.setValue(pedigree::AnalysisScope::Function);
+    } else if (AnalysisBackendType::MDA == AnalysisBackendOption) {
+      AnalysisBackendScopeOption.setValue(pedigree::AnalysisScope::Block);
+    } else if (AnalysisBackendType::MemorySSA == AnalysisBackendOption) {
+      // TODO to be determined
+      AnalysisBackendScopeOption.setValue(pedigree::AnalysisScope::Block);
+    } else {
+      AnalysisBackendScopeOption.setValue(pedigree::AnalysisScope::Block);
+    }
+  }
+
+  //
+
+  if (AnalysisBackendType::DA == AnalysisBackendOption &&
+      AnalysisBackendScopeOption.getPosition()) {
     assert(pedigree::AnalysisScope::Function == AnalysisBackendScopeOption &&
            "Analysis scope is not supported by analysis backend!");
   }
