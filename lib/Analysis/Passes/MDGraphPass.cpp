@@ -56,7 +56,7 @@
 
 #include "llvm/Support/CommandLine.h"
 // using llvm::cl::opt
-// using llvm::cl::bits
+// using llvm::cl::list
 // using llvm::cl::desc
 // using llvm::cl::location
 // using llvm::cl::cat
@@ -156,12 +156,12 @@ static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
     llvm::cl::init(pedigree::AnalysisScope::Block),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
-static llvm::cl::bits<pedigree::AnalysisMode> AnalysisBackendModeOption(
+static llvm::cl::list<pedigree::AnalysisMode> AnalysisBackendModeOption(
     "pedigree-mdg-backend-mode", llvm::cl::desc("analysis backend mode"),
-    llvm::cl::values(clEnumValN(pedigree::AnalysisMode::MemDefs, "mem defs",
+    llvm::cl::values(clEnumValN(pedigree::AnalysisMode::MemDefs, "defs",
                                 "mem defs"),
-                     clEnumValN(pedigree::AnalysisMode::MemClobbers,
-                                "mem clobbers", "mem clobbers")
+                     clEnumValN(pedigree::AnalysisMode::MemClobbers, "clobbers",
+                                "mem clobbers")
 // clang-format off
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
                                 , clEnumValEnd
@@ -187,6 +187,10 @@ static void checkCmdLineOptions() {
   assert(AnalysisBackendType::MemorySSA != AnalysisBackendOption &&
          "MemorySSA is not part of this LLVM version!");
 #endif
+
+  if (!AnalysisBackendModeOption.size()) {
+    AnalysisBackendModeOption.addValue(pedigree::AnalysisMode::MemDefs);
+  }
 }
 
 //
@@ -228,12 +232,8 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
     MDAMDGraphBuilder builder{};
 
-    if (AnalysisBackendModeOption.isSet(AnalysisMode::MemDefs)) {
-      builder.turnOnMode(AnalysisMode::MemDefs);
-    }
-
-    if (AnalysisBackendModeOption.isSet(AnalysisMode::MemClobbers)) {
-      builder.turnOnMode(AnalysisMode::MemClobbers);
+    for (auto i = 0; i < AnalysisBackendModeOption.size(); ++i) {
+      builder.turnOnMode(AnalysisBackendModeOption[i]);
     }
 
     Graph = builder.setScope(AnalysisBackendScopeOption)
