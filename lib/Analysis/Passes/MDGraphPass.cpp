@@ -126,17 +126,17 @@ enum class AnalysisBackendType { MDA, DA, MemorySSA };
 
 static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
     "pedigree-mdg-backend", llvm::cl::desc("analysis backend selection"),
-    llvm::cl::values(clEnumValN(AnalysisBackendType::MDA, "mda",
-                                "Memory Dependence Analysis"),
-                     clEnumValN(AnalysisBackendType::DA, "da",
-                                "Dependence Analysis"),
-                     clEnumValN(AnalysisBackendType::MemorySSA, "memssa", "")
+    llvm::cl::values(
+        clEnumValN(AnalysisBackendType::MDA, "mda",
+                   "Memory Dependence Analysis"),
+        clEnumValN(AnalysisBackendType::DA, "da", "Dependence Analysis"),
+        clEnumValN(AnalysisBackendType::MemorySSA, "memssa", "MemorySSA")
 // clang-format off
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
                                 , clEnumValEnd
 #endif
-                     // clang-format on
-                     ),
+        // clang-format on
+        ),
     llvm::cl::init(AnalysisBackendType::MDA),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
