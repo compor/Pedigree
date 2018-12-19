@@ -175,8 +175,9 @@ private:
       } else {
         LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
       }
-    } else if (QueryResult.isClobber() &&
-               (CurMode & AnalysisMode::MemClobbers)) {
+    }
+
+    if (QueryResult.isClobber() && (CurMode & AnalysisMode::MemClobbers)) {
       if (Dst.mayReadFromMemory()) {
         info.hazards |= DependenceHazard::Flow;
       } else if (Dst.mayWriteToMemory()) {
