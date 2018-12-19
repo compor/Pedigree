@@ -177,9 +177,10 @@ static llvm::cl::opt<bool> EnumerateWithDFS(
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
 static void checkCmdLineOptions() {
-  assert(AnalysisBackendType::DA != AnalysisBackendOption &&
-         pedigree::AnalysisScope::Function != AnalysisBackendScopeOption &&
-         "Analysis scope is not supported by analysis backend!");
+  if (AnalysisBackendType::DA == AnalysisBackendOption) {
+    assert(pedigree::AnalysisScope::Function == AnalysisBackendScopeOption &&
+           "Analysis scope is not supported by analysis backend!");
+  }
 
 #if LLVM_VERSION_MAJOR >= 4 && LLVM_VERSION_MINOR >= 0
   ;
