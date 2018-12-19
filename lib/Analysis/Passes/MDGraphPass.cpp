@@ -191,6 +191,7 @@ static void checkCmdLineOptions() {
 
   if (!AnalysisBackendModeOption.size()) {
     AnalysisBackendModeOption.addValue(pedigree::AnalysisMode::MemDefs);
+    AnalysisBackendModeOption.addValue(pedigree::AnalysisMode::MemClobbers);
   }
 }
 
