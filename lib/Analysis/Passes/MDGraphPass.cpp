@@ -119,6 +119,23 @@ static llvm::cl::OptionCategory
     PedigreeMDGraphPassCategory("Pedigree MDGraph Pass",
                                 "Options for Pedigree MDGraph pass");
 
+enum class AnalysisTraversalType { Naive, DepthFirst };
+
+static llvm::cl::opt<AnalysisTraversalType> AnalysisTraversalOption(
+    "pedigree-mdg-traversal", llvm::cl::desc("analysis traversal selection"),
+    llvm::cl::values(clEnumValN(AnalysisTraversalType::Naive, "naive",
+                                "naive traversal (LLVM API dependent)"),
+                     clEnumValN(AnalysisTraversalType::DepthFirst, "df",
+                                "depth first traversal")
+// clang-format off
+#if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
+                                , clEnumValEnd
+#endif
+                     // clang-format on
+                     ),
+    llvm::cl::init(AnalysisTraversalType::Naive),
+    llvm::cl::cat(PedigreeMDGraphPassCategory));
+
 enum class AnalysisBackendType { MDA, DA, MemorySSA };
 
 static llvm::cl::opt<AnalysisBackendType> AnalysisBackendOption(
