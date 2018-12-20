@@ -13,6 +13,8 @@
 
 #include "Pedigree/Analysis/AnalysisScope.hpp"
 
+#include "Pedigree/Support/Traits/TypeTraits.hpp"
+
 #include "llvm/Config/llvm-config.h"
 // version macros
 
@@ -42,6 +44,9 @@
 
 #include "flags/flags.hpp"
 // using ALLOW_FLAGS_FOR_ENUM
+
+#include <iterator>
+// using std::iterator_traits
 
 #include <memory>
 // using std::unique_ptr
@@ -73,7 +78,6 @@ enum class AnalysisMode : uint8_t {
 class MDAMDGraphBuilder : public llvm::InstVisitor<MDAMDGraphBuilder> {
 private:
   std::unique_ptr<MDGraph> Graph;
-  boost::optional<const llvm::Function &> CurUnit;
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   boost::optional<llvm::MemoryDependenceAnalysis &> CurAnalysis;
 #else
@@ -101,12 +105,6 @@ public:
   }
 #endif
 
-  MDAMDGraphBuilder &setUnit(const llvm::Function &Unit) {
-    CurUnit.emplace(Unit);
-
-    return *this;
-  }
-
   MDAMDGraphBuilder &setScope(AnalysisScope Scope) {
     CurScope = Scope;
 
@@ -119,25 +117,28 @@ public:
     return *this;
   }
 
-  std::unique_ptr<MDGraph> build() {
+  template <typename IteratorT>
+  std::unique_ptr<MDGraph> build(IteratorT Begin, IteratorT End) {
+    static_assert(
+        is_same_v<llvm::Instruction *,
+                  typename std::iterator_traits<IteratorT>::value_type>,
+        "Types do not match!");
     assert(!CurMode.empty() && "Analysis mode is empty!");
 
-    if (CurUnit && CurAnalysis) {
+    if (CurAnalysis) {
       Graph = std::make_unique<MDGraph>();
-      visit(const_cast<llvm::Function &>(*CurUnit));
+
+      for (auto it = Begin; it != End; ++it) {
+        processMemInstruction(*it);
+      }
     }
 
     return std::move(Graph);
   }
 
-  void visitInstruction(llvm::Instruction &CurInstruction) {
-    if (CurInstruction.mayReadOrWriteMemory())
-      visitMemRefInstruction(CurInstruction);
-  }
-
 private:
-  void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
-    auto query = CurAnalysis->getDependency(&CurInstruction);
+  void processMemInstruction(llvm::Instruction *CurInstruction) {
+    auto query = CurAnalysis->getDependency(CurInstruction);
 
     if (query.isUnknown()) {
       return;
@@ -145,15 +146,15 @@ private:
 
     if (query.isNonFuncLocal()) {
       if (CurScope >= AnalysisScope::Interprocedural) {
-        getInterproceduralDependees(llvm::CallSite(&CurInstruction));
+        getInterproceduralDependees(llvm::CallSite(CurInstruction));
       }
     } else if (query.isNonLocal()) {
       if (CurScope >= AnalysisScope::Function) {
-        getFunctionLocalDependees(CurInstruction);
+        getFunctionLocalDependees(*CurInstruction);
       }
     } else {
       // AnalysisScope::Block is the minimum and thus always on
-      getBlockLocalDependees(query, CurInstruction);
+      getBlockLocalDependees(query, *CurInstruction);
     }
   }
 

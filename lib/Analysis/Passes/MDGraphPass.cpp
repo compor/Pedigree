@@ -20,6 +20,8 @@
 
 #include "Pedigree/Support/Utils/InstIterator.hpp"
 
+#include "Pedigree/Support/MemInstTraversals.hpp"
+
 #include "llvm/Config/llvm-config.h"
 // version macros
 
@@ -74,11 +76,6 @@
 
 #include <vector>
 // using std::vector
-
-#include <iterator>
-// using std::back_inserter
-// using std::begin
-// using std::end
 
 #include <cassert>
 // using assert
@@ -232,6 +229,8 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   Graph = std::make_unique<MDGraph>();
 
+  NaiveMemInstTraversal instructions(CurFunc);
+
   if (AnalysisBackendType::DA == AnalysisBackendOption) {
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
     auto &da = getAnalysis<llvm::DependenceAnalysis>();
@@ -257,8 +256,7 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
     Graph = builder.setScope(AnalysisBackendScopeOption)
                 .setAnalysis(mda)
-                .setUnit(CurFunc)
-                .build();
+                .build(instructions.begin(), instructions.end());
   }
 
   if (PedigreeGraphConnectRoot) {
@@ -269,7 +267,7 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
     auto instructions =
         make_inst_range(llvm::df_begin(&CurFunc), llvm::df_end(&CurFunc));
 
-    AssignNodeUID(*Graph, std::begin(instructions), std::end(instructions));
+    AssignNodeUID(*Graph, instructions.begin(), instructions.end());
   }
 
   return false;
