@@ -119,10 +119,6 @@ public:
 
   template <typename IteratorT>
   std::unique_ptr<MDGraph> build(IteratorT Begin, IteratorT End) {
-    static_assert(
-        is_same_v<llvm::Instruction *,
-                  typename std::iterator_traits<IteratorT>::value_type>,
-        "Types do not match!");
     assert(!CurMode.empty() && "Analysis mode is empty!");
 
     if (CurAnalysis) {
@@ -137,8 +133,8 @@ public:
   }
 
 private:
-  void processMemInstruction(llvm::Instruction *CurInstruction) {
-    auto query = CurAnalysis->getDependency(CurInstruction);
+  void processMemInstruction(llvm::Instruction &CurInstruction) {
+    auto query = CurAnalysis->getDependency(&CurInstruction);
 
     if (query.isUnknown()) {
       return;
@@ -146,16 +142,22 @@ private:
 
     if (query.isNonFuncLocal()) {
       if (CurScope >= AnalysisScope::Interprocedural) {
-        getInterproceduralDependees(llvm::CallSite(CurInstruction));
+        getInterproceduralDependees(llvm::CallSite(&CurInstruction));
       }
     } else if (query.isNonLocal()) {
       if (CurScope >= AnalysisScope::Function) {
-        getFunctionLocalDependees(*CurInstruction);
+        getFunctionLocalDependees(CurInstruction);
       }
     } else {
       // AnalysisScope::Block is the minimum and thus always on
-      getBlockLocalDependees(query, *CurInstruction);
+      getBlockLocalDependees(query, CurInstruction);
     }
+  }
+
+  void processMemInstruction(llvm::Instruction *CurInstruction) {
+    assert(CurInstruction && "Instruction is null!");
+
+    processMemInstruction(*CurInstruction);
   }
 
   decltype(auto) determineHazard(const llvm::Instruction &Src,

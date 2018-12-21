@@ -11,6 +11,9 @@
 #include "llvm/ADT/iterator_range.h"
 // llvm::make_range
 
+#include "boost/type_traits/detected.hpp"
+// using boost::detected_t
+
 #include <iterator>
 // using std::iterator_traits
 // using std::begin
@@ -24,22 +27,27 @@
 
 namespace pedigree {
 
+namespace detail {
+template <typename T>
+using inner_iterator_of_val = decltype(
+    std::declval<typename std::iterator_traits<T>::value_type>().begin());
+
+template <typename T>
+using inner_iterator_of_ptr = decltype(
+    std::declval<typename std::iterator_traits<T>::value_type>()->begin());
+
+} // namespace detail
+
 template <typename InstructionBlockIteratorT> struct InstIterator {
   using InstructionBlockT =
       typename std::iterator_traits<InstructionBlockIteratorT>::value_type;
 
-// We're using the member function to obtain the iterator instead of
-// std::begin, because that will be bound to the overload that accepts const
-// ref as a parameter, thus requiring a lot of juggling around types to detect
-// if the originating container is const or not
-
-#if LLVM_VERSION_MAJOR >= 4 && LLVM_VERSION_MINOR >= 0
   using InstructionIteratorT =
-      decltype(std::declval<InstructionBlockT>()->begin());
-#else
-  using InstructionIteratorT =
-      decltype(std::declval<InstructionBlockT>().begin());
-#endif
+      std::conditional_t<std::is_pointer<InstructionBlockT>::value,
+                         boost::detected_t<detail::inner_iterator_of_ptr,
+                                           InstructionBlockIteratorT>,
+                         boost::detected_t<detail::inner_iterator_of_val,
+                                           InstructionBlockIteratorT>>;
 
   using InstructionT =
       typename std::iterator_traits<InstructionIteratorT>::value_type;
@@ -51,21 +59,25 @@ template <typename InstructionBlockIteratorT> struct InstIterator {
       typename std::iterator_traits<InstructionIteratorT>::reference;
   using iterator_category = std::forward_iterator_tag;
 
-  InstIterator() = delete;
+  InstIterator() = default;
   InstIterator(const InstIterator &Other) = default;
 
   InstIterator(InstructionBlockIteratorT Begin,
-               InstructionBlockIteratorT End) noexcept : CurBlockI(Begin),
-                                                         EndBlockI(End) {
+               InstructionBlockIteratorT End) noexcept
+      : CurBlockI(Begin), EndBlockI(End) {
+    using std::begin;
+    using std::end;
+
     if (CurBlockI != EndBlockI) {
       auto &curBlock = ToObj(*CurBlockI);
-      CurInstI = std::begin(curBlock);
-      EndInstI = std::end(curBlock);
+      CurInstI = begin(curBlock);
+      EndInstI = end(curBlock);
       advance();
     }
   }
 
-  InstIterator(InstructionBlockIteratorT End) : InstIterator(End, End) {}
+  explicit InstIterator(InstructionBlockIteratorT End)
+      : InstIterator(End, End) {}
 
   reference operator*() const { return *CurInstI; }
   pointer operator->() const { return &operator*(); }
@@ -98,6 +110,9 @@ template <typename InstructionBlockIteratorT> struct InstIterator {
 
 private:
   void advance() noexcept {
+    using std::begin;
+    using std::end;
+
     while (CurInstI == EndInstI) {
       ++CurBlockI;
 
@@ -106,8 +121,8 @@ private:
       }
 
       auto &curBlock = ToObj(*CurBlockI);
-      CurInstI = std::begin(curBlock);
-      EndInstI = std::end(curBlock);
+      CurInstI = begin(curBlock);
+      EndInstI = end(curBlock);
     }
   }
 
@@ -119,13 +134,16 @@ private:
 };
 
 template <typename T> inline decltype(auto) make_inst_begin(T &Container) {
-  using IteratorT = decltype(std::begin(Container));
-  return InstIterator<IteratorT>(std::begin(Container), std::end(Container));
+  using std::begin;
+  using std::end;
+  using IteratorT = decltype(begin(Container));
+  return InstIterator<IteratorT>(begin(Container), end(Container));
 }
 
 template <typename T> inline decltype(auto) make_inst_end(T &Container) {
-  using IteratorT = decltype(std::end(Container));
-  return InstIterator<IteratorT>(std::end(Container));
+  using std::end;
+  using IteratorT = decltype(end(Container));
+  return InstIterator<IteratorT>(end(Container));
 }
 
 template <typename T> inline decltype(auto) make_inst_range(T &Container) {
