@@ -69,9 +69,6 @@
 // using LLVM_DEBUG macro
 // using llvm::dbgs
 
-#include "boost/range/any_range.hpp"
-// using boost::any_range
-
 #include <cassert>
 // using assert
 
@@ -241,12 +238,7 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   Graph = std::make_unique<MDGraph>();
 
-  using instruction_range =
-      boost::any_range<llvm::Instruction &, boost::forward_traversal_tag>;
-
-  // auto instructions = instruction_range(make_inst_range(CurFunc));
-  auto instructions = instruction_range(boost::make_iterator_range(
-      make_inst_begin(CurFunc), make_inst_end(CurFunc)));
+  auto instructions = make_inst_range(CurFunc);
 
   if (AnalysisBackendType::DA == AnalysisBackendOption) {
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
