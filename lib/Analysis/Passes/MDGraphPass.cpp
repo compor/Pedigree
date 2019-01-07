@@ -69,6 +69,9 @@
 // using LLVM_DEBUG macro
 // using llvm::dbgs
 
+#include <vector>
+// using std::vector
+
 #include <cassert>
 // using assert
 
@@ -238,7 +241,22 @@ bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
 
   Graph = std::make_unique<MDGraph>();
 
-  auto instructions = make_inst_range(CurFunc);
+  std::vector<llvm::Instruction *> instructions;
+
+  switch (AnalysisTraversalOption) {
+  case AnalysisTraversalType::DepthFirst:
+    for (auto &e :
+         make_inst_range(llvm::df_begin(&CurFunc), llvm::df_end(&CurFunc))) {
+      instructions.emplace_back(&e);
+    }
+    break;
+  case AnalysisTraversalType::Naive:
+    // fallthrough
+  default:
+    for (auto &e : make_inst_range(CurFunc)) {
+      instructions.emplace_back(&e);
+    }
+  }
 
   if (AnalysisBackendType::DA == AnalysisBackendOption) {
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
