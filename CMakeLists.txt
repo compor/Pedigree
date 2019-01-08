@@ -281,6 +281,11 @@ configure_file(
   "${CMAKE_INSTALL_BINDIR}/run-pdg-dot.sh"
   @ONLY)
 
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/utils/scripts/run/run-pdg-dg-dot.sh.in"
+  "${CMAKE_INSTALL_BINDIR}/run-pdg-dg-dot.sh"
+  @ONLY)
+
 write_basic_package_version_file(
   "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PRJ_NAME_LOWER}-config-version.cmake"
   VERSION "${PRJ_VERSION_SHORT}" COMPATIBILITY SameMajorVersion)
