@@ -247,6 +247,8 @@ set(PRJ_CONFIG_HEADER_FILE "Config.hpp")
 set(PRJ_CMAKE_CONFIG_FILE "config.cmake")
 set(PRJ_CMAKE_CONFIG_EXTRA_FILE "config-extra.cmake")
 
+set(BIN_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils/scripts/run/)
+
 set(PASS_SO_NAME ${TRGT_PREFIX}${LIB_NAME}${TRGT_SUFFIX})
 
 set(DEPENDEE "")
@@ -276,15 +278,17 @@ configure_file(
   "${CMAKE_INSTALL_LIBDIR}/cmake/${PRJ_NAME_LOWER}-${PRJ_CMAKE_CONFIG_EXTRA_FILE}"
   @ONLY)
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/utils/scripts/run/run-pdg-dot.sh.in"
-  "${CMAKE_INSTALL_BINDIR}/run-pdg-dot.sh"
-  @ONLY)
+file(GLOB BIN_SCRIPTS LIST_DIRECTORIES FALSE RELATIVE
+  ${BIN_SCRIPTS_DIR}
+  ${BIN_SCRIPTS_DIR}/*.sh.in)
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/utils/scripts/run/run-pdg-dg-dot.sh.in"
-  "${CMAKE_INSTALL_BINDIR}/run-pdg-dg-dot.sh"
-  @ONLY)
+foreach(BIN_SCRIPT_TEMPLATE ${BIN_SCRIPTS})
+  get_filename_component(BIN_SCRIPT ${BIN_SCRIPT_TEMPLATE} NAME_WE)
+  configure_file(
+    "${BIN_SCRIPTS_DIR}/${BIN_SCRIPT_TEMPLATE}"
+    "${CMAKE_INSTALL_BINDIR}/${BIN_SCRIPT}.sh"
+    @ONLY)
+endforeach()
 
 write_basic_package_version_file(
   "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PRJ_NAME_LOWER}-config-version.cmake"
