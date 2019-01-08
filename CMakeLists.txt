@@ -247,6 +247,8 @@ set(PRJ_CONFIG_HEADER_FILE "Config.hpp")
 set(PRJ_CMAKE_CONFIG_FILE "config.cmake")
 set(PRJ_CMAKE_CONFIG_EXTRA_FILE "config-extra.cmake")
 
+set(PASS_SO_NAME ${TRGT_PREFIX}${LIB_NAME}${TRGT_SUFFIX})
+
 set(DEPENDEE "")
 
 install(TARGETS ${LIB_NAME} EXPORT ${PEDIGREE_EXPORT}
@@ -272,6 +274,11 @@ configure_file(
 configure_file(
   "${CMAKE_INSTALL_DATAROOTDIR}/cmake/${PRJ_CMAKE_CONFIG_EXTRA_FILE}.in"
   "${CMAKE_INSTALL_LIBDIR}/cmake/${PRJ_NAME_LOWER}-${PRJ_CMAKE_CONFIG_EXTRA_FILE}"
+  @ONLY)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/utils/scripts/run/run-pdg-dot.sh.in"
+  "${CMAKE_INSTALL_BINDIR}/run-pdg-dot.sh"
   @ONLY)
 
 write_basic_package_version_file(

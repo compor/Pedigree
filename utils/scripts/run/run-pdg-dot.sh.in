@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib"
+
+FILENAME=${1}
+
+opt \
+  -load ${LIB_DIR}/@PASS_SO_NAME@ \
+  -S \
+  -basicaa \
+  -globals-aa \
+  -scev-aa \
+  -tbaa \
+  -pedigree-pdg-dot \
+  -disable-output \
+  ${FILENAME}
+
