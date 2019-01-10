@@ -24,9 +24,6 @@
 #include "llvm/IR/CallSite.h"
 // using llvm::CallSite
 
-#include "llvm/IR/InstVisitor.h"
-// using llvm::InstVisitor
-
 #include "llvm/Analysis/MemoryDependenceAnalysis.h"
 // using llvm::MemoryDependenceAnalysis
 // using llvm::MemDepResult
@@ -75,7 +72,7 @@ enum class AnalysisMode : uint8_t {
   MemClobbers = 0b10,
 };
 
-class MDAMDGraphBuilder : public llvm::InstVisitor<MDAMDGraphBuilder> {
+class MDAMDGraphBuilder {
 private:
   std::unique_ptr<MDGraph> Graph;
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
@@ -146,11 +143,11 @@ private:
       }
     } else if (query.isNonLocal()) {
       if (CurScope >= AnalysisScope::Function) {
-        getFunctionLocalDependees(CurInstruction);
+        getIntraproceduralDependees(CurInstruction);
       }
     } else {
       // AnalysisScope::Block is the minimum and thus always on
-      getBlockLocalDependees(query, CurInstruction);
+      getIntrablockDependees(query, CurInstruction);
     }
   }
 
@@ -219,7 +216,7 @@ private:
     }
   }
 
-  void getFunctionLocalDependees(llvm::Instruction &Dst) {
+  void getIntraproceduralDependees(llvm::Instruction &Dst) {
     llvm::SmallVector<llvm::NonLocalDepResult, 8> results;
     CurAnalysis->getNonLocalPointerDependency(&Dst, results);
 
@@ -234,7 +231,7 @@ private:
     }
   }
 
-  void getBlockLocalDependees(llvm::MemDepResult &QueryResult,
+  void getIntrablockDependees(llvm::MemDepResult &QueryResult,
                               llvm::Instruction &Dst) {
     auto *src = QueryResult.getInst();
     auto info = determineHazard(*src, Dst, QueryResult);
