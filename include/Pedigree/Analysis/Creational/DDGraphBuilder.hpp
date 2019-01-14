@@ -40,8 +40,8 @@ class DDGraphBuilder : public llvm::InstVisitor<DDGraphBuilder> {
   bool shouldIgnoreConstantPHINodes = false;
 
   // always flow for SSA use-def chains
-  static constexpr BasicDependenceInfo::value_type info{DependenceOrigin::Data,
-                                                        DependenceHazard::Flow};
+  static constexpr BasicDependenceInfo::value_type info{
+      DependenceOrigin::Data, DependenceHazard::Unknown};
 
 public:
   DDGraphBuilder() = default;
