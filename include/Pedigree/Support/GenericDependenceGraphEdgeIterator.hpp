@@ -46,12 +46,6 @@ public:
     }
   }
 
-  template <typename U, typename K>
-  GenericDependenceGraphEdgeIterator(
-      const GenericDependenceGraphEdgeIterator<U, K> &Other)
-      : CurNI(Other.NI), EndNI(Other.NI), CurNEI(Other.CurNEI),
-        EndNEI(Other.EndNEI) {}
-
 private:
   bool isNodesIterationComplete() { return CurNI == EndNI; }
   bool isNodeEdgesIterationComplete() { return CurNEI == EndNEI; }
