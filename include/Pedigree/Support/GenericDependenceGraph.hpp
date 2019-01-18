@@ -114,7 +114,7 @@ public:
     return *this;
   }
 
-  decltype(auto) getNode(UnitType Unit) {
+  decltype(auto) getNode(UnitType Unit) const {
     auto found = NodeMap.find(Unit);
 
     return found == NodeMap.end() ? boost::none
