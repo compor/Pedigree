@@ -46,6 +46,8 @@ public:
     }
   }
 
+  NodeIteratorT getCurrent() const { return CurNI; }
+
 private:
   bool isNodesIterationComplete() { return CurNI == EndNI; }
   bool isNodeEdgesIterationComplete() { return CurNEI == EndNEI; }
