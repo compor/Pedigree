@@ -19,11 +19,6 @@
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
 
-#include "boost/optional.hpp"
-// using boost::optional
-// using boost::none
-// using boost::make_optional
-
 #include "boost/operators.hpp"
 // using boost::equality_comparable
 
@@ -117,8 +112,7 @@ public:
   decltype(auto) getNode(UnitType Unit) const {
     auto found = NodeMap.find(Unit);
 
-    return found == NodeMap.end() ? boost::none
-                                  : boost::make_optional((*found).second.get());
+    return found == NodeMap.end() ? nullptr : (*found).second.get();
   }
 
   decltype(auto) getOrInsertNode(UnitType Unit) {

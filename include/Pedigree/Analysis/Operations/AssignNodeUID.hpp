@@ -52,7 +52,7 @@ void AssignNodeUID(GraphT &G, IteratorT Begin, IteratorT End,
     auto node = G.getNode(std::addressof(k));
 
     if (node) {
-      auto &info = (*node)->info();
+      auto &info = node->info();
       info.id = FirstID;
     }
   });
