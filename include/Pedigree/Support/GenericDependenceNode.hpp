@@ -178,6 +178,19 @@ public:
     Node->InEdges.insert(this);
   }
 
+  bool removeDependentNode(const NodeType *Node) {
+    bool wasRemoved = false;
+    auto found = getEdgeWith(Node);
+
+    if (found != OutEdges.end()) {
+      (*found).node->InEdges.erase(this);
+      OutEdges.erase(found);
+      wasRemoved = true;
+    }
+
+    return wasRemoved;
+  }
+
   boost::optional<const typename EdgeInfoType::value_type &>
   getEdgeInfo(const NodeType *Node) const {
     auto found = getEdgeWith(Node);
