@@ -39,15 +39,12 @@
 #include "boost/optional.hpp"
 // using boost::optional
 
-#include "flags/flags.hpp"
-// using ALLOW_FLAGS_FOR_ENUM
-
-#include <iterator>
-// using std::iterator_traits
-
 #include <memory>
 // using std::unique_ptr
 // using std::make_unique
+
+#include <bitset>
+// using std::bitset
 
 #include <cassert>
 // using assert
@@ -59,17 +56,11 @@ class Function;
 } // namespace llvm
 
 namespace pedigree {
-enum class AnalysisMode : uint8_t;
-} // namespace pedigree
 
-ALLOW_FLAGS_FOR_ENUM(pedigree::AnalysisMode);
-
-namespace pedigree {
-
-enum class AnalysisMode : uint8_t {
-  Unknown = 0,
-  MemDefs = 0b01,
-  MemClobbers = 0b10,
+enum MDA_MD_AnalysisMode : uint8_t {
+  MDA_MD_MemDefs,
+  MDA_MD_MemClobbers,
+  MDA_MD_COUNT
 };
 
 class MDAMDGraphBuilder {
@@ -82,11 +73,12 @@ private:
 #endif
 
   AnalysisScope CurScope;
-  flags::flags<AnalysisMode> CurMode;
+  std::bitset<MDA_MD_COUNT> CurMode;
 
 public:
-  MDAMDGraphBuilder()
-      : CurScope(AnalysisScope::Block), CurMode(AnalysisMode::MemDefs) {}
+  MDAMDGraphBuilder() : CurScope(AnalysisScope::Block) {
+    CurMode[MDA_MD_MemDefs] = true;
+  }
 
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   MDAMDGraphBuilder &setAnalysis(llvm::MemoryDependenceAnalysis &Analysis) {
@@ -108,15 +100,15 @@ public:
     return *this;
   }
 
-  MDAMDGraphBuilder &turnOnMode(AnalysisMode Mode) {
-    CurMode |= Mode;
+  MDAMDGraphBuilder &turnOnMode(MDA_MD_AnalysisMode Mode) {
+    CurMode[Mode] = true;
 
     return *this;
   }
 
   template <typename IteratorT>
   std::unique_ptr<MDGraph> build(IteratorT Begin, IteratorT End) {
-    assert(!CurMode.empty() && "Analysis mode is empty!");
+    assert(!CurMode.none() && "Analysis mode is empty!");
 
     if (CurAnalysis) {
       Graph = std::make_unique<MDGraph>();
@@ -160,28 +152,27 @@ private:
   decltype(auto) determineHazard(const llvm::Instruction &Src,
                                  const llvm::Instruction &Dst,
                                  const llvm::MemDepResult &QueryResult) {
-    BasicDependenceInfo::value_type info{DependenceOrigin::Memory,
-                                         DependenceHazard::Unknown};
+    BasicDependenceInfo::value_type info{DO_Unknown, DH_Unknown};
 
-    if (QueryResult.isDef() && (CurMode & AnalysisMode::MemDefs)) {
+    if (QueryResult.isDef() && CurMode[MDA_MD_MemDefs]) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
         // do not add edge
       } else if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
-        info.hazards |= DependenceHazard::Anti;
+        info |= {DO_Memory, DH_Anti};
       } else if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
-        info.hazards |= DependenceHazard::Flow;
+        info |= {DO_Memory, DH_Flow};
       } else if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
-        info.hazards |= DependenceHazard::Out;
+        info |= {DO_Memory, DH_Out};
       } else {
         LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
       }
     }
 
-    if (QueryResult.isClobber() && (CurMode & AnalysisMode::MemClobbers)) {
+    if (QueryResult.isClobber() && CurMode[MDA_MD_MemClobbers]) {
       if (Dst.mayReadFromMemory()) {
-        info.hazards |= DependenceHazard::Flow;
+        info |= {DO_Memory, DH_Flow};
       } else if (Dst.mayWriteToMemory()) {
-        info.hazards |= DependenceHazard::Out;
+        info |= {DO_Memory, DH_Out};
       } else {
         LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
       }
@@ -210,7 +201,7 @@ private:
       auto *src = queryResult.getInst();
       auto info = determineHazard(*src, *dst, queryResult);
 
-      if (info.hazards) {
+      if (info) {
         addDependenceWithInfo(*src, *dst, info);
       }
     }
@@ -225,7 +216,7 @@ private:
       auto *src = queryResult.getInst();
       auto info = determineHazard(*src, Dst, queryResult);
 
-      if (info.hazards) {
+      if (info) {
         addDependenceWithInfo(*src, Dst, info);
       }
     }
@@ -236,7 +227,7 @@ private:
     auto *src = QueryResult.getInst();
     auto info = determineHazard(*src, Dst, QueryResult);
 
-    if (info.hazards) {
+    if (info) {
       addDependenceWithInfo(*src, Dst, info);
     }
   }

@@ -121,8 +121,6 @@ set(CMAKE_MODULE_LINKER_FLAGS
 find_package(Boost REQUIRED)
 find_package(Sanitizers)
 
-add_subdirectory(third_party/enum-flags)
-
 
 #
 
@@ -186,14 +184,9 @@ endforeach()
 
 # workaround for OBJECT libraries since they are not first class citizens
 # should be able to use target_link_libraries() against an INTERFACE library
-target_include_directories(${OBJ_LIB_NAME} PUBLIC
-  $<TARGET_PROPERTY:enum-flags::enum-flags,INTERFACE_INCLUDE_DIRECTORIES>)
 
 target_include_directories(${LIB_NAME} PUBLIC
   $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${PATH_PREFIX}/include>)
-
-target_link_libraries(${LIB_NAME} INTERFACE enum-flags::enum-flags)
-target_link_libraries(${TEST_LIB_NAME} INTERFACE enum-flags::enum-flags)
 
 if(SANITIZE_MEMORY)
   target_compile_options(${TEST_LIB_NAME} PUBLIC "-fPIC")

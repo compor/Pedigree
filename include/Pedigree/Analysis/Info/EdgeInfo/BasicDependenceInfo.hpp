@@ -9,11 +9,11 @@
 
 #include "EdgeInfoDOTTraits.hpp"
 
+#include "llvm/ADT/SmallVector.h"
+// using llvm::SmallVector
+
 #include "boost/operators.hpp"
 // using boost::orable
-
-#include "flags/flags.hpp"
-// using ALLOW_FLAGS_FOR_ENUM
 
 #include <sstream>
 // using std::stringstream
@@ -24,65 +24,141 @@
 #include <iomanip>
 // using std::setprecision
 
-#include <vector>
-// using std::vector
-
 #include <algorithm>
 // using std::copy
 
 #include <iterator>
 // using std::ostream_iterator
 
-#include <cstddef>
-// using std::size_t
+#include <bitset>
+// using std::bitset
 
 namespace pedigree {
 
-enum class DependenceHazard : std::size_t;
-
-enum class DependenceOrigin : std::size_t;
-
-} // namespace pedigree
-
-ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceHazard);
-ALLOW_FLAGS_FOR_ENUM(pedigree::DependenceOrigin);
-
-namespace pedigree {
-
-// also known as load-store classification (see OCMA book)
-enum class DependenceHazard : std::size_t {
-  Unknown = 0,
-  Flow = 0b01,
-  Anti = 0b10,
-  Out = 0b100,
+enum DependenceOrigin : unsigned {
+  DO_Unknown = 0,
+  DO_Data,
+  DO_Memory,
+  DO_Control,
+  DO_COUNT
 };
 
-enum class DependenceOrigin : std::size_t {
-  Unknown = 0,
-  Data = 0b01,
-  Memory = 0b10,
-  Control = 0b100,
+// also known as load-store classification (see OCMA book)
+enum DependenceHazard : unsigned {
+  DH_Unknown = 0,
+  DH_Flow,
+  DH_Anti,
+  DH_Out,
+  DH_COUNT
 };
 
 struct BasicDependenceInfo {
   struct value_type : boost::orable<value_type> {
-    flags::flags<DependenceOrigin> origins;
-    flags::flags<DependenceHazard> hazards;
+    std::bitset<DO_COUNT> origins;
+    llvm::SmallVector<std::bitset<DH_COUNT>, DO_COUNT> hazards{};
 
-    constexpr value_type(DependenceOrigin origin,
-                         DependenceHazard hazard) noexcept
-        : origins(origin), hazards(hazard) {}
+  private:
+    void reset() {
+      origins.reset();
+      for (auto &e : hazards) {
+        e.reset();
+      }
 
-    constexpr value_type() noexcept
-        : value_type(DependenceOrigin::Unknown, DependenceHazard::Unknown) {}
+      origins[DO_Unknown] = true;
+      hazards[DO_Unknown][DH_Unknown] = true;
+    }
 
-    constexpr value_type(const value_type &) = default;
+    bool isValid() const {
+      if (!origins.count()) {
+        return false;
+      }
 
-    value_type &operator|=(const value_type &Other) noexcept {
-      this->hazards = this->hazards | Other.hazards;
-      this->origins = this->origins | Other.origins;
+      if (origins[DO_Unknown]) {
+        if (origins.count() > 1) {
+          return false;
+        }
+
+        if (hazards[DO_Unknown].count() > 1) {
+          return false;
+        }
+
+        if (!hazards[DO_Unknown][DH_Unknown]) {
+          return false;
+        }
+      }
+
+      bool status = true;
+
+      if (origins[DO_Control]) {
+        if (!hazards[DO_Control][DH_Unknown]) {
+          status |= false;
+        }
+
+        if (hazards[DO_Control].count() > 1) {
+          status |= false;
+        }
+      }
+
+      if (origins[DO_Data] && hazards[DO_Data][DH_Unknown]) {
+        status |= false;
+      }
+
+      if (origins[DO_Memory] && hazards[DO_Memory][DH_Unknown]) {
+        status |= false;
+      }
+
+      return status;
+    }
+
+  public:
+    value_type() {
+      for (auto i = 0u; i < DO_COUNT; ++i) {
+        hazards.push_back({});
+      }
+      reset();
+    }
+
+    value_type(DependenceOrigin O, DependenceHazard H) : value_type() {
+      origins[DO_Unknown] = false;
+      hazards[DH_Unknown].reset();
+
+      origins[O] = true;
+      hazards[O][H] = true;
+
+      assert(isValid() && "Dependence info is not valid!");
+    }
+
+    value_type(const value_type &) = default;
+
+    value_type &operator|=(const value_type &Other) {
+      if (Other.origins[DO_Unknown]) {
+        ;
+      } else if (origins[DO_Unknown]) {
+        origins = Other.origins;
+        hazards = Other.hazards;
+      } else {
+        origins |= Other.origins;
+
+        for (auto i = 0u; i < hazards.size(); ++i) {
+          hazards[i] |= Other.hazards[i];
+        }
+      }
+
+      assert(isValid() && "Dependence info is not valid!");
 
       return *this;
+    }
+
+    explicit operator bool() const { return !origins[DO_Unknown]; }
+
+    bool any(DependenceHazard H) const {
+      for (auto i = 0u; i < origins.size(); ++i) {
+        if (origins[i] && hazards[i][H]) {
+          return true;
+        }
+      }
+
+      return false;
     }
   };
 };
@@ -93,7 +169,7 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
   static std::string toDOTAttributes(const BasicDependenceInfo::value_type &I) {
     auto attr = toDOTColor(I);
 
-    if (I.origins & DependenceOrigin::Memory) {
+    if (I.origins[DO_Memory]) {
       attr += " " + toDOTLabel(I);
     }
 
@@ -103,26 +179,25 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
   static std::string toDOTColor(const BasicDependenceInfo::value_type &I) {
     std::stringstream colorAttribute{};
     std::stringstream sep{};
-    std::vector<std::string> colors{};
+    llvm::SmallVector<std::string, 4> colors{};
 
     colorAttribute << "color=\"";
 
-    if (I.origins.empty()) {
+    if (I.origins.none()) {
       colors.emplace_back("grey");
     } else {
-      auto n = std::distance(I.origins.cbegin(), I.origins.cend());
-      auto ratio = 1.0 / n;
+      auto ratio = 1.0 / DO_COUNT;
       sep << std::setprecision(2) << ";" << ratio << ":";
 
-      if (I.origins & DependenceOrigin::Control) {
+      if (I.origins[DO_Control]) {
         colors.emplace_back("red");
       }
 
-      if (I.origins & DependenceOrigin::Memory) {
+      if (I.origins[DO_Memory]) {
         colors.emplace_back("purple");
       }
 
-      if (I.origins & DependenceOrigin::Data) {
+      if (I.origins[DO_Data]) {
         colors.emplace_back("blue");
       }
     }
@@ -139,18 +214,18 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
   static std::string toDOTLabel(const BasicDependenceInfo::value_type &I) {
     std::string label{"label=\""};
 
-    if (I.hazards.empty()) {
+    if (I.origins.none()) {
       label = "label=\"U\"";
     } else {
-      if (I.hazards & DependenceHazard::Flow) {
+      if (I.any(DH_Flow)) {
         label += "F";
       }
 
-      if (I.hazards & DependenceHazard::Anti) {
+      if (I.any(DH_Anti)) {
         label += "A";
       }
 
-      if (I.hazards & DependenceHazard::Out) {
+      if (I.any(DH_Out)) {
         label += "O";
       }
 

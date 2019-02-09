@@ -88,9 +88,6 @@ public:
       Graph = std::make_unique<MDGraph>();
       visit(const_cast<llvm::Function &>(*CurUnit));
 
-      constexpr BasicDependenceInfo::value_type info{DependenceOrigin::Memory,
-                                                     DependenceHazard::Flow};
-
       for (auto ii = std::begin(MemInstructions),
                 ie = std::end(MemInstructions);
            ii != ie; ++ii) {
@@ -99,7 +96,7 @@ public:
         for (auto jj = ii; jj != ie; ++jj) {
           if (auto D = CurAnalysis->depends(*ii, *jj, true)) {
             auto dst = Graph->getOrInsertNode(*jj);
-            src->addDependentNode(dst, info);
+            src->addDependentNode(dst, {DO_Memory, DH_Flow});
           }
         }
       }

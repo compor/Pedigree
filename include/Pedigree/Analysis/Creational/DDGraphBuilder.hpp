@@ -39,10 +39,6 @@ class DDGraphBuilder : public llvm::InstVisitor<DDGraphBuilder> {
   boost::optional<const llvm::Function &> CurUnit;
   bool shouldIgnoreConstantPHINodes = false;
 
-  // always flow for SSA use-def chains
-  static constexpr BasicDependenceInfo::value_type info{
-      DependenceOrigin::Data, DependenceHazard::Unknown};
-
 public:
   DDGraphBuilder() = default;
 
@@ -73,7 +69,7 @@ public:
       if (user) {
         auto src = Graph->getOrInsertNode(&CurInstruction);
         auto dst = Graph->getOrInsertNode(user);
-        src->addDependentNode(dst, info);
+        src->addDependentNode(dst, {DO_Data, DH_Flow});
       }
     }
   }
@@ -85,7 +81,7 @@ public:
           auto dst = Graph->getOrInsertNode(&CurInstruction);
           auto src = Graph->getOrInsertNode(
               CurInstruction.getIncomingBlock(e)->getTerminator());
-          src->addDependentNode(dst, info);
+          src->addDependentNode(dst, {DO_Data, DH_Flow});
         }
       }
     }
@@ -93,8 +89,6 @@ public:
     visitInstruction(CurInstruction);
   }
 };
-
-constexpr BasicDependenceInfo::value_type DDGraphBuilder::info;
 
 } // namespace pedigree
 

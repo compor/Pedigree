@@ -42,9 +42,6 @@ namespace pedigree {
 class CDGraphBuilder {
   boost::optional<const llvm::Function &> CurUnit;
 
-  static constexpr BasicDependenceInfo::value_type info{
-      DependenceOrigin::Control, DependenceHazard::Unknown};
-
 public:
   CDGraphBuilder() = default;
 
@@ -76,15 +73,13 @@ public:
       for (auto &e : f.second) {
         auto dst = Graph->getOrInsertNode(f.first);
         auto src = Graph->getOrInsertNode(e);
-        src->addDependentNode(dst, info);
+        src->addDependentNode(dst, {DO_Control, DH_Unknown});
       }
     }
 
     return Graph;
   }
 };
-
-constexpr BasicDependenceInfo::value_type CDGraphBuilder::info;
 
 } // namespace pedigree
 

@@ -164,11 +164,10 @@ static llvm::cl::opt<pedigree::AnalysisScope> AnalysisBackendScopeOption(
         ),
     llvm::cl::cat(PedigreeMDGraphPassCategory));
 
-static llvm::cl::list<pedigree::AnalysisMode> AnalysisBackendModeOption(
+static llvm::cl::list<pedigree::MDA_MD_AnalysisMode> AnalysisBackendModeOption(
     "pedigree-mdg-backend-mode", llvm::cl::desc("analysis backend mode"),
-    llvm::cl::values(clEnumValN(pedigree::AnalysisMode::MemDefs, "defs",
-                                "mem defs"),
-                     clEnumValN(pedigree::AnalysisMode::MemClobbers, "clobbers",
+    llvm::cl::values(clEnumValN(pedigree::MDA_MD_MemDefs, "defs", "mem defs"),
+                     clEnumValN(pedigree::MDA_MD_MemClobbers, "clobbers",
                                 "mem clobbers")
 // clang-format off
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
@@ -216,8 +215,8 @@ static void checkCmdLineOptions() {
 #endif
 
   if (!AnalysisBackendModeOption.size()) {
-    AnalysisBackendModeOption.addValue(pedigree::AnalysisMode::MemDefs);
-    AnalysisBackendModeOption.addValue(pedigree::AnalysisMode::MemClobbers);
+    AnalysisBackendModeOption.addValue(pedigree::MDA_MD_MemDefs);
+    AnalysisBackendModeOption.addValue(pedigree::MDA_MD_MemClobbers);
   }
 }
 

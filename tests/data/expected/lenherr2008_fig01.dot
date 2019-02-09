@@ -1,8 +1,15 @@
 
 digraph {
   R [dg_uid=0]
-  A [dg_uid=4]
-  B [dg_uid=7]
+  A [dg_uid=3]
+  B [dg_uid=4]
+  C [dg_uid=5]
+  D [dg_uid=7]
+  E [dg_uid=8]
+  F [dg_uid=9]
 
-  A -> B
+  A -> C
+  B -> D
+  C -> E
+  E -> F
 }
