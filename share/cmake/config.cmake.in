@@ -1,6 +1,4 @@
 # cmake file
 
-include(${CMAKE_CURRENT_LIST_DIR}/enum-flags.cmake)
-
 include(${CMAKE_CURRENT_LIST_DIR}/@PRJ_NAME_LOWER@.cmake)
 
