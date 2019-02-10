@@ -14,6 +14,7 @@
 
 #include "boost/operators.hpp"
 // using boost::orable
+// using boost::andable
 
 #include <sstream>
 // using std::stringstream
@@ -53,7 +54,7 @@ enum DependenceHazard : unsigned {
 };
 
 struct BasicDependenceInfo {
-  struct value_type : boost::orable<value_type> {
+  struct value_type : boost::orable<value_type>, boost::andable<value_type> {
     std::bitset<DO_COUNT> origins;
     llvm::SmallVector<std::bitset<DH_COUNT>, DO_COUNT> hazards{};
 
@@ -142,6 +143,29 @@ struct BasicDependenceInfo {
         for (auto i = 0u; i < hazards.size(); ++i) {
           hazards[i] |= Other.hazards[i];
         }
+      }
+
+      assert(isValid() && "Dependence info is not valid!");
+
+      return *this;
+    }
+
+    value_type &operator&=(const value_type &Other) {
+      if (Other.origins[DO_Unknown]) {
+        ;
+      } else if (origins[DO_Unknown]) {
+        origins = Other.origins;
+        hazards = Other.hazards;
+      } else {
+        origins &= Other.origins;
+
+        for (auto i = 0u; i < hazards.size(); ++i) {
+          hazards[i] &= Other.hazards[i];
+        }
+      }
+
+      if (origins.none()) {
+        reset();
       }
 
       assert(isValid() && "Dependence info is not valid!");
