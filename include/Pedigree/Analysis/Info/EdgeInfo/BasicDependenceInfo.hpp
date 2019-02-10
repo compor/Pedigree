@@ -151,7 +151,9 @@ struct BasicDependenceInfo {
 
     explicit operator bool() const { return !origins[DO_Unknown]; }
 
-    bool any(DependenceHazard H) const {
+    bool has(DependenceOrigin O) const { return origins[O]; }
+
+    bool has(DependenceHazard H) const {
       for (auto i = 0u; i < origins.size(); ++i) {
         if (origins[i] && hazards[i][H]) {
           return true;
@@ -159,6 +161,10 @@ struct BasicDependenceInfo {
       }
 
       return false;
+    }
+
+    bool has(DependenceOrigin O, DependenceHazard H) const {
+      return has(O) && has(H);
     }
   };
 };
@@ -214,18 +220,18 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
   static std::string toDOTLabel(const BasicDependenceInfo::value_type &I) {
     std::string label{"label=\""};
 
-    if (I.origins.none()) {
+    if (I) {
       label = "label=\"U\"";
     } else {
-      if (I.any(DH_Flow)) {
+      if (I.has(DH_Flow)) {
         label += "F";
       }
 
-      if (I.any(DH_Anti)) {
+      if (I.has(DH_Anti)) {
         label += "A";
       }
 
-      if (I.any(DH_Out)) {
+      if (I.has(DH_Out)) {
         label += "O";
       }
 
