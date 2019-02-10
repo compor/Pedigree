@@ -55,10 +55,10 @@ enum DependenceHazard : unsigned {
 
 struct BasicDependenceInfo {
   struct value_type : boost::orable<value_type>, boost::andable<value_type> {
+  private:
     std::bitset<DO_COUNT> origins;
     llvm::SmallVector<std::bitset<DH_COUNT>, DO_COUNT> hazards{};
 
-  private:
     void reset() {
       origins.reset();
       for (auto &e : hazards) {
@@ -199,7 +199,7 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
   static std::string toDOTAttributes(const BasicDependenceInfo::value_type &I) {
     auto attr = toDOTColor(I);
 
-    if (I.origins[DO_Memory]) {
+    if (I.has(DO_Memory)) {
       attr += " " + toDOTLabel(I);
     }
 
@@ -213,21 +213,21 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
 
     colorAttribute << "color=\"";
 
-    if (I.origins.none()) {
+    if (I) {
       colors.emplace_back("grey");
     } else {
       auto ratio = 1.0 / DO_COUNT;
       sep << std::setprecision(2) << ";" << ratio << ":";
 
-      if (I.origins[DO_Control]) {
+      if (I.has(DO_Control)) {
         colors.emplace_back("red");
       }
 
-      if (I.origins[DO_Memory]) {
+      if (I.has(DO_Memory)) {
         colors.emplace_back("purple");
       }
 
-      if (I.origins[DO_Data]) {
+      if (I.has(DO_Data)) {
         colors.emplace_back("blue");
       }
     }
