@@ -20,12 +20,12 @@
 #include "llvm/Analysis/PostDominators.h"
 // using llvm::PostDominatorTree
 
+#include "llvm/ADT/Optional.h"
+// using llvm::Optional
+
 #include "llvm/Support/Debug.h"
 // using LLVM_DEBUG macro
 // using llvm::dbgs
-
-#include "boost/optional.hpp"
-// using boost::optional
 
 #include <memory>
 // using std::unique_ptr
@@ -40,16 +40,18 @@ class Function;
 namespace pedigree {
 
 class CDGraphBuilder {
-  boost::optional<const llvm::Function &> CurUnit;
+  llvm::Optional<const llvm::Function *> CurUnit;
 
 public:
   CDGraphBuilder() = default;
 
-  CDGraphBuilder &setUnit(const llvm::Function &Unit) {
+  CDGraphBuilder &setUnit(const llvm::Function *Unit) {
     CurUnit.emplace(Unit);
 
     return *this;
   }
+
+  CDGraphBuilder &setUnit(const llvm::Function &Unit) { return setUnit(&Unit); }
 
   std::unique_ptr<CDGraph> build() {
     if (!CurUnit) {
@@ -60,7 +62,7 @@ public:
     PostDominanceFrontierBase<llvm::BasicBlock> pdf;
 
 #if (LLVM_VERSION_MAJOR >= 5)
-    curPDT.recalculate(const_cast<llvm::Function &>(*CurUnit));
+    curPDT.recalculate(const_cast<llvm::Function &>(**CurUnit));
     pdf.analyze(curPDT);
 #else
     curPDT.DT->recalculate(const_cast<llvm::Function &>(*CurUnit));

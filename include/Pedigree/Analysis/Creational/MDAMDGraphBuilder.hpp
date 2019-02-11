@@ -32,12 +32,12 @@
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
 
+#include "llvm/ADT/Optional.h"
+// using llvm::Optional
+
 #include "llvm/Support/Debug.h"
 // using LLVM_DEBUG macro
 // using llvm::dbgs
-
-#include "boost/optional.hpp"
-// using boost::optional
 
 #include <memory>
 // using std::unique_ptr
@@ -67,9 +67,9 @@ class MDAMDGraphBuilder {
 private:
   std::unique_ptr<MDGraph> Graph;
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
-  boost::optional<llvm::MemoryDependenceAnalysis &> CurAnalysis;
+  llvm::Optional<llvm::MemoryDependenceAnalysis *> CurAnalysis;
 #else
-  boost::optional<llvm::MemoryDependenceResults &> CurAnalysis;
+  llvm::Optional<llvm::MemoryDependenceResults *> CurAnalysis;
 #endif
 
   AnalysisScope CurScope;
@@ -82,13 +82,13 @@ public:
 
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   MDAMDGraphBuilder &setAnalysis(llvm::MemoryDependenceAnalysis &Analysis) {
-    CurAnalysis = const_cast<llvm::MemoryDependenceAnalysis &>(Analysis);
+    CurAnalysis = const_cast<llvm::MemoryDependenceAnalysis *>(&Analysis);
 
     return *this;
   }
 #else
   MDAMDGraphBuilder &setAnalysis(llvm::MemoryDependenceResults &Analysis) {
-    CurAnalysis = const_cast<llvm::MemoryDependenceResults &>(Analysis);
+    CurAnalysis = const_cast<llvm::MemoryDependenceResults *>(&Analysis);
 
     return *this;
   }
@@ -123,7 +123,7 @@ public:
 
 private:
   void processMemInstruction(llvm::Instruction &CurInstruction) {
-    auto query = CurAnalysis->getDependency(&CurInstruction);
+    auto query = (*CurAnalysis)->getDependency(&CurInstruction);
 
     if (query.isUnknown()) {
       return;
@@ -193,7 +193,7 @@ private:
       return;
     }
 
-    auto &results = CurAnalysis->getNonLocalCallDependency(Dst);
+    auto &results = (*CurAnalysis)->getNonLocalCallDependency(Dst);
     auto dst = Dst.getInstruction();
 
     for (auto &e : results) {
@@ -209,7 +209,7 @@ private:
 
   void getIntraproceduralDependees(llvm::Instruction &Dst) {
     llvm::SmallVector<llvm::NonLocalDepResult, 8> results;
-    CurAnalysis->getNonLocalPointerDependency(&Dst, results);
+    (*CurAnalysis)->getNonLocalPointerDependency(&Dst, results);
 
     for (const auto &e : results) {
       auto &queryResult = e.getResult();

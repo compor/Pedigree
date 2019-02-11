@@ -15,12 +15,12 @@
 #include "llvm/IR/InstVisitor.h"
 // using llvm::InstVisitor
 
+#include "llvm/ADT/Optional.h"
+// using llvm::Optional
+
 #include "llvm/Support/Debug.h"
 // using LLVM_DEBUG macro
 // using llvm::dbgs
-
-#include "boost/optional.hpp"
-// using boost::optional
 
 #include <memory>
 // using std::unique_ptr
@@ -36,17 +36,19 @@ namespace pedigree {
 
 class DDGraphBuilder : public llvm::InstVisitor<DDGraphBuilder> {
   std::unique_ptr<DDGraph> Graph;
-  boost::optional<const llvm::Function &> CurUnit;
+  llvm::Optional<const llvm::Function *> CurUnit;
   bool shouldIgnoreConstantPHINodes = false;
 
 public:
   DDGraphBuilder() = default;
 
-  DDGraphBuilder &setUnit(const llvm::Function &Unit) {
+  DDGraphBuilder &setUnit(const llvm::Function *Unit) {
     CurUnit.emplace(Unit);
 
     return *this;
   }
+
+  DDGraphBuilder &setUnit(const llvm::Function &Unit) { return setUnit(&Unit); }
 
   DDGraphBuilder &ignoreConstantPHINodes(bool Val) {
     shouldIgnoreConstantPHINodes = Val;
@@ -57,7 +59,7 @@ public:
   std::unique_ptr<DDGraph> build() {
     if (CurUnit) {
       Graph = std::make_unique<DDGraph>();
-      visit(const_cast<llvm::Function &>(*CurUnit));
+      visit(const_cast<llvm::Function *>(*CurUnit));
     }
 
     return std::move(Graph);

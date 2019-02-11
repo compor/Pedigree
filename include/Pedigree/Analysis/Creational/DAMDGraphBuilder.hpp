@@ -21,12 +21,12 @@
 #include "llvm/Analysis/DependenceAnalysis.h"
 // using llvm::DependenceAnalysis
 
+#include "llvm/ADT/Optional.h"
+// using llvm::Optional
+
 #include "llvm/Support/Debug.h"
 // using LLVM_DEBUG macro
 // using llvm::dbgs
-
-#include "boost/optional.hpp"
-// using boost::optional
 
 #include <memory>
 // using std::unique_ptr
@@ -49,11 +49,11 @@ namespace pedigree {
 class DAMDGraphBuilder : public llvm::InstVisitor<DAMDGraphBuilder> {
   std::unique_ptr<MDGraph> Graph;
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
-  boost::optional<llvm::DependenceAnalysis &> CurAnalysis;
+  llvm::Optional<llvm::DependenceAnalysis *> CurAnalysis;
 #else
-  boost::optional<llvm::DependenceInfo &> CurAnalysis;
+  llvm::Optional<llvm::DependenceInfo *> CurAnalysis;
 #endif
-  boost::optional<const llvm::Function &> CurUnit;
+  llvm::Optional<const llvm::Function *> CurUnit;
   std::vector<llvm::Instruction *> MemInstructions;
 
   void visitMemRefInstruction(llvm::Instruction &CurInstruction) {
@@ -65,28 +65,32 @@ public:
 
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   DAMDGraphBuilder &setAnalysis(llvm::DependenceAnalysis &Analysis) {
-    CurAnalysis = const_cast<llvm::DependenceAnalysis &>(Analysis);
+    CurAnalysis = const_cast<llvm::DependenceAnalysis *>(&Analysis);
 
     return *this;
   }
 #else
   DAMDGraphBuilder &setAnalysis(llvm::DependenceInfo &Analysis) {
-    CurAnalysis = const_cast<llvm::DependenceInfo &>(Analysis);
+    CurAnalysis = const_cast<llvm::DependenceInfo *>(&Analysis);
 
     return *this;
   }
 #endif
 
-  DAMDGraphBuilder &setUnit(const llvm::Function &Unit) {
+  DAMDGraphBuilder &setUnit(const llvm::Function *Unit) {
     CurUnit.emplace(Unit);
 
     return *this;
   }
 
+  DAMDGraphBuilder &setUnit(const llvm::Function &Unit) {
+    return setUnit(&Unit);
+  }
+
   std::unique_ptr<MDGraph> build() {
     if (CurUnit && CurAnalysis) {
       Graph = std::make_unique<MDGraph>();
-      visit(const_cast<llvm::Function &>(*CurUnit));
+      visit(const_cast<llvm::Function *>(*CurUnit));
 
       for (auto ii = std::begin(MemInstructions),
                 ie = std::end(MemInstructions);
@@ -94,7 +98,7 @@ public:
         auto src = Graph->getOrInsertNode(*ii);
 
         for (auto jj = ii; jj != ie; ++jj) {
-          if (auto D = CurAnalysis->depends(*ii, *jj, true)) {
+          if (auto D = (*CurAnalysis)->depends(*ii, *jj, true)) {
             auto dst = Graph->getOrInsertNode(*jj);
             src->addDependentNode(dst, {DO_Memory, DH_Flow});
           }
