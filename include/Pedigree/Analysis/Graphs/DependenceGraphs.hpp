@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_DEPENDENCEGRAPHS_HPP
-#define PEDIGREE_DEPENDENCEGRAPHS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -199,4 +198,3 @@ struct DOTGraphTraits<pedigree::BasicBlockDependenceGraph *>
 
 } // namespace llvm
 
-#endif // header

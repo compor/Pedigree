@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_LLVMGRAPHTRAITSHELPERBASE_HPP
-#define PEDIGREE_LLVMGRAPHTRAITSHELPERBASE_HPP
+#pragma once
 
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
@@ -412,4 +411,3 @@ struct LLVMDependenceInverseGraphTraitsHelperBase<const GraphT *> {
 
 } // namespace pedigree
 
-#endif // header

@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_INFO_BASICDEPENDENCEINFO_HPP
-#define PEDIGREE_INFO_BASICDEPENDENCEINFO_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -268,4 +267,3 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
 
 } // namespace pedigree
 
-#endif // header

@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_LLVMANALYSISGRAPHTRAITS_HPP
-#define PEDIGREE_LLVMANALYSISGRAPHTRAITS_HPP
+#pragma once
 
 #include <memory>
 // using std::addressof
@@ -26,4 +25,3 @@ struct LLVMAnalysisInstructionDependenceGraphPassTraitsHelperBase {
 
 } // namespace pedigree
 
-#endif // header

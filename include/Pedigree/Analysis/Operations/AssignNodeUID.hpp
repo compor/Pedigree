@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_ASSIGNNODEUID_HPP
-#define PEDIGREE_ASSIGNNODEUID_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -60,4 +59,3 @@ void AssignNodeUID(GraphT &G, IteratorT Begin, IteratorT End,
 
 } // namespace pedigree
 
-#endif // header

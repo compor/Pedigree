@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_CDGRAPH_HPP
-#define PEDIGREE_CDGRAPH_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -19,4 +18,3 @@ using InstCDGraph = InstructionDependenceGraph;
 
 } // namespace pedigree
 
-#endif // header

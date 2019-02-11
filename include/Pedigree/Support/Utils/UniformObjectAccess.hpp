@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_UNIFORMOBJECTACCESS_HPP
-#define PEDIGREE_UNIFORMOBJECTACCESS_HPP
+#pragma once
 
 #include <cassert>
 // using assert
@@ -25,4 +24,3 @@ template <typename T> T *ToPtr(T *Ptr) { return Ptr; }
 
 } // namespace pedigree
 
-#endif // header

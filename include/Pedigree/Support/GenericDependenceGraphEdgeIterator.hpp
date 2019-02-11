@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_GENERICDEPENDENCEGRAPHEDGEITERATOR_HPP
-#define PEDIGREE_GENERICDEPENDENCEGRAPHEDGEITERATOR_HPP
+#pragma once
 
 #include "boost/iterator/iterator_facade.hpp"
 // using boost::iterator_facade
@@ -103,4 +102,3 @@ private:
 } // namespace detail
 } // namespace pedigree
 
-#endif // header

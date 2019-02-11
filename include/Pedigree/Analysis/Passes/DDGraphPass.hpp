@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_DDGRAPHPASS_HPP
-#define PEDIGREE_DDGRAPHPASS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -49,4 +48,3 @@ struct DDGraphPass : public llvm::FunctionPass {
 
 } // namespace pedigree
 
-#endif // header

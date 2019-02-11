@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_UNITS_UNITTRAITS_HPP
-#define PEDIGREE_UNITS_UNITTRAITS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -62,4 +61,3 @@ constexpr bool is_unit_convertible_v = is_unit_convertible<FromT, ToT>::value;
 
 } // namespace pedigree
 
-#endif // header

@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_UTIL_HPP
-#define PEDIGREE_UTIL_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -15,4 +14,3 @@
 
 //
 
-#endif // header

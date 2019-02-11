@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_INFO_NODEINFO_DOTTRAITS_HPP
-#define PEDIGREE_INFO_NODEINFO_DOTTRAITS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -19,4 +18,3 @@ template <typename InfoT> struct NodeInfoDOTTraits {
 
 } // namespace pedigree
 
-#endif // header

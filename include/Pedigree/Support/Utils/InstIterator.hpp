@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_INSTITERATOR_HPP
-#define PEDIGREE_INSTITERATOR_HPP
+#pragma once
 
 #include "llvm/Config/llvm-config.h"
 // version macros
@@ -156,4 +155,3 @@ template <typename T> inline decltype(auto) make_inst_range(T Begin, T End) {
 
 } // namespace pedigree
 
-#endif // header

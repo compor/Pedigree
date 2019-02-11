@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_GRAPHCONVERTER_HPP
-#define PEDIGREE_GRAPHCONVERTER_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -63,4 +62,3 @@ void Convert(const GenericDependenceGraph<FromNodeT> &From,
 
 } // namespace pedigree
 
-#endif // header

@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_TYPETRAITS_HPP
-#define PEDIGREE_TYPETRAITS_HPP
+#pragma once
 
 #include <type_traits>
 // using std::integral_constant
@@ -90,4 +89,3 @@ constexpr bool is_const_iterator_v = is_const_iterator<T>::value;
 
 } // namespace pedigree
 
-#endif // header

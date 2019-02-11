@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_POSTDOMINANCEFRONTIER_HPP
-#define PEDIGREE_POSTDOMINANCEFRONTIER_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -131,4 +130,3 @@ protected:
 
 } // namespace pedigree
 
-#endif // header

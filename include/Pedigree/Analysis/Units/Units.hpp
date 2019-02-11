@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_UNITS_UNITS_HPP
-#define PEDIGREE_UNITS_UNITS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -21,4 +20,3 @@ struct function_unit_tag {};
 
 } // namespace pedigree
 
-#endif // header

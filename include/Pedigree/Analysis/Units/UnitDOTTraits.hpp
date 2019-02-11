@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_UNITS_DOTTRAITS_HPP
-#define PEDIGREE_UNITS_DOTTRAITS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -119,4 +118,3 @@ struct UnitDOTTraits<
 
 } // namespace pedigree
 
-#endif // header

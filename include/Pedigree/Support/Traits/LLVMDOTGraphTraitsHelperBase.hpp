@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
-#define PEDIGREE_LLVMDOTGRAPHTRAITSHELPER_HPP
+#pragma once
 
 #include "Pedigree/Analysis/Info/NodeInfo/NodeInfoDOTTraits.hpp"
 
@@ -106,4 +105,3 @@ struct LLVMDOTDependenceGraphTraitsHelperBase<GraphT *>
 
 } // namespace pedigree
 
-#endif // header

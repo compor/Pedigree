@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_INFO_EMPTYINFO_HPP
-#define PEDIGREE_INFO_EMPTYINFO_HPP
+#pragma once
 
 namespace pedigree {
 
@@ -13,4 +12,3 @@ struct EmptyInfo {
 
 } // namespace pedigree
 
-#endif // header

@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_UNITCONVERTERS_HPP
-#define PEDIGREE_UNITCONVERTERS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -45,4 +44,3 @@ struct BlockToInstructionsUnitConverter {
 
 } // namespace pedigree
 
-#endif // header

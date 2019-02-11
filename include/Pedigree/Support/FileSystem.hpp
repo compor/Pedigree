@@ -8,8 +8,7 @@
 #include <string>
 // using std::string
 
-#ifndef PEDIGREE_FILESYSTEM_HPP
-#define PEDIGREE_FILESYSTEM_HPP
+#pragma once
 
 namespace llvm {
 class Twine;
@@ -21,4 +20,3 @@ llvm::ErrorOr<std::string> CreateDirectory(const llvm::Twine &Path);
 
 } // namespace pedigree
 
-#endif // header

@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_PDGRAPH_HPP
-#define PEDIGREE_PDGRAPH_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -16,4 +15,3 @@ using PDGraph = InstructionDependenceGraph;
 
 } // namespace pedigree
 
-#endif // header

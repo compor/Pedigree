@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_UTILS_HPP
-#define PEDIGREE_UTILS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -56,4 +55,3 @@ static constexpr bool dumpFunction(const llvm::Function *CurFunc = nullptr) {
 
 #endif // PEDIGREE_DEBUG
 
-#endif // header

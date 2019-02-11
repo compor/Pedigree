@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_ANALYSISSCOPE_HPP
-#define PEDIGREE_ANALYSISSCOPE_HPP
+#pragma once
 
 #include <cstdint>
 // using std::uint8_t
@@ -19,4 +18,3 @@ enum class AnalysisScope : std::uint8_t {
 
 } // namespace pedigree
 
-#endif // header

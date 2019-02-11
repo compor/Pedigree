@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_INFO_BASICNODEINFO_HPP
-#define PEDIGREE_INFO_BASICNODEINFO_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -47,4 +46,3 @@ template <> struct NodeInfoDOTTraits<BasicNodeInfo::value_type> {
 
 } // namespace pedigree
 
-#endif // header

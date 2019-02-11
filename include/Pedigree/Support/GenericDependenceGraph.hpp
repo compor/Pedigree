@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_GENERICDEPENDENCEGRAPH_HPP
-#define PEDIGREE_GENERICDEPENDENCEGRAPH_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -267,4 +266,3 @@ public:
 
 } // namespace pedigree
 
-#endif // header

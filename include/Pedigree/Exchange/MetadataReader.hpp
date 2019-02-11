@@ -14,8 +14,7 @@
 #include <cassert>
 // using assert
 
-#ifndef PEDIGREE_METADATAREADER_HPP
-#define PEDIGREE_METADATAREADER_HPP
+#pragma once
 
 namespace pedigree {
 
@@ -61,4 +60,3 @@ public:
 
 } // namespace pedigree
 
-#endif // header

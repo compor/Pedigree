@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_INFO_EDGEINFO_DOTTRAITS_HPP
-#define PEDIGREE_INFO_EDGEINFO_DOTTRAITS_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -18,4 +17,3 @@ template <typename T> struct EdgeInfoDOTTraits {
 
 } // namespace pedigree
 
-#endif // header

@@ -2,8 +2,7 @@
 //
 //
 
-#ifndef PEDIGREE_DAMDGRAPHBUILDER_HPP
-#define PEDIGREE_DAMDGRAPHBUILDER_HPP
+#pragma once
 
 #include "Pedigree/Config.hpp"
 
@@ -118,4 +117,3 @@ public:
 
 } // namespace pedigree
 
-#endif // header
