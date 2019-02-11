@@ -53,7 +53,7 @@ enum DependenceHazard : unsigned {
 };
 
 struct BasicDependenceInfo {
-  struct value_type : boost::orable<value_type>, boost::andable<value_type> {
+  struct value_type : boost::orable<value_type, boost::andable<value_type>> {
   private:
     std::bitset<DO_COUNT> origins;
     llvm::SmallVector<std::bitset<DH_COUNT>, DO_COUNT> hazards{};
