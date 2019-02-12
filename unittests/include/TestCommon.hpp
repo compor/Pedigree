@@ -5,6 +5,8 @@
 #ifndef TESTCOMMON_HPP
 #define TESTCOMMON_HPP
 
+#include "Pedigree/Debug.hpp"
+
 #include "llvm/Config/llvm-config.h"
 
 #include "llvm/IR/Function.h"
@@ -15,31 +17,6 @@
 
 #include "llvm/Analysis/LoopInfo.h"
 // using llvm::LoopInfo
-
-#ifdef BOOST_NO_EXCEPTIONS
-
-#include <iostream>
-// using std::cerr
-//
-#include <exception>
-// using std::exception
-// using std::terminate
-
-#endif // BOOST_NO_EXCEPTIONS
-
-#ifdef BOOST_NO_EXCEPTIONS
-
-namespace boost {
-
-[[noreturn]] inline void throw_exception(std::exception const &e) {
-  std::cerr << e.what() << '\n';
-
-  std::terminate();
-}
-
-} // namespace boost
-
-#endif // BOOST_NO_EXCEPTIONS
 
 namespace pedigree {
 namespace testing {
