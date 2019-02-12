@@ -209,38 +209,39 @@ struct BasicDependenceInfo {
 // traits
 
 template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
-  static std::string toDOTAttributes(const BasicDependenceInfo::value_type &I) {
-    auto attr = toDOTColor(I);
+  static std::string
+  toDOTAttributes(const BasicDependenceInfo::value_type &Info) {
+    auto attr = toDOTColor(Info);
 
-    if (I.has(DO_Memory)) {
-      attr += " " + toDOTLabel(I);
+    if (Info.has(DO_Memory)) {
+      attr += " " + toDOTLabel(Info);
     }
 
     return attr;
   }
 
-  static std::string toDOTColor(const BasicDependenceInfo::value_type &I) {
+  static std::string toDOTColor(const BasicDependenceInfo::value_type &Info) {
     std::stringstream colorAttribute{};
     std::stringstream sep{};
     llvm::SmallVector<std::string, 4> colors{};
 
     colorAttribute << "color=\"";
 
-    if (I) {
+    if (!Info) {
       colors.emplace_back("grey");
     } else {
       auto ratio = 1.0 / DO_COUNT;
       sep << std::setprecision(2) << ";" << ratio << ":";
 
-      if (I.has(DO_Control)) {
+      if (Info.has(DO_Control)) {
         colors.emplace_back("red");
       }
 
-      if (I.has(DO_Memory)) {
+      if (Info.has(DO_Memory)) {
         colors.emplace_back("purple");
       }
 
-      if (I.has(DO_Data)) {
+      if (Info.has(DO_Data)) {
         colors.emplace_back("blue");
       }
     }
@@ -254,21 +255,21 @@ template <> struct EdgeInfoDOTTraits<BasicDependenceInfo::value_type> {
     return colorAttribute.str();
   }
 
-  static std::string toDOTLabel(const BasicDependenceInfo::value_type &I) {
+  static std::string toDOTLabel(const BasicDependenceInfo::value_type &Info) {
     std::string label{"label=\""};
 
-    if (I) {
+    if (!Info) {
       label = "label=\"U\"";
     } else {
-      if (I.has(DH_Flow)) {
+      if (Info.has(DH_Flow)) {
         label += "F";
       }
 
-      if (I.has(DH_Anti)) {
+      if (Info.has(DH_Anti)) {
         label += "A";
       }
 
-      if (I.has(DH_Out)) {
+      if (Info.has(DH_Out)) {
         label += "O";
       }
 
