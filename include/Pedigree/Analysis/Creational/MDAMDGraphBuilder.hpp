@@ -151,7 +151,7 @@ private:
   decltype(auto) determineHazard(const llvm::Instruction &Src,
                                  const llvm::Instruction &Dst,
                                  const llvm::MemDepResult &QueryResult) {
-    BasicDependenceInfo::value_type info{DO_Unknown, DH_Unknown};
+    BasicDependenceInfo::value_type info;
 
     if (QueryResult.isDef() && CurMode[MDA_MD_MemDefs]) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {

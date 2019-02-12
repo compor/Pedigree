@@ -11,6 +11,10 @@
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
 
+#include "llvm/Support/Debug.h"
+// using LLVM_DEBUG macro
+// using llvm::dbgs
+
 #include "boost/operators.hpp"
 // using boost::orable
 // using boost::andable
@@ -32,6 +36,9 @@
 
 #include <bitset>
 // using std::bitset
+
+#include <cassert>
+// using assert
 
 namespace pedigree {
 
@@ -58,11 +65,15 @@ struct BasicDependenceInfo {
     std::bitset<DO_COUNT> origins;
     llvm::SmallVector<std::bitset<DH_COUNT>, DO_COUNT> hazards{};
 
-    void reset() {
+    void blank() {
       origins.reset();
       for (auto &e : hazards) {
         e.reset();
       }
+    }
+
+    void reset() {
+      blank();
 
       origins[DO_Unknown] = true;
       hazards[DO_Unknown][DH_Unknown] = true;
@@ -119,13 +130,12 @@ struct BasicDependenceInfo {
     }
 
     value_type(DependenceOrigin O, DependenceHazard H) : value_type() {
-      origins[DO_Unknown] = false;
-      hazards[DH_Unknown].reset();
+      blank();
 
       origins[O] = true;
       hazards[O][H] = true;
 
-      assert(isValid() && "Dependence info is not valid!");
+      assert(isValid() && "Dependence info is not valid after construction!");
     }
 
     value_type(const value_type &) = default;
@@ -134,6 +144,8 @@ struct BasicDependenceInfo {
       if (Other.origins[DO_Unknown]) {
         ;
       } else if (origins[DO_Unknown]) {
+        blank();
+
         origins = Other.origins;
         hazards = Other.hazards;
       } else {
@@ -144,7 +156,7 @@ struct BasicDependenceInfo {
         }
       }
 
-      assert(isValid() && "Dependence info is not valid!");
+      assert(isValid() && "Dependence info is not valid after disjunction!");
 
       return *this;
     }
@@ -153,6 +165,8 @@ struct BasicDependenceInfo {
       if (Other.origins[DO_Unknown]) {
         ;
       } else if (origins[DO_Unknown]) {
+        blank();
+
         origins = Other.origins;
         hazards = Other.hazards;
       } else {
@@ -167,7 +181,7 @@ struct BasicDependenceInfo {
         reset();
       }
 
-      assert(isValid() && "Dependence info is not valid!");
+      assert(isValid() && "Dependence info is not valid after conjunction!");
 
       return *this;
     }
