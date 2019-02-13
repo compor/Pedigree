@@ -186,6 +186,21 @@ struct BasicDependenceInfo {
       return *this;
     }
 
+    value_type &operator&=(DependenceOrigin O) {
+      value_type v;
+
+      if (O && origins[O]) {
+        v.blank();
+        v.origins[O] = true;
+        v.hazards[O] = hazards[O];
+      }
+
+      origins = v.origins;
+      hazards = v.hazards;
+
+      return *this;
+    }
+
     explicit operator bool() const { return !origins[DO_Unknown]; }
 
     void reset(DependenceOrigin O) {
