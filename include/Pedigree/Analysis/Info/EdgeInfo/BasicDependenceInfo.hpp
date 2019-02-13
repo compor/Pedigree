@@ -188,6 +188,13 @@ struct BasicDependenceInfo {
 
     explicit operator bool() const { return !origins[DO_Unknown]; }
 
+    void reset(DependenceOrigin O) {
+      if (O && origins[O]) {
+        origins[O] = false;
+        hazards[O].reset();
+      }
+    }
+
     bool has(DependenceOrigin O) const { return origins[O]; }
 
     bool has(DependenceHazard H) const {
