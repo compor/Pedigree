@@ -89,7 +89,7 @@ public:
   GenericDependenceGraph(const GenericDependenceGraph &) = delete;
   GenericDependenceGraph &operator=(const GenericDependenceGraph &) = delete;
 
-  explicit GenericDependenceGraph(GenericDependenceGraph &&Other) noexcept(
+  GenericDependenceGraph(GenericDependenceGraph &&Other) noexcept(
       noexcept(Other.NodeMap.clear()) &&
       are_all_nothrow_move_constructible_v<decltype(VirtualRoot),
                                            decltype(NodeMap)>)
