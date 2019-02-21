@@ -27,6 +27,8 @@ class Function;
 class AnalysisUsage;
 } // namespace llvm
 
+#define PEDIGREE_DDG_PASS_NAME "pedigree-ddg"
+
 namespace pedigree {
 
 // new passmanager pass

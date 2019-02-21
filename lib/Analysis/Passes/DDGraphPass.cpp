@@ -49,7 +49,8 @@ class Function;
 
 char pedigree::DDGraphWrapperPass::ID = 0;
 static llvm::RegisterPass<pedigree::DDGraphWrapperPass>
-    X("pedigree-ddg", PRJ_CMDLINE_DESC("pedigree ddg pass"), false, false);
+    X(PEDIGREE_DDG_PASS_NAME, PRJ_CMDLINE_DESC("pedigree ddg pass"), false,
+      false);
 
 // plugin registration for clang
 
