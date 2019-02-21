@@ -152,15 +152,20 @@ private:
                                  const llvm::Instruction &Dst,
                                  const llvm::MemDepResult &QueryResult) {
     BasicDependenceInfo::value_type info;
+    LLVM_DEBUG(llvm::dbgs() << "in " << __func__ << "\n\tsrc: " << Src
+                            << "\n\tdst: " << Dst << '\n';);
 
     if (QueryResult.isDef() && CurMode[MDA_MD_MemDefs]) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
         // do not add edge
       } else if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
+        LLVM_DEBUG(llvm::dbgs() << "adding def anti\n";);
         info |= {DO_Memory, DH_Anti};
       } else if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
+        LLVM_DEBUG(llvm::dbgs() << "adding def flow\n";);
         info |= {DO_Memory, DH_Flow};
       } else if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
+        LLVM_DEBUG(llvm::dbgs() << "adding def out\n";);
         info |= {DO_Memory, DH_Out};
       } else {
         LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
@@ -170,8 +175,10 @@ private:
     if (QueryResult.isClobber() && CurMode[MDA_MD_MemClobbers]) {
       if (Dst.mayReadFromMemory()) {
         info |= {DO_Memory, DH_Flow};
+        LLVM_DEBUG(llvm::dbgs() << "adding clobber flow\n";);
       } else if (Dst.mayWriteToMemory()) {
         info |= {DO_Memory, DH_Out};
+        LLVM_DEBUG(llvm::dbgs() << "adding clobber out\n";);
       } else {
         LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
       }
