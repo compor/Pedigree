@@ -55,13 +55,13 @@ namespace pedigree {
 
 struct CDGraphPrinterPass
     : public llvm::DOTGraphTraitsPrinter<
-          CDGraphPass, false, CDGraph *,
-          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass,
-                                                                  CDGraph>> {
+          CDGraphWrapperPass, false, CDGraph *,
+          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
+              CDGraphWrapperPass, CDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
-      CDGraphPass, false, CDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass,
-                                                              CDGraph>>;
+      CDGraphWrapperPass, false, CDGraph *,
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
+          CDGraphWrapperPass, CDGraph>>;
 
   static char ID;
 
@@ -95,13 +95,13 @@ struct CDGraphPrinterPass
 
 struct CDGraphSimplePrinterPass
     : public llvm::DOTGraphTraitsPrinter<
-          CDGraphPass, true, CDGraph *,
-          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass,
-                                                                  CDGraph>> {
+          CDGraphWrapperPass, true, CDGraph *,
+          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
+              CDGraphWrapperPass, CDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
-      CDGraphPass, true, CDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<CDGraphPass,
-                                                              CDGraph>>;
+      CDGraphWrapperPass, true, CDGraph *,
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
+          CDGraphWrapperPass, CDGraph>>;
 
   static char ID;
 

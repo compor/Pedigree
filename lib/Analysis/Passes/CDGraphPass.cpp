@@ -53,8 +53,8 @@ class Function;
 
 // plugin registration for opt
 
-char pedigree::CDGraphPass::ID = 0;
-static llvm::RegisterPass<pedigree::CDGraphPass>
+char pedigree::CDGraphWrapperPass::ID = 0;
+static llvm::RegisterPass<pedigree::CDGraphWrapperPass>
     X("pedigree-cdg", PRJ_CMDLINE_DESC("pedigree cdg pass"), false, false);
 
 // plugin registration for clang
@@ -65,16 +65,17 @@ static llvm::RegisterPass<pedigree::CDGraphPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPedigreeCDGraphPass(const llvm::PassManagerBuilder &Builder,
-                                        llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::CDGraphPass());
+static void
+registerPedigreeCDGraphWrapperPass(const llvm::PassManagerBuilder &Builder,
+                                   llvm::legacy::PassManagerBase &PM) {
+  PM.add(new pedigree::CDGraphWrapperPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses
-    RegisterPedigreeCDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                                registerPedigreeCDGraphPass);
+static llvm::RegisterStandardPasses RegisterPedigreeCDGraphWrapperPass(
+    llvm::PassManagerBuilder::EP_EarlyAsPossible,
+    registerPedigreeCDGraphWrapperPass);
 
 //
 
@@ -91,11 +92,11 @@ static llvm::cl::opt<bool> PedigreeCDGraphConvertToInstruction(
 
 namespace pedigree {
 
-void CDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+void CDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool CDGraphPass::runOnFunction(llvm::Function &CurFunc) {
+bool CDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
   CDGraphBuilder builder{};
   Graph = builder.setUnit(CurFunc).build();
 

@@ -26,12 +26,12 @@ class AnalysisUsage;
 
 namespace pedigree {
 
-struct CDGraphPass : public llvm::FunctionPass {
+struct CDGraphWrapperPass : public llvm::FunctionPass {
   static char ID;
   std::unique_ptr<CDGraph> Graph;
   std::unique_ptr<InstCDGraph> InstGraph;
 
-  CDGraphPass() : llvm::FunctionPass(ID) {}
+  CDGraphWrapperPass() : llvm::FunctionPass(ID) {}
 
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;

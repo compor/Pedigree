@@ -145,7 +145,7 @@ PDGraphPass::PDGraphPass() : llvm::FunctionPass(ID) {
 
 void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
-    AU.addRequired<CDGraphPass>();
+    AU.addRequired<CDGraphWrapperPass>();
   }
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::DDG)) {
@@ -164,7 +164,7 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>> graphs;
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
-    Convert(getAnalysis<CDGraphPass>().getGraph(), instCDG,
+    Convert(getAnalysis<CDGraphWrapperPass>().getGraph(), instCDG,
             BlockToTerminatorUnitConverter{},
             BlockToInstructionsUnitConverter{});
     graphs.emplace_back(instCDG);
