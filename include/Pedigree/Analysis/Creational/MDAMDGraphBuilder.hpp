@@ -158,29 +158,42 @@ private:
     if (QueryResult.isDef() && CurMode[MDA_MD_MemDefs]) {
       if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
         // do not add edge
-      } else if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
+      }
+
+      if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
         LLVM_DEBUG(llvm::dbgs() << "adding def anti\n";);
         info |= {DO_Memory, DH_Anti};
-      } else if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
+      }
+
+      if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
         LLVM_DEBUG(llvm::dbgs() << "adding def flow\n";);
         info |= {DO_Memory, DH_Flow};
-      } else if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
+      }
+
+      if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
         LLVM_DEBUG(llvm::dbgs() << "adding def out\n";);
         info |= {DO_Memory, DH_Out};
-      } else {
-        LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
       }
     }
 
     if (QueryResult.isClobber() && CurMode[MDA_MD_MemClobbers]) {
-      if (Dst.mayReadFromMemory()) {
-        info |= {DO_Memory, DH_Flow};
+      if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
+        // do not add edge
+      }
+
+      if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
+        LLVM_DEBUG(llvm::dbgs() << "adding clobber anti\n";);
+        info |= {DO_Memory, DH_Anti};
+      }
+
+      if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
         LLVM_DEBUG(llvm::dbgs() << "adding clobber flow\n";);
-      } else if (Dst.mayWriteToMemory()) {
-        info |= {DO_Memory, DH_Out};
+        info |= {DO_Memory, DH_Flow};
+      }
+
+      if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
         LLVM_DEBUG(llvm::dbgs() << "adding clobber out\n";);
-      } else {
-        LLVM_DEBUG(llvm::dbgs() << "No appropriate hazard was found!");
+        info |= {DO_Memory, DH_Out};
       }
     }
 
@@ -242,4 +255,3 @@ private:
 } // namespace pedigree
 
 #undef DEBUG_TYPE
-
