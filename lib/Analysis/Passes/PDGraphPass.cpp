@@ -72,8 +72,8 @@ extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
 
 // plugin registration for opt
 
-char pedigree::PDGraphPass::ID = 0;
-static llvm::RegisterPass<pedigree::PDGraphPass>
+char pedigree::PDGraphWrapperPass::ID = 0;
+static llvm::RegisterPass<pedigree::PDGraphWrapperPass>
     X("pedigree-pdg", PRJ_CMDLINE_DESC("pedigree pdg pass"), false, false);
 
 // plugin registration for clang
@@ -84,16 +84,16 @@ static llvm::RegisterPass<pedigree::PDGraphPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPDGraphPass(const llvm::PassManagerBuilder &Builder,
-                                llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::PDGraphPass());
+static void registerPDGraphWrapperPass(const llvm::PassManagerBuilder &Builder,
+                                       llvm::legacy::PassManagerBase &PM) {
+  PM.add(new pedigree::PDGraphWrapperPass());
 
   return;
 }
 
 static llvm::RegisterStandardPasses
-    RegisterPDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                        registerPDGraphPass);
+    RegisterPDGraphWrapperPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
+                               registerPDGraphWrapperPass);
 
 //
 
@@ -139,11 +139,11 @@ static void checkAndSetCmdLineOptions() {
 
 namespace pedigree {
 
-PDGraphPass::PDGraphPass() : llvm::FunctionPass(ID) {
+PDGraphWrapperPass::PDGraphWrapperPass() : llvm::FunctionPass(ID) {
   checkAndSetCmdLineOptions();
 }
 
-void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+void PDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
     AU.addRequired<CDGraphWrapperPass>();
   }
@@ -159,7 +159,7 @@ void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
+bool PDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
   InstructionDependenceGraph instCDG;
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>> graphs;
 
