@@ -85,8 +85,8 @@ class Function;
 
 // plugin registration for opt
 
-char pedigree::MDGraphPass::ID = 0;
-static llvm::RegisterPass<pedigree::MDGraphPass>
+char pedigree::MDGraphWrapperPass::ID = 0;
+static llvm::RegisterPass<pedigree::MDGraphWrapperPass>
     X("pedigree-mdg", PRJ_CMDLINE_DESC("pedigree mdg pass"), false, false);
 
 // plugin registration for clang
@@ -97,16 +97,17 @@ static llvm::RegisterPass<pedigree::MDGraphPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPedigreeMDGraphPass(const llvm::PassManagerBuilder &Builder,
-                                        llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::MDGraphPass());
+static void
+registerPedigreeMDGraphWrapperPass(const llvm::PassManagerBuilder &Builder,
+                                   llvm::legacy::PassManagerBase &PM) {
+  PM.add(new pedigree::MDGraphWrapperPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses
-    RegisterPedigreeMDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                                registerPedigreeMDGraphPass);
+static llvm::RegisterStandardPasses RegisterPedigreeMDGraphWrapperPass(
+    llvm::PassManagerBuilder::EP_EarlyAsPossible,
+    registerPedigreeMDGraphWrapperPass);
 
 //
 
@@ -224,7 +225,7 @@ static void checkCmdLineOptions() {
 
 namespace pedigree {
 
-void MDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+void MDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   AU.addRequiredTransitive<llvm::MemoryDependenceAnalysis>();
   AU.addRequiredTransitive<llvm::DependenceAnalysis>();
@@ -235,7 +236,7 @@ void MDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool MDGraphPass::runOnFunction(llvm::Function &CurFunc) {
+bool MDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
   checkCmdLineOptions();
 
   Graph = std::make_unique<MDGraph>();

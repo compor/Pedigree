@@ -153,7 +153,7 @@ void PDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   }
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG)) {
-    AU.addRequired<MDGraphPass>();
+    AU.addRequired<MDGraphWrapperPass>();
   }
 
   AU.setPreservesAll();
@@ -175,7 +175,7 @@ bool PDGraphPass::runOnFunction(llvm::Function &CurFunc) {
   }
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG)) {
-    graphs.emplace_back(getAnalysis<MDGraphPass>().getGraph());
+    graphs.emplace_back(getAnalysis<MDGraphWrapperPass>().getGraph());
   }
 
   PDGraphBuilder builder{};
