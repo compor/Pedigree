@@ -8,8 +8,6 @@
 
 #include "Pedigree/Analysis/Passes/DDGraphPass.hpp"
 
-#include "Pedigree/Analysis/Creational/DDGraphBuilder.hpp"
-
 #include "llvm/Config/llvm-config.h"
 // version macros
 
@@ -88,15 +86,32 @@ static llvm::cl::opt<bool> IgnoreConstantPHINodes(
 
 namespace pedigree {
 
+// new passmanager pass
+
+llvm::AnalysisKey DDGraphPass::Key;
+
+DDGraphPass::Result run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
+  DDGraphBuilder builder{};
+  auto graph =
+      builder.setUnit(F).ignoreConstantPHINodes(IgnoreConstantPHINodes).build();
+
+  if (PedigreeGraphConnectRoot) {
+    graph->connectRootNode();
+  }
+
+  return std::move(graph);
+}
+
+// legacy passmanager pass
+
 void DDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool DDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
+bool DDGraphWrapperPass::runOnFunction(llvm::Function &F) {
   DDGraphBuilder builder{};
-  Graph = builder.setUnit(CurFunc)
-              .ignoreConstantPHINodes(IgnoreConstantPHINodes)
-              .build();
+  Graph =
+      builder.setUnit(F).ignoreConstantPHINodes(IgnoreConstantPHINodes).build();
 
   if (PedigreeGraphConnectRoot) {
     Graph->connectRootNode();

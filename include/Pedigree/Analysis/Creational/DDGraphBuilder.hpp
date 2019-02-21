@@ -33,8 +33,10 @@ class Function;
 
 namespace pedigree {
 
+using DDGraphResultT = std::unique_ptr<DDGraph>;
+
 class DDGraphBuilder : public llvm::InstVisitor<DDGraphBuilder> {
-  std::unique_ptr<DDGraph> Graph;
+  DDGraphResultT Graph;
   llvm::Optional<const llvm::Function *> CurUnit;
   bool shouldIgnoreConstantPHINodes = false;
 
@@ -55,7 +57,7 @@ public:
     return *this;
   }
 
-  std::unique_ptr<DDGraph> build() {
+  DDGraphResultT build() {
     if (CurUnit) {
       Graph = std::make_unique<DDGraph>();
       visit(const_cast<llvm::Function *>(*CurUnit));

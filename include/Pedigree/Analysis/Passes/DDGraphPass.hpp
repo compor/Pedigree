@@ -8,6 +8,8 @@
 
 #include "Pedigree/Analysis/Graphs/DDGraph.hpp"
 
+#include "Pedigree/Analysis/Creational/DDGraphBuilder.hpp"
+
 #include "llvm/Pass.h"
 // using llvm::FunctionPass
 // using llvm::AnalysisUsage
@@ -28,7 +30,7 @@ namespace pedigree {
 
 struct DDGraphWrapperPass : public llvm::FunctionPass {
   static char ID;
-  std::unique_ptr<DDGraph> Graph;
+  DDGraphResultT Graph;
 
   DDGraphWrapperPass() : llvm::FunctionPass(ID) {}
 
