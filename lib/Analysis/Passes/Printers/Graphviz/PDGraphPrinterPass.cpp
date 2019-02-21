@@ -59,7 +59,7 @@ extern llvm::cl::opt<std::string> PedigreeReportsDir;
 
 namespace pedigree {
 
-struct PDGraphPrinterPass
+struct PDGraphPrinterWrapperPass
     : public llvm::DOTGraphTraitsPrinter<
           PDGraphWrapperPass, false, PDGraph *,
           LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
@@ -71,7 +71,7 @@ struct PDGraphPrinterPass
 
   static char ID;
 
-  PDGraphPrinterPass() : Base(PedigreeReportsDir + "/" + "pdg", ID) {
+  PDGraphPrinterWrapperPass() : Base(PedigreeReportsDir + "/" + "pdg", ID) {
     auto dirOrErr = CreateDirectory(PedigreeReportsDir);
     if (std::error_code ec = dirOrErr.getError()) {
       llvm::errs() << "Error: " << ec.message() << '\n';
@@ -99,7 +99,7 @@ struct PDGraphPrinterPass
 
 //
 
-struct PDGraphSimplePrinterPass
+struct PDGraphSimplePrinterWrapperPass
     : public llvm::DOTGraphTraitsPrinter<
           PDGraphWrapperPass, true, PDGraph *,
           LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
@@ -111,7 +111,8 @@ struct PDGraphSimplePrinterPass
 
   static char ID;
 
-  PDGraphSimplePrinterPass() : Base(PedigreeReportsDir + "/" + "pdg", ID) {
+  PDGraphSimplePrinterWrapperPass()
+      : Base(PedigreeReportsDir + "/" + "pdg", ID) {
     auto dirOrErr = CreateDirectory(PedigreeReportsDir);
     if (std::error_code ec = dirOrErr.getError()) {
       llvm::errs() << "Error: " << ec.message() << '\n';
@@ -139,15 +140,15 @@ struct PDGraphSimplePrinterPass
 
 } // namespace pedigree
 
-char pedigree::PDGraphPrinterPass::ID = 0;
-static llvm::RegisterPass<pedigree::PDGraphPrinterPass>
+char pedigree::PDGraphPrinterWrapperPass::ID = 0;
+static llvm::RegisterPass<pedigree::PDGraphPrinterWrapperPass>
     X("pedigree-pdg-dot", PRJ_CMDLINE_DESC("pedigree pdg DOT pass"), false,
       false);
 
 //
 
-char pedigree::PDGraphSimplePrinterPass::ID = 0;
-static llvm::RegisterPass<pedigree::PDGraphSimplePrinterPass>
+char pedigree::PDGraphSimplePrinterWrapperPass::ID = 0;
+static llvm::RegisterPass<pedigree::PDGraphSimplePrinterWrapperPass>
     Y("pedigree-pdg-simple-dot",
       PRJ_CMDLINE_DESC("pedigree simple pdg DOT pass"), false, false);
 
@@ -159,28 +160,30 @@ static llvm::RegisterPass<pedigree::PDGraphSimplePrinterPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void
-registerPedigreePDGraphPrinterPass(const llvm::PassManagerBuilder &Builder,
-                                   llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::PDGraphPrinterPass());
+static void registerPedigreePDGraphPrinterWrapperPass(
+    const llvm::PassManagerBuilder &Builder,
+    llvm::legacy::PassManagerBase &PM) {
+  PM.add(new pedigree::PDGraphPrinterWrapperPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses RegisterPedigreePDGraphPrinterPass(
+static llvm::RegisterStandardPasses RegisterPedigreePDGraphPrinterWrapperPass(
     llvm::PassManagerBuilder::EP_EarlyAsPossible,
-    registerPedigreePDGraphPrinterPass);
+    registerPedigreePDGraphPrinterWrapperPass);
 
 //
 
-static void registerPedigreePDGraphSimplePrinterPass(
+static void registerPedigreePDGraphSimplePrinterWrapperPass(
     const llvm::PassManagerBuilder &Builder,
     llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::PDGraphSimplePrinterPass());
+  PM.add(new pedigree::PDGraphSimplePrinterWrapperPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses RegisterPedigreePDGraphSimplePrinterPass(
-    llvm::PassManagerBuilder::EP_EarlyAsPossible,
-    registerPedigreePDGraphSimplePrinterPass);
+static llvm::RegisterStandardPasses
+    RegisterPedigreePDGraphSimplePrinterWrapperPass(
+        llvm::PassManagerBuilder::EP_EarlyAsPossible,
+        registerPedigreePDGraphSimplePrinterWrapperPass);
+
