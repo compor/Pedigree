@@ -37,6 +37,9 @@
 // using DEBUG macro
 // using llvm::dbgs
 
+#include <utility>
+// using std::move
+
 #define DEBUG_TYPE "pedigree-ddg"
 
 extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
@@ -85,13 +88,14 @@ static llvm::cl::opt<bool> IgnoreConstantPHINodes(
 
 //
 
+llvm::AnalysisKey pedigree::DDGraphPass::Key;
+
 namespace pedigree {
 
 // new passmanager pass
 
-llvm::AnalysisKey DDGraphPass::Key;
-
-DDGraphPass::Result run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
+DDGraphPass::Result DDGraphPass::run(llvm::Function &F,
+                                     llvm::FunctionAnalysisManager &FAM) {
   DDGraphBuilder builder{};
   auto graph =
       builder.setUnit(F).ignoreConstantPHINodes(IgnoreConstantPHINodes).build();
