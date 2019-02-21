@@ -93,3 +93,5 @@ public:
 
 } // namespace pedigree
 
+#undef DEBUG_TYPE
+

@@ -234,3 +234,5 @@ private:
 
 } // namespace pedigree
 
+#undef DEBUG_TYPE
+
