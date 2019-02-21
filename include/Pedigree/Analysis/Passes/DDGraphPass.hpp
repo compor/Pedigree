@@ -26,11 +26,11 @@ class AnalysisUsage;
 
 namespace pedigree {
 
-struct DDGraphPass : public llvm::FunctionPass {
+struct DDGraphWrapperPass : public llvm::FunctionPass {
   static char ID;
   std::unique_ptr<DDGraph> Graph;
 
-  DDGraphPass() : llvm::FunctionPass(ID) {}
+  DDGraphWrapperPass() : llvm::FunctionPass(ID) {}
 
   void getAnalysisUsage(llvm::AnalysisUsage &AU) const override;
   bool runOnFunction(llvm::Function &CurFunction) override;

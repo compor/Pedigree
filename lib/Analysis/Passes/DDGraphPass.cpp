@@ -49,8 +49,8 @@ class Function;
 
 // plugin registration for opt
 
-char pedigree::DDGraphPass::ID = 0;
-static llvm::RegisterPass<pedigree::DDGraphPass>
+char pedigree::DDGraphWrapperPass::ID = 0;
+static llvm::RegisterPass<pedigree::DDGraphWrapperPass>
     X("pedigree-ddg", PRJ_CMDLINE_DESC("pedigree ddg pass"), false, false);
 
 // plugin registration for clang
@@ -61,37 +61,38 @@ static llvm::RegisterPass<pedigree::DDGraphPass>
 // add an instance of this pass and a static instance of the
 // RegisterStandardPasses class
 
-static void registerPedigreeDDGraphPass(const llvm::PassManagerBuilder &Builder,
-                                        llvm::legacy::PassManagerBase &PM) {
-  PM.add(new pedigree::DDGraphPass());
+static void
+registerPedigreeDDGraphWrapperPass(const llvm::PassManagerBuilder &Builder,
+                                   llvm::legacy::PassManagerBase &PM) {
+  PM.add(new pedigree::DDGraphWrapperPass());
 
   return;
 }
 
-static llvm::RegisterStandardPasses
-    RegisterPedigreeDDGraphPass(llvm::PassManagerBuilder::EP_EarlyAsPossible,
-                                registerPedigreeDDGraphPass);
+static llvm::RegisterStandardPasses RegisterPedigreeDDGraphWrapperPass(
+    llvm::PassManagerBuilder::EP_EarlyAsPossible,
+    registerPedigreeDDGraphWrapperPass);
 
 //
 
 static llvm::cl::OptionCategory
-    PedigreeDDGraphPassCategory("Pedigree DDGraph Pass",
-                                "Options for Pedigree DDGraph pass");
+    PedigreeDDGraphWrapperPassCategory("Pedigree DDGraph Pass",
+                                       "Options for Pedigree DDGraph pass");
 
 static llvm::cl::opt<bool> IgnoreConstantPHINodes(
     "pedigree-ddg-ignore-constant-phi", llvm::cl::init(true), llvm::cl::Hidden,
     llvm::cl::desc("ignore PHI nodes with constant values as data dependences"),
-    llvm::cl::cat(PedigreeDDGraphPassCategory));
+    llvm::cl::cat(PedigreeDDGraphWrapperPassCategory));
 
 //
 
 namespace pedigree {
 
-void DDGraphPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+void DDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool DDGraphPass::runOnFunction(llvm::Function &CurFunc) {
+bool DDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
   DDGraphBuilder builder{};
   Graph = builder.setUnit(CurFunc)
               .ignoreConstantPHINodes(IgnoreConstantPHINodes)

@@ -58,13 +58,13 @@ namespace pedigree {
 
 struct DDGraphPrinterPass
     : public llvm::DOTGraphTraitsPrinter<
-          DDGraphPass, false, DDGraph *,
-          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
-                                                                  DDGraph>> {
+          DDGraphWrapperPass, false, DDGraph *,
+          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
+              DDGraphWrapperPass, DDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
-      DDGraphPass, false, DDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
-                                                              DDGraph>>;
+      DDGraphWrapperPass, false, DDGraph *,
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
+          DDGraphWrapperPass, DDGraph>>;
 
   static char ID;
 
@@ -98,13 +98,13 @@ struct DDGraphPrinterPass
 
 struct DDGraphSimplePrinterPass
     : public llvm::DOTGraphTraitsPrinter<
-          DDGraphPass, true, DDGraph *,
-          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
-                                                                  DDGraph>> {
+          DDGraphWrapperPass, true, DDGraph *,
+          LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
+              DDGraphWrapperPass, DDGraph>> {
   using Base = llvm::DOTGraphTraitsPrinter<
-      DDGraphPass, true, DDGraph *,
-      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<DDGraphPass,
-                                                              DDGraph>>;
+      DDGraphWrapperPass, true, DDGraph *,
+      LLVMAnalysisStandardDependenceGraphPassTraitsHelperBase<
+          DDGraphWrapperPass, DDGraph>>;
 
   static char ID;
 
