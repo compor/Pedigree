@@ -15,8 +15,9 @@
 // using llvm::AnalysisUsage
 // using llvm::RegisterPass
 
-#include <memory>
-// using std::unique_ptr
+#include "llvm/IR/PassManager.h"
+// using llvm::FunctionAnalysisManager
+// using llvm::AnalysisInfoMixin
 
 #include <cassert>
 // using assert
@@ -28,6 +29,19 @@ class AnalysisUsage;
 
 namespace pedigree {
 
+// new passmanager pass
+class DDGraphPass : public llvm::AnalysisInfoMixin<DDGraphPass> {
+  friend llvm::AnalysisInfoMixin<DDGraphPass>;
+
+  static llvm::AnalysisKey Key;
+
+public:
+  using Result = DDGraphResultT;
+
+  Result run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM);
+};
+
+// legacy passmanager pass
 struct DDGraphWrapperPass : public llvm::FunctionPass {
   static char ID;
   DDGraphResultT Graph;
