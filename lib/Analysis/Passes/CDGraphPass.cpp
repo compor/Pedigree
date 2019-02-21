@@ -55,7 +55,7 @@ class Function;
 
 char pedigree::CDGraphWrapperPass::ID = 0;
 static llvm::RegisterPass<pedigree::CDGraphWrapperPass>
-    X("pedigree-cdg", PRJ_CMDLINE_DESC("pedigree cdg pass"), false, false);
+    X("pedigree-cdg", PRJ_CMDLINE_DESC("pedigree cdg pass"), false, true);
 
 // plugin registration for clang
 

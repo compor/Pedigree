@@ -74,7 +74,7 @@ extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
 
 char pedigree::PDGraphWrapperPass::ID = 0;
 static llvm::RegisterPass<pedigree::PDGraphWrapperPass>
-    X("pedigree-pdg", PRJ_CMDLINE_DESC("pedigree pdg pass"), false, false);
+    X("pedigree-pdg", PRJ_CMDLINE_DESC("pedigree pdg pass"), false, true);
 
 // plugin registration for clang
 
