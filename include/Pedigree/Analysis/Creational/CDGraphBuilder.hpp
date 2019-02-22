@@ -26,10 +26,6 @@
 // using LLVM_DEBUG macro
 // using llvm::dbgs
 
-#include <memory>
-// using std::unique_ptr
-// using std::make_unique
-
 #define DEBUG_TYPE "pedigree-cdg-builder"
 
 namespace llvm {
@@ -37,8 +33,6 @@ class Function;
 } // namespace llvm
 
 namespace pedigree {
-
-using CDGraphResultT = std::unique_ptr<CDGraph>;
 
 class CDGraphBuilder {
   llvm::Optional<const llvm::Function *> CurUnit;

@@ -27,10 +27,6 @@
 // using LLVM_DEBUG macro
 // using llvm::dbgs
 
-#include <memory>
-// using std::unique_ptr
-// using std::make_unique
-
 #include <vector>
 // using std::vector
 
@@ -46,7 +42,7 @@ namespace pedigree {
 // in the graph unless they have an edge
 
 class DAMDGraphBuilder : public llvm::InstVisitor<DAMDGraphBuilder> {
-  std::unique_ptr<MDGraph> Graph;
+  MDGraphResultT Graph;
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   llvm::Optional<llvm::DependenceAnalysis *> CurAnalysis;
 #else
@@ -86,7 +82,7 @@ public:
     return setUnit(&Unit);
   }
 
-  std::unique_ptr<MDGraph> build() {
+  MDGraphResultT build() {
     if (CurUnit && CurAnalysis) {
       Graph = std::make_unique<MDGraph>();
       visit(const_cast<llvm::Function *>(*CurUnit));

@@ -8,6 +8,8 @@
 
 #include "Pedigree/Analysis/Passes/DDGraphPass.hpp"
 
+#include "Pedigree/Analysis/Creational/DDGraphBuilder.hpp"
+
 #include "llvm/Config/llvm-config.h"
 // version macros
 

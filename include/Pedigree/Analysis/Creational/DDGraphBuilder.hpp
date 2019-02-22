@@ -33,8 +33,6 @@ class Function;
 
 namespace pedigree {
 
-using DDGraphResultT = std::unique_ptr<DDGraph>;
-
 class DDGraphBuilder : public llvm::InstVisitor<DDGraphBuilder> {
   DDGraphResultT Graph;
   llvm::Optional<const llvm::Function *> CurUnit;
