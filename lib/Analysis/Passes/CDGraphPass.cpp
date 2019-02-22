@@ -43,7 +43,10 @@
 // using LLVM_DEBUG macro
 // using llvm::dbgs
 
-#define DEBUG_TYPE "pedigree-cdg"
+#include <utility>
+// using std::move
+
+#define DEBUG_TYPE PEDIGREE_CDG_PASS_NAME
 
 extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
 
@@ -55,7 +58,8 @@ class Function;
 
 char pedigree::CDGraphWrapperPass::ID = 0;
 static llvm::RegisterPass<pedigree::CDGraphWrapperPass>
-    X("pedigree-cdg", PRJ_CMDLINE_DESC("pedigree cdg pass"), false, true);
+    X(PEDIGREE_CDG_PASS_NAME, PRJ_CMDLINE_DESC("pedigree cdg pass"), false,
+      true);
 
 // plugin registration for clang
 
@@ -90,15 +94,40 @@ static llvm::cl::opt<bool> PedigreeCDGraphConvertToInstruction(
 
 //
 
+llvm::AnalysisKey pedigree::CDGraphPass::Key;
+
 namespace pedigree {
+
+// new passmanager pass
+
+CDGraphPass::Result CDGraphPass::run(llvm::Function &F,
+                                     llvm::FunctionAnalysisManager &FAM) {
+  CDGraphBuilder builder{};
+  auto graph = builder.setUnit(F).build();
+
+  if (PedigreeGraphConnectRoot) {
+    graph->connectRootNode();
+  }
+
+  if (PedigreeCDGraphConvertToInstruction) {
+    // TODO do nothing for now
+    // instGraph = std::make_unique<InstCDGraph>();
+    // Convert(*graph, *instGraph, BlockToTerminatorUnitConverter{},
+    // BlockToInstructionsUnitConverter{});
+  }
+
+  return std::move(graph);
+}
+
+// legacy passmanager pass
 
 void CDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool CDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
+bool CDGraphWrapperPass::runOnFunction(llvm::Function &F) {
   CDGraphBuilder builder{};
-  Graph = builder.setUnit(CurFunc).build();
+  Graph = builder.setUnit(F).build();
 
   if (PedigreeGraphConnectRoot) {
     Graph->connectRootNode();

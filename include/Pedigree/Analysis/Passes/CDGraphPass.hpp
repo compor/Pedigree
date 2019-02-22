@@ -8,13 +8,16 @@
 
 #include "Pedigree/Analysis/Graphs/CDGraph.hpp"
 
+#include "Pedigree/Analysis/Creational/CDGraphBuilder.hpp"
+
 #include "llvm/Pass.h"
 // using llvm::FunctionPass
 // using llvm::AnalysisUsage
 // using llvm::RegisterPass
 
-#include <memory>
-// using std::unique_ptr
+#include "llvm/IR/PassManager.h"
+// using llvm::FunctionAnalysisManager
+// using llvm::AnalysisInfoMixin
 
 #include <cassert>
 // using assert
@@ -24,11 +27,26 @@ class Function;
 class AnalysisUsage;
 } // namespace llvm
 
+#define PEDIGREE_CDG_PASS_NAME "pedigree-cdg"
+
 namespace pedigree {
 
+// new passmanager pass
+class CDGraphPass : public llvm::AnalysisInfoMixin<CDGraphPass> {
+  friend llvm::AnalysisInfoMixin<CDGraphPass>;
+
+  static llvm::AnalysisKey Key;
+
+public:
+  using Result = CDGraphResultT;
+
+  Result run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM);
+};
+
+// legacy passmanager pass
 struct CDGraphWrapperPass : public llvm::FunctionPass {
   static char ID;
-  std::unique_ptr<CDGraph> Graph;
+  CDGraphResultT Graph;
   std::unique_ptr<InstCDGraph> InstGraph;
 
   CDGraphWrapperPass() : llvm::FunctionPass(ID) {}

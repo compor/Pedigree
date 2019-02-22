@@ -40,7 +40,7 @@
 #include <utility>
 // using std::move
 
-#define DEBUG_TYPE "pedigree-ddg"
+#define DEBUG_TYPE PEDIGREE_DDG_PASS_NAME
 
 extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
 

@@ -38,6 +38,8 @@ class Function;
 
 namespace pedigree {
 
+using CDGraphResultT = std::unique_ptr<CDGraph>;
+
 class CDGraphBuilder {
   llvm::Optional<const llvm::Function *> CurUnit;
 
@@ -52,7 +54,7 @@ public:
 
   CDGraphBuilder &setUnit(const llvm::Function &Unit) { return setUnit(&Unit); }
 
-  std::unique_ptr<CDGraph> build() {
+  CDGraphResultT build() {
     if (!CurUnit) {
       return {};
     }
