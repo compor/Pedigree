@@ -94,14 +94,14 @@ static llvm::cl::opt<bool> PedigreeCDGraphConvertToInstruction(
 
 //
 
-llvm::AnalysisKey pedigree::CDGraphPass::Key;
+llvm::AnalysisKey pedigree::CDGraphAnalysis::Key;
 
 namespace pedigree {
 
 // new passmanager pass
 
-CDGraphPass::Result CDGraphPass::run(llvm::Function &F,
-                                     llvm::FunctionAnalysisManager &FAM) {
+CDGraphAnalysis::Result
+CDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
   CDGraphBuilder builder{};
   auto graph = builder.setUnit(F).build();
 

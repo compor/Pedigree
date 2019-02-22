@@ -30,8 +30,8 @@ class AnalysisUsage;
 namespace pedigree {
 
 // new passmanager pass
-class MDGraphPass : public llvm::AnalysisInfoMixin<MDGraphPass> {
-  friend llvm::AnalysisInfoMixin<MDGraphPass>;
+class MDGraphAnalysis : public llvm::AnalysisInfoMixin<MDGraphAnalysis> {
+  friend llvm::AnalysisInfoMixin<MDGraphAnalysis>;
 
   static llvm::AnalysisKey Key;
 

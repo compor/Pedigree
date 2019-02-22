@@ -141,30 +141,30 @@ static void checkAndSetCmdLineOptions() {
 
 //
 
-llvm::AnalysisKey pedigree::PDGraphPass::Key;
+llvm::AnalysisKey pedigree::PDGraphAnalysis::Key;
 
 namespace pedigree {
 
 // new passmanager pass
 
-PDGraphPass::Result PDGraphPass::run(llvm::Function &F,
-                                     llvm::FunctionAnalysisManager &FAM) {
+PDGraphAnalysis::Result
+PDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
   std::unique_ptr<InstCDGraph> instCDG;
   std::vector<std::unique_ptr<InstructionDependenceGraph>> graphs;
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
-    Convert(*FAM.getResult<CDGraphPass>(F), *instCDG,
+    Convert(*FAM.getResult<CDGraphAnalysis>(F), *instCDG,
             BlockToTerminatorUnitConverter{},
             BlockToInstructionsUnitConverter{});
     graphs.emplace_back(std::move(instCDG));
   }
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::DDG)) {
-    graphs.emplace_back(std::move(FAM.getResult<DDGraphPass>(F)));
+    graphs.emplace_back(std::move(FAM.getResult<DDGraphAnalysis>(F)));
   }
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG)) {
-    graphs.emplace_back(std::move(FAM.getResult<MDGraphPass>(F)));
+    graphs.emplace_back(std::move(FAM.getResult<MDGraphAnalysis>(F)));
   }
 
   PDGraphBuilder builder{};

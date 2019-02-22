@@ -30,8 +30,8 @@ class AnalysisUsage;
 namespace pedigree {
 
 // new passmanager pass
-class CDGraphPass : public llvm::AnalysisInfoMixin<CDGraphPass> {
-  friend llvm::AnalysisInfoMixin<CDGraphPass>;
+class CDGraphAnalysis : public llvm::AnalysisInfoMixin<CDGraphAnalysis> {
+  friend llvm::AnalysisInfoMixin<CDGraphAnalysis>;
 
   static llvm::AnalysisKey Key;
 

@@ -224,14 +224,14 @@ static void checkCmdLineOptions() {
 
 //
 
-llvm::AnalysisKey pedigree::MDGraphPass::Key;
+llvm::AnalysisKey pedigree::MDGraphAnalysis::Key;
 
 namespace pedigree {
 
 // new passmanager pass
 
-MDGraphPass::Result MDGraphPass::run(llvm::Function &F,
-                                     llvm::FunctionAnalysisManager &FAM) {
+MDGraphAnalysis::Result
+MDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
   checkCmdLineOptions();
 
   auto graph = std::make_unique<MDGraph>();

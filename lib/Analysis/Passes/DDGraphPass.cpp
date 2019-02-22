@@ -90,14 +90,14 @@ static llvm::cl::opt<bool> IgnoreConstantPHINodes(
 
 //
 
-llvm::AnalysisKey pedigree::DDGraphPass::Key;
+llvm::AnalysisKey pedigree::DDGraphAnalysis::Key;
 
 namespace pedigree {
 
 // new passmanager pass
 
-DDGraphPass::Result DDGraphPass::run(llvm::Function &F,
-                                     llvm::FunctionAnalysisManager &FAM) {
+DDGraphAnalysis::Result
+DDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
   DDGraphBuilder builder{};
   auto graph =
       builder.setUnit(F).ignoreConstantPHINodes(IgnoreConstantPHINodes).build();
