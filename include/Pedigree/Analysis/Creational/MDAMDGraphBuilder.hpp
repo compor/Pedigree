@@ -38,10 +38,6 @@
 // using LLVM_DEBUG macro
 // using llvm::dbgs
 
-#include <memory>
-// using std::unique_ptr
-// using std::make_unique
-
 #include <bitset>
 // using std::bitset
 
@@ -64,7 +60,7 @@ enum MDA_MD_AnalysisMode : uint8_t {
 
 class MDAMDGraphBuilder {
 private:
-  std::unique_ptr<MDGraph> Graph;
+  MDGraphResultT Graph;
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
   llvm::Optional<llvm::MemoryDependenceAnalysis *> CurAnalysis;
 #else
@@ -106,7 +102,7 @@ public:
   }
 
   template <typename IteratorT>
-  std::unique_ptr<MDGraph> build(IteratorT Begin, IteratorT End) {
+  MDGraphResultT build(IteratorT Begin, IteratorT End) {
     assert(!CurMode.none() && "Analysis mode is empty!");
 
     if (CurAnalysis) {

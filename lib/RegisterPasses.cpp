@@ -10,6 +10,8 @@
 
 #include "Pedigree/Analysis/Passes/CDGraphPass.hpp"
 
+#include "Pedigree/Analysis/Passes/MDGraphPass.hpp"
+
 #include "llvm/IR/PassManager.h"
 // using llvm::FunctionAnalysisManager
 
@@ -92,9 +94,40 @@ void registerCDGCallbacks(llvm::PassBuilder &PB) {
       });
 }
 
+void registerMDGCallbacks(llvm::PassBuilder &PB) {
+  PB.registerAnalysisRegistrationCallback(
+      [](llvm::FunctionAnalysisManager &FAM) {
+        LLVM_DEBUG(llvm::dbgs() << "registering analysis "
+                                << PEDIGREE_MDG_PASS_NAME << "\n";);
+        FAM.registerPass([]() { return pedigree::MDGraphPass(); });
+      });
+  PB.registerPipelineParsingCallback(
+      [](llvm::StringRef Name, llvm::FunctionPassManager &FPM,
+         llvm::ArrayRef<llvm::PassBuilder::PipelineElement>) {
+        if (Name == "require<" PEDIGREE_MDG_PASS_NAME ">") {
+          LLVM_DEBUG(llvm::dbgs() << "registering require analysis parser for "
+                                  << PEDIGREE_MDG_PASS_NAME << "\n";);
+
+          FPM.addPass(llvm::RequireAnalysisPass<pedigree::MDGraphPass,
+                                                llvm::Function>());
+          return true;
+        }
+        if (Name == "invalidate<" PEDIGREE_MDG_PASS_NAME ">") {
+          LLVM_DEBUG(llvm::dbgs()
+                         << "registering invalidate analysis parser for "
+                         << PEDIGREE_MDG_PASS_NAME << "\n";);
+
+          FPM.addPass(llvm::InvalidateAnalysisPass<pedigree::MDGraphPass>());
+          return true;
+        }
+        return false;
+      });
+}
+
 void registerCallbacks(llvm::PassBuilder &PB) {
   registerDDGCallbacks(PB);
   registerCDGCallbacks(PB);
+  registerMDGCallbacks(PB);
 }
 
 } // namespace

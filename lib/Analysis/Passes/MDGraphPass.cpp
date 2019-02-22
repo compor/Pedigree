@@ -75,7 +75,7 @@
 #include <cassert>
 // using assert
 
-#define DEBUG_TYPE "pedigree-mdg"
+#define DEBUG_TYPE PEDIGREE_MDG_PASS_NAME
 
 extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
 
@@ -87,7 +87,8 @@ class Function;
 
 char pedigree::MDGraphWrapperPass::ID = 0;
 static llvm::RegisterPass<pedigree::MDGraphWrapperPass>
-    X("pedigree-mdg", PRJ_CMDLINE_DESC("pedigree mdg pass"), false, true);
+    X(PEDIGREE_MDG_PASS_NAME, PRJ_CMDLINE_DESC("pedigree mdg pass"), false,
+      true);
 
 // plugin registration for clang
 
@@ -223,7 +224,64 @@ static void checkCmdLineOptions() {
 
 //
 
+llvm::AnalysisKey pedigree::MDGraphPass::Key;
+
 namespace pedigree {
+
+// new passmanager pass
+
+MDGraphPass::Result MDGraphPass::run(llvm::Function &F,
+                                     llvm::FunctionAnalysisManager &FAM) {
+  checkCmdLineOptions();
+
+  auto graph = std::make_unique<MDGraph>();
+
+  std::vector<llvm::Instruction *> instructions;
+
+  switch (AnalysisTraversalOption) {
+  case AnalysisTraversalType::DepthFirst:
+    for (auto &e : make_inst_range(llvm::df_begin(&F), llvm::df_end(&F))) {
+      instructions.emplace_back(&e);
+    }
+    break;
+  case AnalysisTraversalType::Naive:
+    // fallthrough
+  default:
+    for (auto &e : make_inst_range(F)) {
+      instructions.emplace_back(&e);
+    }
+  }
+
+  if (AnalysisBackendType::DA == AnalysisBackendOption) {
+    // TODO currently unimplemented
+    assert(false && "This feature is currently unimplemented!");
+  } else {
+    auto &mda = FAM.getResult<llvm::MemoryDependenceAnalysis>(F);
+    MDAMDGraphBuilder builder{};
+
+    for (auto i = 0; i < AnalysisBackendModeOption.size(); ++i) {
+      builder.turnOnMode(AnalysisBackendModeOption[i]);
+    }
+
+    graph = builder.setScope(AnalysisBackendScopeOption)
+                .setAnalysis(mda)
+                .build(instructions.begin(), instructions.end());
+  }
+
+  if (PedigreeGraphConnectRoot) {
+    graph->connectRootNode();
+  }
+
+  if (EnumerateWithDFS && graph) {
+    auto instructions = make_inst_range(llvm::df_begin(&F), llvm::df_end(&F));
+
+    AssignNodeUID(*graph, instructions.begin(), instructions.end());
+  }
+
+  return std::move(graph);
+}
+
+// legacy passmanager pass
 
 void MDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
@@ -236,7 +294,7 @@ void MDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool MDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
+bool MDGraphWrapperPass::runOnFunction(llvm::Function &F) {
   checkCmdLineOptions();
 
   Graph = std::make_unique<MDGraph>();
@@ -245,15 +303,14 @@ bool MDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
 
   switch (AnalysisTraversalOption) {
   case AnalysisTraversalType::DepthFirst:
-    for (auto &e :
-         make_inst_range(llvm::df_begin(&CurFunc), llvm::df_end(&CurFunc))) {
+    for (auto &e : make_inst_range(llvm::df_begin(&F), llvm::df_end(&F))) {
       instructions.emplace_back(&e);
     }
     break;
   case AnalysisTraversalType::Naive:
     // fallthrough
   default:
-    for (auto &e : make_inst_range(CurFunc)) {
+    for (auto &e : make_inst_range(F)) {
       instructions.emplace_back(&e);
     }
   }
@@ -267,7 +324,7 @@ bool MDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
 
     DAMDGraphBuilder builder{};
 
-    Graph = builder.setAnalysis(da).setUnit(CurFunc).build();
+    Graph = builder.setAnalysis(da).setUnit(F).build();
   } else {
 #if (LLVM_VERSION_MAJOR <= 3 && LLVM_VERSION_MINOR < 9)
     auto &mda = getAnalysis<llvm::MemoryDependenceAnalysis>();
@@ -291,8 +348,7 @@ bool MDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
   }
 
   if (EnumerateWithDFS && Graph) {
-    auto instructions =
-        make_inst_range(llvm::df_begin(&CurFunc), llvm::df_end(&CurFunc));
+    auto instructions = make_inst_range(llvm::df_begin(&F), llvm::df_end(&F));
 
     AssignNodeUID(*Graph, instructions.begin(), instructions.end());
   }
