@@ -66,7 +66,10 @@
 #include <string>
 // using std::string
 
-#define DEBUG_TYPE "pedigree-pdg"
+#include <utility>
+// using std::move
+
+#define DEBUG_TYPE PEDIGREE_PDG_PASS_NAME
 
 extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
 
@@ -74,7 +77,8 @@ extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
 
 char pedigree::PDGraphWrapperPass::ID = 0;
 static llvm::RegisterPass<pedigree::PDGraphWrapperPass>
-    X("pedigree-pdg", PRJ_CMDLINE_DESC("pedigree pdg pass"), false, true);
+    X(PEDIGREE_PDG_PASS_NAME, PRJ_CMDLINE_DESC("pedigree pdg pass"), false,
+      true);
 
 // plugin registration for clang
 
@@ -137,7 +141,74 @@ static void checkAndSetCmdLineOptions() {
 
 //
 
+llvm::AnalysisKey pedigree::PDGraphPass::Key;
+
 namespace pedigree {
+
+// new passmanager pass
+
+PDGraphPass::Result PDGraphPass::run(llvm::Function &F,
+                                     llvm::FunctionAnalysisManager &FAM) {
+  std::unique_ptr<InstCDGraph> instCDG;
+  std::vector<std::unique_ptr<InstructionDependenceGraph>> graphs;
+
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
+    Convert(*FAM.getResult<CDGraphPass>(F), *instCDG,
+            BlockToTerminatorUnitConverter{},
+            BlockToInstructionsUnitConverter{});
+    graphs.emplace_back(std::move(instCDG));
+  }
+
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::DDG)) {
+    graphs.emplace_back(std::move(FAM.getResult<DDGraphPass>(F)));
+  }
+
+  if (GraphComponentOption.isSet(PedigreePDGraphComponent::MDG)) {
+    graphs.emplace_back(std::move(FAM.getResult<MDGraphPass>(F)));
+  }
+
+  PDGraphBuilder builder{};
+
+  // TODO refactor filters to use lists and their absolute position in the
+  // command line to chain and apply them
+  if (!MetadataFilterExclusion.empty()) {
+    MetadataAnnotationReader mdar;
+
+    builder.registerPostInsertionCallback(
+        [&mdar](PDGraphBuilder::PostInsertionFuncFirstArgTy i,
+                PDGraphBuilder::PostInsertionFuncSecondArgTy u) {
+          if (u && mdar.has(u, MetadataFilterExclusion)) {
+            i.filtered = true;
+          }
+        });
+  }
+
+  if (!MetadataFilterInclusion.empty()) {
+    MetadataAnnotationReader mdar;
+
+    builder.registerPostInsertionCallback(
+        [&mdar](PDGraphBuilder::PostInsertionFuncFirstArgTy i,
+                PDGraphBuilder::PostInsertionFuncSecondArgTy u) {
+          if (u && !mdar.has(u, MetadataFilterInclusion)) {
+            i.filtered = true;
+          }
+        });
+  }
+
+  for (const auto &e : graphs) {
+    builder.addGraph(*e);
+  }
+
+  auto graph = builder.build();
+
+  if (PedigreeGraphConnectRoot) {
+    graph->connectRootNode();
+  }
+
+  return std::move(graph);
+}
+
+// legacy passmanager pass
 
 PDGraphWrapperPass::PDGraphWrapperPass() : llvm::FunctionPass(ID) {
   checkAndSetCmdLineOptions();
@@ -159,7 +230,7 @@ void PDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
   AU.setPreservesAll();
 }
 
-bool PDGraphWrapperPass::runOnFunction(llvm::Function &CurFunc) {
+bool PDGraphWrapperPass::runOnFunction(llvm::Function &F) {
   InstructionDependenceGraph instCDG;
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>> graphs;
 

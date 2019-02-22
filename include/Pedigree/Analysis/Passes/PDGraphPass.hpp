@@ -13,8 +13,9 @@
 // using llvm::AnalysisUsage
 // using llvm::RegisterPass
 
-#include <memory>
-// using std::unique_ptr
+#include "llvm/IR/PassManager.h"
+// using llvm::FunctionAnalysisManager
+// using llvm::AnalysisInfoMixin
 
 #include <cassert>
 // using assert
@@ -24,11 +25,26 @@ class Function;
 class AnalysisUsage;
 } // namespace llvm
 
+#define PEDIGREE_PDG_PASS_NAME "pedigree-pdg"
+
 namespace pedigree {
 
+// new passmanager pass
+class PDGraphPass : public llvm::AnalysisInfoMixin<PDGraphPass> {
+  friend llvm::AnalysisInfoMixin<PDGraphPass>;
+
+  static llvm::AnalysisKey Key;
+
+public:
+  using Result = PDGraphResultT;
+
+  Result run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM);
+};
+
+// legacy passmanager pass
 struct PDGraphWrapperPass : public llvm::FunctionPass {
   static char ID;
-  std::unique_ptr<PDGraph> Graph;
+  PDGraphResultT Graph;
 
   PDGraphWrapperPass();
 

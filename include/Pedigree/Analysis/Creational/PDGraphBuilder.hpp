@@ -23,10 +23,6 @@
 // using std::cref
 // using std::function
 
-#include <memory>
-// using std::unique_ptr
-// using std::make_unique
-
 #include <cassert>
 // using assert
 
@@ -46,7 +42,7 @@ public:
 private:
   std::vector<std::reference_wrapper<const InstructionDependenceGraph>>
       componentGraphs;
-  std::unique_ptr<PDGraph> Graph;
+  PDGraphResultT Graph;
   bool LazilyConstructible;
 
   std::vector<PostInsertionFunc> PostInsertionFunctions;
@@ -113,7 +109,7 @@ public:
     return *this;
   }
 
-  std::unique_ptr<PDGraph> build() {
+  PDGraphResultT build() {
     if (!Graph) {
       Graph = std::make_unique<PDGraph>();
     }
