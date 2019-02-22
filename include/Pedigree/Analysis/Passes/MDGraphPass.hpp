@@ -16,6 +16,7 @@
 #include "llvm/IR/PassManager.h"
 // using llvm::FunctionAnalysisManager
 // using llvm::AnalysisInfoMixin
+// using llvm::PreservedAnalyses
 
 #include <cassert>
 // using assert
@@ -37,6 +38,9 @@ class MDGraphAnalysis : public llvm::AnalysisInfoMixin<MDGraphAnalysis> {
 
 public:
   using Result = MDGraphResultT;
+
+  bool invalidate(llvm::Function &F, const llvm::PreservedAnalyses &PA,
+                  llvm::FunctionAnalysisManager::Invalidator &Inv);
 
   Result run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM);
 };

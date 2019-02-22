@@ -147,6 +147,18 @@ namespace pedigree {
 
 // new passmanager pass
 
+bool PDGraphAnalysis::invalidate(
+    llvm::Function &F, const llvm::PreservedAnalyses &PA,
+    llvm::FunctionAnalysisManager::Invalidator &Inv) {
+  auto PAC = PA.getChecker<PDGraphAnalysis>();
+
+  return !(PAC.preserved() ||
+           PAC.preservedSet<llvm::AllAnalysesOn<llvm::Function>>()) ||
+         Inv.invalidate<DDGraphAnalysis>(F, PA) ||
+         Inv.invalidate<CDGraphAnalysis>(F, PA) ||
+         Inv.invalidate<MDGraphAnalysis>(F, PA);
+}
+
 PDGraphAnalysis::Result
 PDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
   std::unique_ptr<InstCDGraph> instCDG;

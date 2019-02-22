@@ -230,6 +230,16 @@ namespace pedigree {
 
 // new passmanager pass
 
+bool MDGraphAnalysis::invalidate(
+    llvm::Function &F, const llvm::PreservedAnalyses &PA,
+    llvm::FunctionAnalysisManager::Invalidator &Inv) {
+  auto PAC = PA.getChecker<MDGraphAnalysis>();
+
+  return !(PAC.preserved() ||
+           PAC.preservedSet<llvm::AllAnalysesOn<llvm::Function>>()) ||
+         Inv.invalidate<llvm::MemoryDependenceAnalysis>(F, PA);
+}
+
 MDGraphAnalysis::Result
 MDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
   checkCmdLineOptions();
