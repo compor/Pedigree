@@ -163,7 +163,7 @@ PDGraphAnalysis::Result
 PDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
   checkAndSetCmdLineOptions();
 
-  std::unique_ptr<InstCDGraph> instCDG;
+  std::unique_ptr<InstCDGraph> instCDG = std::make_unique<InstCDGraph>();
   std::vector<std::unique_ptr<InstructionDependenceGraph>> graphs;
 
   if (GraphComponentOption.isSet(PedigreePDGraphComponent::CDG)) {
