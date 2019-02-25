@@ -219,6 +219,10 @@ PDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
     graph->connectRootNode();
   }
 
+  LLVM_DEBUG(llvm::dbgs() << "pdg built with: " << graph->numVertices()
+                          << " vertices and " << graph->numOutEdges()
+                          << " out edges\n";);
+
   return std::move(graph);
 }
 
