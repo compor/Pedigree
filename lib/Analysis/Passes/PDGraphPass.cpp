@@ -161,6 +161,8 @@ bool PDGraphAnalysis::invalidate(
 
 PDGraphAnalysis::Result
 PDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
+  checkAndSetCmdLineOptions();
+
   std::unique_ptr<InstCDGraph> instCDG;
   std::vector<std::unique_ptr<InstructionDependenceGraph>> graphs;
 
