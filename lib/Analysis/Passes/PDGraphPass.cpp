@@ -70,6 +70,7 @@
 // using std::move
 
 #define DEBUG_TYPE PEDIGREE_PDG_PASS_NAME
+#define PASS_CMDLINE_OPTIONS_ENVVAR "PEDIGREE_PDG_ANALYSIS_CMDLINE_OPTIONS"
 
 extern llvm::cl::opt<bool> PedigreeGraphConnectRoot;
 
@@ -161,6 +162,9 @@ bool PDGraphAnalysis::invalidate(
 
 PDGraphAnalysis::Result
 PDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
+  llvm::cl::ParseEnvironmentOptions(PEDIGREE_PDG_PASS_NAME,
+                                    PASS_CMDLINE_OPTIONS_ENVVAR);
+
   checkAndSetCmdLineOptions();
 
   std::unique_ptr<InstCDGraph> instCDG = std::make_unique<InstCDGraph>();
