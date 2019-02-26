@@ -8,6 +8,8 @@
 
 #include "Pedigree/Util.hpp"
 
+#include "Pedigree/Analysis/Passes/Printers/Graphviz/PDGraphPrinterPass.hpp"
+
 #include "Pedigree/Analysis/Passes/PDGraphPass.hpp"
 
 #include "Pedigree/Support/Traits/LLVMAnalysisGraphTraits.hpp"
@@ -58,6 +60,52 @@ extern llvm::cl::list<std::string> PedigreeGraphDOTFunctionWhitelist;
 extern llvm::cl::opt<std::string> PedigreeReportsDir;
 
 namespace pedigree {
+
+// new passmanager pass
+
+llvm::PreservedAnalyses
+PDGraphDOTPrinterPass::run(llvm::Function &F,
+                           llvm::FunctionAnalysisManager &FAM) {
+  auto graph = std::move(FAM.getResult<PDGraphAnalysis>(F));
+
+  auto dirOrErr = CreateDirectory(PedigreeReportsDir);
+  if (std::error_code ec = dirOrErr.getError()) {
+    llvm::errs() << "Error: " << ec.message() << '\n';
+    llvm::report_fatal_error("Failed to create reports directory" +
+                             PedigreeReportsDir);
+  }
+
+  PedigreeReportsDir = dirOrErr.get();
+
+  auto found =
+      std::find(std::begin(PedigreeGraphDOTFunctionWhitelist),
+                std::end(PedigreeGraphDOTFunctionWhitelist), F.getName().str());
+
+  if (PedigreeGraphDOTFunctionWhitelist.empty() ||
+      std::end(PedigreeGraphDOTFunctionWhitelist) != found) {
+    std::string Filename =
+        PedigreeReportsDir + "/" + "pdg" + "." + F.getName().str() + ".dot";
+    std::error_code EC;
+
+    llvm::errs() << "Writing '" << Filename << "'...";
+
+    llvm::raw_fd_ostream File(Filename, EC, llvm::sys::fs::F_Text);
+    std::string GraphName =
+        llvm::DOTGraphTraits<PDGraph *>::getGraphName(graph.get());
+    std::string Title = GraphName + " for '" + F.getName().str() + "' function";
+
+    if (!EC) {
+      WriteGraph(File, graph.get(), false, Title);
+    } else {
+      llvm::errs() << "  error opening file for writing!";
+    }
+    llvm::errs() << "\n";
+  }
+
+  return llvm::PreservedAnalyses::all();
+}
+
+// legacy passmanager pass
 
 struct PDGraphPrinterWrapperPass
     : public llvm::DOTGraphTraitsPrinter<

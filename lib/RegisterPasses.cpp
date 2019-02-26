@@ -16,6 +16,8 @@
 
 #include "Pedigree/Analysis/Passes/Printers/Graphviz/DDGraphPrinterPass.hpp"
 
+#include "Pedigree/Analysis/Passes/Printers/Graphviz/PDGraphPrinterPass.hpp"
+
 #include "llvm/IR/PassManager.h"
 // using llvm::FunctionAnalysisManager
 
@@ -165,6 +167,15 @@ void registerPDGCallbacks(llvm::PassBuilder &PB) {
 
           FPM.addPass(
               llvm::InvalidateAnalysisPass<pedigree::PDGraphAnalysis>());
+          return true;
+        }
+        return false;
+      });
+  PB.registerPipelineParsingCallback(
+      [](llvm::StringRef Name, llvm::FunctionPassManager &FPM,
+         llvm::ArrayRef<llvm::PassBuilder::PipelineElement>) {
+        if (Name == "pedigree-pdg-dot") {
+          FPM.addPass(pedigree::PDGraphDOTPrinterPass());
           return true;
         }
         return false;
