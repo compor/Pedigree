@@ -15,9 +15,18 @@
 // using LLVM_DEBUG macro
 // using llvm::dbgs
 
+#include <cassert>
+// using assert
+
 #define DEBUG_TYPE "pdg-hazards"
 
 namespace pedigree {
+
+BasicDependenceInfo::value_type DetermineHazard(const llvm::Instruction *Src,
+                                                const llvm::Instruction *Dst) {
+  assert(Src && Dst && "Pointer is null!");
+  return DetermineHazard(*Src, *Dst);
+}
 
 BasicDependenceInfo::value_type DetermineHazard(const llvm::Instruction &Src,
                                                 const llvm::Instruction &Dst) {
