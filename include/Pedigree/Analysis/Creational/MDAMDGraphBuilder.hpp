@@ -12,6 +12,8 @@
 
 #include "Pedigree/Analysis/AnalysisScope.hpp"
 
+#include "Pedigree/Analysis/Hazards.hpp"
+
 #include "Pedigree/Support/Traits/TypeTraits.hpp"
 
 #include "llvm/Config/llvm-config.h"
@@ -152,45 +154,11 @@ private:
                             << "\n\tdst: " << Dst << '\n';);
 
     if (QueryResult.isDef() && CurMode[MDA_MD_MemDefs]) {
-      if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
-        // do not add edge
-      }
-
-      if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
-        LLVM_DEBUG(llvm::dbgs() << "adding def anti\n";);
-        info |= {DO_Memory, DH_Anti};
-      }
-
-      if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
-        LLVM_DEBUG(llvm::dbgs() << "adding def flow\n";);
-        info |= {DO_Memory, DH_Flow};
-      }
-
-      if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
-        LLVM_DEBUG(llvm::dbgs() << "adding def out\n";);
-        info |= {DO_Memory, DH_Out};
-      }
+      info |= DetermineHazard(Src, Dst);
     }
 
     if (QueryResult.isClobber() && CurMode[MDA_MD_MemClobbers]) {
-      if (Src.mayReadFromMemory() && Dst.mayReadFromMemory()) {
-        // do not add edge
-      }
-
-      if (Src.mayReadFromMemory() && Dst.mayWriteToMemory()) {
-        LLVM_DEBUG(llvm::dbgs() << "adding clobber anti\n";);
-        info |= {DO_Memory, DH_Anti};
-      }
-
-      if (Src.mayWriteToMemory() && Dst.mayReadFromMemory()) {
-        LLVM_DEBUG(llvm::dbgs() << "adding clobber flow\n";);
-        info |= {DO_Memory, DH_Flow};
-      }
-
-      if (Src.mayWriteToMemory() && Dst.mayWriteToMemory()) {
-        LLVM_DEBUG(llvm::dbgs() << "adding clobber out\n";);
-        info |= {DO_Memory, DH_Out};
-      }
+      info |= DetermineHazard(Src, Dst);
     }
 
     return info;

@@ -127,6 +127,7 @@ find_package(Sanitizers)
 set(LIB_SOURCES
   lib/RegisterPasses.cpp
   lib/Support/FileSystem.cpp
+  lib/Analysis/Hazards.cpp
   lib/Analysis/Graphs/DependenceGraphs.cpp
   lib/Analysis/Passes/GraphPassCommandLineOptions.cpp
   lib/Analysis/Passes/DDGraphPass.cpp
