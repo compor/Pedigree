@@ -124,6 +124,16 @@ public:
     return node.get();
   }
 
+  void removeNode(UnitType Unit) {
+    if (auto found = getNode(Unit)) {
+      for (auto *src : found->InEdges) {
+        src->removeDependentNode(found);
+      }
+
+      NodeMap.erase(Unit);
+    }
+  }
+
   VerticesSizeType numVertices() const noexcept(noexcept(NodeMap.size())) {
     return NodeMap.size();
   }
