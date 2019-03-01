@@ -92,6 +92,7 @@ public:
 
   void visitIntrinsicInst(llvm::IntrinsicInst &CurI) {
     auto intrID = CurI.getIntrinsicID();
+    bool hasChanged = false;
 
     switch (intrID) {
     default:
@@ -102,8 +103,11 @@ public:
     case llvm::Intrinsic::invariant_end:
     case llvm::Intrinsic::launder_invariant_group:
     case llvm::Intrinsic::strip_invariant_group:
-      // LLVM_DEBUG(llvm::dbgs() << "remove intrinsic already in graph\n";);
-      Graph->removeNode(&CurI);
+      hasChanged = Graph->removeNode(&CurI);
+
+      LLVM_DEBUG(if (hasChanged) {
+        llvm::dbgs() << "remove intrinsic already in graph\n";
+      });
 
       break;
     }
