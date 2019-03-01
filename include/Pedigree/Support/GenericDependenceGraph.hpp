@@ -124,14 +124,18 @@ public:
     return node.get();
   }
 
-  void removeNode(UnitType Unit) {
+  bool removeNode(UnitType Unit) {
+    bool hasChanged = false;
+
     if (auto found = getNode(Unit)) {
       for (auto *src : found->InEdges) {
-        src->removeDependentNode(found);
+        hasChanged |= src->removeDependentNode(found);
       }
 
-      NodeMap.erase(Unit);
+      hasChanged |= NodeMap.erase(Unit);
     }
+
+    return hasChanged;
   }
 
   VerticesSizeType numVertices() const noexcept(noexcept(NodeMap.size())) {
