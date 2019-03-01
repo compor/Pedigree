@@ -64,30 +64,49 @@ public:
     return std::move(Graph);
   }
 
-  void visitInstruction(llvm::Instruction &CurInstruction) {
-    for (auto &u : CurInstruction.uses()) {
+  void visitInstruction(llvm::Instruction &CurI) {
+    for (auto &u : CurI.uses()) {
       auto *user = llvm::dyn_cast<llvm::Instruction>(u.getUser());
       if (user) {
-        auto src = Graph->getOrInsertNode(&CurInstruction);
+        auto src = Graph->getOrInsertNode(&CurI);
         auto dst = Graph->getOrInsertNode(user);
         src->addDependentNode(dst, {DO_Data, DH_Flow});
       }
     }
   }
 
-  void visitPHINode(llvm::PHINode &CurInstruction) {
+  void visitPHINode(llvm::PHINode &CurI) {
     if (!shouldIgnoreConstantPHINodes) {
-      for (auto &e : CurInstruction.incoming_values()) {
+      for (auto &e : CurI.incoming_values()) {
         if (llvm::isa<llvm::Constant>(e.get())) {
-          auto dst = Graph->getOrInsertNode(&CurInstruction);
-          auto src = Graph->getOrInsertNode(
-              CurInstruction.getIncomingBlock(e)->getTerminator());
+          auto dst = Graph->getOrInsertNode(&CurI);
+          auto src =
+              Graph->getOrInsertNode(CurI.getIncomingBlock(e)->getTerminator());
           src->addDependentNode(dst, {DO_Data, DH_Flow});
         }
       }
     }
 
-    visitInstruction(CurInstruction);
+    visitInstruction(CurI);
+  }
+
+  void visitIntrinsicInst(llvm::IntrinsicInst &CurI) {
+    auto intrID = CurI.getIntrinsicID();
+
+    switch (intrID) {
+    default:
+      visitInstruction(CurI);
+    case llvm::Intrinsic::lifetime_start:
+    case llvm::Intrinsic::lifetime_end:
+    case llvm::Intrinsic::invariant_start:
+    case llvm::Intrinsic::invariant_end:
+    case llvm::Intrinsic::launder_invariant_group:
+    case llvm::Intrinsic::strip_invariant_group:
+      // LLVM_DEBUG(llvm::dbgs() << "remove intrinsic already in graph\n";);
+      Graph->removeNode(&CurI);
+
+      break;
+    }
   }
 };
 
