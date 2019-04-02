@@ -125,6 +125,7 @@ find_package(Sanitizers)
 #
 
 set(LIB_SOURCES
+  lib/Debug.cpp
   lib/RegisterPasses.cpp
   lib/Support/FileSystem.cpp
   lib/Analysis/Hazards.cpp
