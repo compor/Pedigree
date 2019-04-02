@@ -115,11 +115,11 @@ std::array<PDFConstructionTestData, 5> testData1{
 std::array<PDFConstructionTestData, 1> testData2{
     {{"exit.ll", "if.then", {"entry"}}}};
 
-INSTANTIATE_TEST_CASE_P(TestInstance1, PDFConstructionTest,
-                        ::testing::ValuesIn(testData1), );
+INSTANTIATE_TEST_SUITE_P(TestInstance1, PDFConstructionTest,
+                         ::testing::ValuesIn(testData1));
 
-INSTANTIATE_TEST_CASE_P(TestInstance2, PDFConstructionTest,
-                        ::testing::ValuesIn(testData2), );
+INSTANTIATE_TEST_SUITE_P(TestInstance2, PDFConstructionTest,
+                   ::testing::ValuesIn(testData2));
 
 } // unnamed namespace
 } // namespace testing

@@ -47,8 +47,8 @@ TEST_P(ExampleTest, Example) {
 
 std::array<ExampleTestData, 1> testData1 = {{{"test01.ll"}}};
 
-INSTANTIATE_TEST_CASE_P(DefaultInstance, ExampleTest,
-                        ::testing::ValuesIn(testData1), );
+INSTANTIATE_TEST_SUITE_P(DefaultInstance, ExampleTest,
+                         ::testing::ValuesIn(testData1));
 
 } // unnamed namespace
 } // namespace testing

@@ -65,8 +65,8 @@ std::array<DDGraphTestData, 3> testData1{{{"whalebook_fig81.ll", 13, 12},
                                           {"whalebook_fig85.ll", 7, 5},
                                           {"whalebook_fig821.ll", 14, 14}}};
 
-INSTANTIATE_TEST_CASE_P(DefaultInstance, DDGraphConstructionTest,
-                        ::testing::ValuesIn(testData1), );
+INSTANTIATE_TEST_SUITE_P(DefaultInstance, DDGraphConstructionTest,
+                         ::testing::ValuesIn(testData1));
 
 } // unnamed namespace
 } // namespace testing

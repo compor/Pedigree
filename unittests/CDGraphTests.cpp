@@ -125,11 +125,11 @@ std::array<CDGraphTestData, 5> testData2{{{"whalebook_fig81.ll", 10, 8},
                                           {"hpc4pc_book_fig37.ll", 20, 22},
                                           {"hpc4pc_book_fig321.ll", 26, 27}}};
 
-INSTANTIATE_TEST_CASE_P(DefaultInstance, CDGraphConstructionTest,
-                        ::testing::ValuesIn(testData1), );
+INSTANTIATE_TEST_SUITE_P(DefaultInstance, CDGraphConstructionTest,
+                         ::testing::ValuesIn(testData1));
 
-INSTANTIATE_TEST_CASE_P(DefaultInstance2, CDGraphConstructionTest2,
-                        ::testing::ValuesIn(testData2), );
+INSTANTIATE_TEST_SUITE_P(DefaultInstance2, CDGraphConstructionTest2,
+                         ::testing::ValuesIn(testData2));
 
 } // unnamed namespace
 } // namespace testing
