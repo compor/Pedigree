@@ -47,10 +47,6 @@ if(SANITIZE_MEMORY)
   target_compile_options(${PRJ_TEST_NAME} PUBLIC "-fPIE")
 endif()
 
-if(NOT LLVM_ENABLE_EH)
-  target_compile_definitions(${PRJ_TEST_NAME} PUBLIC BOOST_NO_EXCEPTIONS)
-endif()
-
 target_include_directories(${PRJ_TEST_NAME} PUBLIC include)
 target_include_directories(${PRJ_TEST_NAME} PUBLIC ${GTEST_INCLUDE_DIRS})
 target_include_directories(${PRJ_TEST_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
