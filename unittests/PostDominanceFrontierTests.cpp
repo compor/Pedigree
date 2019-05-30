@@ -117,6 +117,13 @@ std::array<PDFConstructionTestData, 1> testData2{
 
 std::array<PDFConstructionTestData, 1> testData3{{{"single.ll", "entry", {}}}};
 
+std::array<PDFConstructionTestData, 5> testData4{
+    {{"unreachable_return.ll", "entry", {}},
+     {"unreachable_return.ll", "for.cond", {"for.cond"}},
+     {"unreachable_return.ll", "for.body", {"for.cond"}},
+     {"unreachable_return.ll", "for.inc", {"for.cond"}},
+     {"unreachable_return.ll", "for.end", {}}}};
+
 INSTANTIATE_TEST_SUITE_P(TestInstance1, PDFConstructionTest,
                          ::testing::ValuesIn(testData1));
 
@@ -125,6 +132,9 @@ INSTANTIATE_TEST_SUITE_P(TestInstance2, PDFConstructionTest,
 
 INSTANTIATE_TEST_SUITE_P(TestInstance3, PDFConstructionTest,
                          ::testing::ValuesIn(testData3));
+
+INSTANTIATE_TEST_SUITE_P(TestInstance4, PDFConstructionTest,
+                         ::testing::ValuesIn(testData4));
 
 } // unnamed namespace
 } // namespace testing
