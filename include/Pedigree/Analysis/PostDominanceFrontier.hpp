@@ -83,8 +83,6 @@ public:
     this->Roots.resize(roots.size());
     std::copy(roots.begin(), roots.end(), this->Roots.begin());
 
-    assert(getSingleRoot() && "Only one entry block for post domfronts!");
-
     calculate(DT);
   }
 
@@ -103,7 +101,11 @@ protected:
 
   const DomSetType &calculate(const DomTreeT &DT) {
     this->Frontiers.clear();
-    auto *root = DT[getSingleRoot()];
+
+    auto *blockRoot = getSingleRoot();
+    assert(blockRoot && "Only one entry block for post domfronts!");
+
+    auto *root = DT[blockRoot];
     const auto &traversal = llvm::post_order(root);
 
     for (const auto &e : traversal)
