@@ -20,6 +20,7 @@
 
 #include "llvm/IR/CFG.h"
 // using llvm::GraphTraits
+// using llvm::pred_size
 
 #include "llvm/IR/Dominators.h"
 // using llvm::DominatorTreeBase
@@ -94,14 +95,18 @@ public:
 
 protected:
   BlockT *getSingleRoot() const {
-    BlockT *root = nullptr;
+    if (this->Roots.size() == 1) {
+      return this->Roots[0];
+    }
+
     for (auto i = 0; i < this->Roots.size(); ++i) {
-      if (!root) {
-        root = this->Roots[i];
+      auto *root = this->Roots[i];
+      if (root && llvm::pred_size(root)) {
+        return root;
       }
     }
 
-    return root;
+    return nullptr;
   }
 
   const DomSetType &calculate(const DomTreeT &DT) {
