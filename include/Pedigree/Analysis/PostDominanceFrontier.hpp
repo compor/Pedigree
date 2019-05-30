@@ -34,11 +34,17 @@
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
 
+#include "llvm/Support/Debug.h"
+// using LLVM_DEBUG macro
+// using llvm::dbgs
+
 #include <algorithm>
 // using std::copy
 
 #include <cassert>
 // using assert
+
+#define DEBUG_TYPE "pedigree-postdom-frontier"
 
 namespace pedigree {
 
@@ -105,6 +111,11 @@ protected:
     auto *blockRoot = getSingleRoot();
     assert(blockRoot && "Only one entry block for post domfronts!");
 
+    LLVM_DEBUG(llvm::dbgs()
+                   << "selected postdom tree root block of function '"
+                   << blockRoot->getParent()->getName() << "' with terminator: "
+                   << *blockRoot->getTerminator() << '\n';);
+
     auto *root = DT[blockRoot];
     const auto &traversal = llvm::post_order(root);
 
@@ -131,4 +142,6 @@ protected:
 };
 
 } // namespace pedigree
+
+#undef DEBUG_TYPE
 
