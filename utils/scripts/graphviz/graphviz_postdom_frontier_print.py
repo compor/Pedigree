@@ -22,7 +22,7 @@ from networkx.drawing.nx_agraph import read_dot
 from networkx.drawing.nx_agraph import to_agraph
 
 
-def find_postdom_frontiers(infile, start):
+def find_postdom_frontiers(graph, start):
     """ Create the strongly connected components (SCC's) as subgraphs of a
     GraphViz DOT digraph.
 
@@ -41,12 +41,8 @@ def find_postdom_frontiers(infile, start):
         Current values supported: ['subgraph', 'colour']
     """
 
-    dot_graph = read_dot(infile)
-    reverse_dot_graph = dot_graph.reverse()
-
-    return sorted(
-        (u, sorted(df))
-        for u, df in nx.dominance_frontiers(reverse_dot_graph, start).items())
+    return sorted((u, sorted(df))
+                  for u, df in nx.dominance_frontiers(graph, start).items())
 
 
 #
@@ -63,18 +59,23 @@ if __name__ == '__main__':
         required=True,
         help='GraphViz DOT files')
     parser.add_argument(
-        '-s',
-        '--start',
-        dest='start_node',
-        required=True,
-        help='The start node of dominance computation')
-    parser.add_argument(
         '-q',
         '--quiet',
         dest='quiet',
         default=False,
         action='store_true',
         help='silence output')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        '-s',
+        '--start',
+        dest='start_node',
+        help='The start node of dominance computation')
+    group.add_argument(
+        '-l',
+        '--start-label',
+        dest='start_node_label',
+        help='The start node of dominance computation')
 
     args = parser.parse_args()
 
@@ -88,7 +89,19 @@ if __name__ == '__main__':
     if invalid_files:
         raise ValueError('Input files: {} do not exist'.format(invalid_files))
 
+    start_node = args.start_node
+
     for f in args.dotfiles:
-        print(find_postdom_frontiers(f, args.start_node))
+        dot_graph = read_dot(f)
+        reverse_dot_graph = dot_graph.reverse()
+
+        if args.start_node_label:
+            for n in reverse_dot_graph.nodes():
+                if reverse_dot_graph.node[n]['label'].find(
+                        args.start_node_label):
+                    start_node = n
+
+        frontiers = find_postdom_frontiers(reverse_dot_graph, start_node)
+        print(frontiers)
 
     sys.exit(0)
