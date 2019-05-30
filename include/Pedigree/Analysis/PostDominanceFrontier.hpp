@@ -96,8 +96,7 @@ protected:
   BlockT *getSingleRoot() const {
     BlockT *root = nullptr;
     for (auto i = 0; i < this->Roots.size(); ++i) {
-      if (!llvm::isa<llvm::UnreachableInst>(this->Roots[i]->getTerminator()) &&
-          !root) {
+      if (!root) {
         root = this->Roots[i];
       }
     }
