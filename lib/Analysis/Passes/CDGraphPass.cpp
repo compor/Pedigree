@@ -29,6 +29,9 @@
 // using llvm::PassManagerBuilder
 // using llvm::RegisterStandardPasses
 
+#include "llvm/CodeGen/Passes.h"
+// using llvm::UnreachableMachineBlockElimID
+
 #include "llvm/Support/CommandLine.h"
 // using llvm::cl::opt
 // using llvm::cl::desc
@@ -122,6 +125,7 @@ CDGraphAnalysis::run(llvm::Function &F, llvm::FunctionAnalysisManager &FAM) {
 // legacy passmanager pass
 
 void CDGraphWrapperPass::getAnalysisUsage(llvm::AnalysisUsage &AU) const {
+  AU.addRequiredTransitiveID(llvm::UnreachableMachineBlockElimID);
   AU.setPreservesAll();
 }
 
