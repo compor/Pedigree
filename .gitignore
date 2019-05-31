@@ -32,3 +32,6 @@ compile_commands.json
 *.exe
 *.out
 *.app
+
+# Caches
+.ccls-cache

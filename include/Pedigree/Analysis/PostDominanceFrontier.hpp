@@ -20,6 +20,7 @@
 
 #include "llvm/IR/CFG.h"
 // using llvm::GraphTraits
+// using llvm::pred_size
 
 #include "llvm/IR/Dominators.h"
 // using llvm::DominatorTreeBase
@@ -34,11 +35,17 @@
 #include "llvm/ADT/iterator_range.h"
 // using llvm::make_range
 
+#include "llvm/Support/Debug.h"
+// using LLVM_DEBUG macro
+// using llvm::dbgs
+
 #include <algorithm>
 // using std::copy
 
 #include <cassert>
 // using assert
+
+#define DEBUG_TYPE "pedigree-postdom-frontier"
 
 namespace pedigree {
 
@@ -83,27 +90,37 @@ public:
     this->Roots.resize(roots.size());
     std::copy(roots.begin(), roots.end(), this->Roots.begin());
 
-    assert(getSingleRoot() && "Only one entry block for post domfronts!");
-
     calculate(DT);
   }
 
 protected:
   BlockT *getSingleRoot() const {
-    BlockT *root = nullptr;
+    if (this->Roots.size() == 1) {
+      return this->Roots[0];
+    }
+
     for (auto i = 0; i < this->Roots.size(); ++i) {
-      if (!llvm::isa<llvm::UnreachableInst>(this->Roots[i]->getTerminator()) &&
-          !root) {
-        root = this->Roots[i];
+      auto *root = this->Roots[i];
+      if (root && llvm::pred_size(root)) {
+        return root;
       }
     }
 
-    return root;
+    return nullptr;
   }
 
   const DomSetType &calculate(const DomTreeT &DT) {
     this->Frontiers.clear();
-    auto *root = DT[getSingleRoot()];
+
+    auto *blockRoot = getSingleRoot();
+    assert(blockRoot && "Only one entry block for post domfronts!");
+
+    LLVM_DEBUG(llvm::dbgs()
+                   << "selected postdom tree root block of function '"
+                   << blockRoot->getParent()->getName() << "' with terminator: "
+                   << *blockRoot->getTerminator() << '\n';);
+
+    auto *root = DT[blockRoot];
     const auto &traversal = llvm::post_order(root);
 
     for (const auto &e : traversal)
@@ -129,4 +146,6 @@ protected:
 };
 
 } // namespace pedigree
+
+#undef DEBUG_TYPE
 
