@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-""" A command line utility that outputs the strongly connected components
-(SCC's) subgraphs of a digraph as GraphViz DOT clusters.
+""" A command line utility that outputs the post-dominance frontier starting at
+the selected node of a digraph input as GraphViz DOT.
 
-The utility accepts the name of a file containing a GraphViz DOT digraph and
-outputs a file with the given name of a digraph in the same format with all the
-SCC's containing more than 1 nodes grouped as subgraph clusters.
+The utility accepts the name of a file containing a GraphViz DOT digraph and a
+start node and outputs a dict containing the post-dominance frontiers of each
+node reachable from start as lists.
 """
 
 from __future__ import print_function
@@ -23,22 +23,22 @@ from networkx.drawing.nx_agraph import to_agraph
 
 
 def find_postdom_frontiers(graph, start):
-    """ Create the strongly connected components (SCC's) as subgraphs of a
-    GraphViz DOT digraph.
-
-    It finds the SCC's of a GrahViz digraph and groups them as subgraph
-    clusters in this format.
+    """ Returns the post-dominance frontiers of all nodes in a networkx.DiGraph
 
     Args:
-        infile (string): The input file name expected to contain a GraphViz DOT
-        digraph.
+        graph (networkx.DiGraph or networkx.MultiDiGraph): The input digraph.
 
-        outfile (string): The output file name to be created containing a
+        start (string): The output file name to be created containing a
         GraphViz DOT digraph.
 
-        mode (string): A string denoting the way that the multinode SCCs will
-        be visually marked on the output graph. Defaults to the emptry string.
-        Current values supported: ['subgraph', 'colour']
+
+    Returns:
+       df : dict keyed by nodes
+        A dict containing the dominance frontiers of each node reachable from
+        `start` as lists.
+
+    Raises:
+        Same as networkx.algorithms.dominance.dominance_frontiers()
     """
 
     return sorted((u, sorted(df))
