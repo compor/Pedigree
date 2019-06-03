@@ -99,14 +99,21 @@ protected:
       return this->Roots[0];
     }
 
+    BlockT *root = nullptr;
+
     for (auto i = 0; i < this->Roots.size(); ++i) {
-      auto *root = this->Roots[i];
+      root = this->Roots[i];
       if (root && llvm::pred_size(root)) {
         return root;
       }
     }
 
-    return nullptr;
+    // NOTE this is an ugly catch-all solution
+    if (!root) {
+      root = &this->Roots[0]->getParent()->getEntryBlock();
+    }
+
+    return root;
   }
 
   const DomSetType &calculate(const DomTreeT &DT) {
