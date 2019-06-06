@@ -11,6 +11,9 @@
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
+#include "llvm/IR/IntrinsicInst.h"
+// using llvm::IntrinsicInst
+
 #include "llvm/IR/InstVisitor.h"
 // using llvm::InstVisitor
 

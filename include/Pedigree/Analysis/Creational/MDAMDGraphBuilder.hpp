@@ -22,6 +22,9 @@
 #include "llvm/IR/Instruction.h"
 // using llvm::Instruction
 
+#include "llvm/IR/IntrinsicInst.h"
+// using llvm::IntrinsicInst
+
 #include "llvm/IR/CallSite.h"
 // using llvm::CallSite
 
@@ -32,6 +35,9 @@
 
 #include "llvm/ADT/SmallVector.h"
 // using llvm::SmallVector
+
+#include "llvm/ADT/SmallPtrSet.h"
+// using llvm::SmallPtrSet
 
 #include "llvm/ADT/Optional.h"
 // using llvm::Optional
@@ -111,7 +117,9 @@ public:
       Graph = std::make_unique<MDGraph>();
 
       for (auto it = Begin; it != End; ++it) {
-        processMemInstruction(*it);
+        if (!shouldSkip(*it)) {
+          processMemInstruction(*it);
+        }
       }
     }
 
@@ -214,6 +222,47 @@ private:
       addDependenceWithInfo(*src, Dst, info);
     }
   }
+
+  llvm::SmallPtrSet<llvm::Instruction *, 32> SkipSet;
+
+  bool shouldSkip(llvm::IntrinsicInst &CurI) {
+    auto intrID = CurI.getIntrinsicID();
+
+    switch (intrID) {
+    default:
+    case llvm::Intrinsic::lifetime_start:
+    case llvm::Intrinsic::lifetime_end:
+    case llvm::Intrinsic::invariant_start:
+    case llvm::Intrinsic::invariant_end:
+    case llvm::Intrinsic::launder_invariant_group:
+    case llvm::Intrinsic::strip_invariant_group:
+      return true;
+    }
+
+    return false;
+  }
+
+  bool shouldSkip(llvm::Instruction *CurI) {
+    assert(CurI && "Pointer is null!");
+
+    if (SkipSet.count(CurI)) {
+      return true;
+    }
+
+    bool status = false;
+
+    if (auto *ii = llvm::dyn_cast<llvm::IntrinsicInst>(CurI)) {
+      status |= shouldSkip(*ii);
+    }
+
+    if (status) {
+      SkipSet.insert(CurI);
+    }
+
+    return status;
+  }
+
+  bool shouldSkip(llvm::Instruction &CurI) { return shouldSkip(&CurI); }
 };
 
 } // namespace pedigree
