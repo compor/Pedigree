@@ -18,10 +18,17 @@ fi
 export BUILD_TYPE=RelWithDebInfo
 
 #export GTEST_ROOT=/usr/local/gtest-libcxx
-export GTEST_ROOT=/bulk/workbench/thirdparty/gtest/install1-libcxx/
+#export GTEST_ROOT=/bulk/workbench/thirdparty/gtest/install1-libcxx/
 
-#export BOOST_ROOT=/bulk/workbench/boost/015900/install/
-export BOOST_ROOT=/bulk/workbench/thirdparty/boost/016800/install1/
+#BOOST_ROOT=/bulk/workbench/boost/015900/install/
+#BOOST_ROOT=/bulk/workbench/thirdparty/boost/016800/install1/
+
+if [[ -z ${BOOST_ROOT} ]]; then
+  BOOST_ROOT="/bulk/workbench/thirdparty/boost/016800/install1/"
+  echo "using default BOOST_ROOT=${BOOST_ROOT}"
+fi
+
+export BOOST_ROOT
 
 export CXX_FLAGS=
 export CXX_FLAGS="${CXX_FLAGS} -O1"
@@ -31,9 +38,10 @@ export LINKER_FLAGS=
 export LINKER_FLAGS="-Wl,-L$(${LLVMCONFIG} --libdir)"
 export LINKER_FLAGS="${LINKER_FLAGS} -lc++ -lc++abi"
 
-export PEDIGREE_SKIP_TESTS=OFF
-
 export SANITIZER_OPTIONS=""
+
+PEDIGREE_SKIP_TESTS="OFF"
+PEDIGREE_SKIP_TESTS=${GTEST_ROOT:=ON}
 
 # find LLVM's cmake dir
 export LLVM_DIR=$(${LLVMCONFIG} --prefix)/share/llvm/cmake/
@@ -44,7 +52,11 @@ ${LLVMCONFIG} --cmakedir &> /dev/null
 
 
 CMAKE_OPTIONS="-DLLVM_DIR=${LLVM_DIR}"
-CMAKE_OPTIONS="${CMAKE_OPTIONS} -DGTEST_ROOT=${GTEST_ROOT}"
+
+if [[ ! -z ${GTEST_ROOT} ]]; then
+  CMAKE_OPTIONS="${CMAKE_OPTIONS} -DGTEST_ROOT=${GTEST_ROOT}"
+fi
+
 CMAKE_OPTIONS="${CMAKE_OPTIONS} -DBOOST_ROOT=${BOOST_ROOT}"
 CMAKE_OPTIONS="${CMAKE_OPTIONS} -DPEDIGREE_SKIP_TESTS=${PEDIGREE_SKIP_TESTS}"
 CMAKE_OPTIONS="${CMAKE_OPTIONS} ${SANITIZER_OPTIONS}"
