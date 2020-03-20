@@ -19,7 +19,7 @@ This is a `LLVM` [`opt`][1] pass for creating Program Dependence Graphs.
     -   [GCC][4]
       tested with:
         -   7.3.1
-    -   Boost
+-   Boost
       tested with:
         -   1.68
 -   [googletest][6]
